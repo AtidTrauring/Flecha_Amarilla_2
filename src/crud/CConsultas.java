@@ -455,6 +455,27 @@ public class CConsultas {
     /**
      * ***************************CONSULTAS***********************************
      */
+    
+    
+         public ArrayList<String[]> buscaConduce() throws SQLException {
+        consulta = "SELECT\n" +
+"    persona.nombre,\n" +
+"    persona.ApPat,\n" +
+"    persona.ApMat,\n" +
+"    autobus.placa,\n" +
+"    marca.nombre AS nombre_marca,\n" +
+"    modelo.nombre AS nombre_modelo\n" +
+"FROM\n" +
+"    autobus\n" +
+"INNER JOIN autobusconductor ON autobus.Id_autobus = autobusconductor.Id_autobus\n" +
+"INNER JOIN conductor ON autobusconductor.Id_conductor = conductor.Id_conductor\n" +
+"INNER JOIN modelo ON autobus.Id_modelo = modelo.Id_modelo\n" +
+"INNER JOIN marca ON modelo.Id_marca = marca.Id_marca\n" +
+"INNER JOIN persona ON conductor.Id_persona = persona.Id_persona;";
+        return buscarCon6(consulta);
+    }
+    
+    
     public ArrayList<String[]> buscarClientes() throws SQLException {
         consulta = "SELECT persona.nombre, persona.ApPat, persona.ApMat, cliente.correo  FROM cliente INNER JOIN persona ON persona.Id_persona = cliente.Id_persona;";
         return buscarCon4(consulta);
