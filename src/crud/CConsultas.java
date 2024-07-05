@@ -451,11 +451,36 @@ public class CConsultas {
         return false;
     }
 
+    public boolean buscar(String consulta) throws SQLException {
+        conn = conector.conecta();
+        try {
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery(consulta);
+            if (rs == null) {
+                return false;
+            } else {
+                while (rs.next()) {
+                    if (rs.getString(1) == null) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            CMensajes.msg_error("Error: " + e.getMessage(), "Buscar objeto");
+        } finally {
+            //3. Cerrarla conexion
+            conector.desconecta(conn);
+        }
+        return false;
+    }
+
     // *************** Declaracion de consultas ******************
     /**
      * ***************************CONSULTAS***********************************
      */
-    
     public ArrayList<String[]> buscarReembolso() throws SQLException {
         consulta = "SELECT p.nombre,\n"
                 + "       p.ApPat,\n"
@@ -474,7 +499,7 @@ public class CConsultas {
         return buscarCon7(consulta);
 
     }
-      
+
     public ArrayList<String[]> buscaViaje() throws SQLException {
         consulta = "SELECT t_origen.nombre AS origen,\n"
                 + "       t_destino.nombre AS destino,\n"
@@ -494,7 +519,7 @@ public class CConsultas {
                 + "JOIN mes me ON f.Id_mes = me.Id_mes;";
         return buscarCon7(consulta);
     }
-    
+
     public ArrayList<String[]> buscaConduce() throws SQLException {
         consulta = "SELECT\n"
                 + "    persona.nombre,\n"
@@ -512,7 +537,7 @@ public class CConsultas {
                 + "INNER JOIN persona ON conductor.Id_persona = persona.Id_persona;";
         return buscarCon6(consulta);
     }
-       
+
     public ArrayList<String[]> buscarClientes() throws SQLException {
         consulta = "SELECT persona.nombre, persona.ApPat, persona.ApMat, cliente.correo  FROM cliente INNER JOIN persona ON persona.Id_persona = cliente.Id_persona;";
         return buscarCon4(consulta);
@@ -528,6 +553,26 @@ public class CConsultas {
         return buscarCon4(consulta);
     }
 
+    public boolean buscarConductor(int id) throws SQLException {
+        consulta = "SELECT conductor.Id_conductor FROM conductor WHERE conductor.Id_conductor = " + id;
+        return buscar(consulta);
+    }
+
+    public boolean actualizarPersona(String nombre, String ApPat, String ApMat, int id) throws SQLException {
+        consulta = "UPDATE flecha_amarilla.persona SET `nombre`='" + nombre + "',`ApPat`='" + ApPat + "',`ApMat`='" + ApMat + "' WHERE persona.Id_persona = " + id;
+        return actualiza(consulta);
+    }
+
+    public boolean actualizarTelefono(String tel, int id) throws SQLException {
+        consulta = "UPDATE flecha_amarilla.telefono_persona SET `telefono`='" + tel + "' WHERE telefono_persona.Id_persona = " + id;
+        return actualiza(consulta);
+    }
+
+    public ArrayList<String[]> buscarConductoresCompletos() throws SQLException {
+        consulta = "SELECT conductor.id_conductor, persona.nombre, persona.ApPat, persona.ApMat, telefono_persona.telefono FROM conductor INNER JOIN persona ON conductor.Id_persona = persona.Id_persona INNER JOIN telefono_persona ON telefono_persona.Id_persona = persona.Id_persona";
+        return buscarCon5(consulta);
+    }
+
     public ArrayList<String[]> buscaUsuarios() throws SQLException {
         consulta = "SELECT persona.nombre, persona.ApPat, persona.ApMat FROM persona";
         return buscarCon3(consulta);
@@ -541,7 +586,7 @@ public class CConsultas {
                 + " AND fecha.Id_anio = anio.Id_anio AND modelo.Id_marca = marca.Id_marca";
         return buscarCon4(consulta);
     }
-    
+
     public ArrayList<String[]> buscaParadas() throws SQLException {
         consulta = " SELECT DISTINCT ruta.nombre,terminal.nombre FROM rutaterminal "
                 + " INNER JOIN ruta ON ruta.Id_ruta = rutaterminal.Id_ruta "
@@ -583,7 +628,7 @@ public class CConsultas {
                 + " JOIN terminal AS terminal_destino ON destino.Id_terminal = terminal_destino.Id_terminal";
         return buscarCon8(consulta);
     }
-    
+
     public ArrayList<String[]> buscaTerminales() throws SQLException {
         consulta = "SELECT\n"
                 + "terminal.nombre,\n"
@@ -604,13 +649,13 @@ public class CConsultas {
                 + "INNER JOIN telefonoterminal ON terminal.Id_terminal = telefonoterminal.Id_terminal";
         return buscarCon8(consulta);
     }
-    
+
     public ArrayList<String> cargaComboDias() throws SQLException {
         consulta = "SELECT DISTINCT fecha.dia FROM fecha ORDER BY fecha.dia ASC;";
         return buscarCon1(consulta);
     }
-    
-       public ArrayList<String> cargaComboPlaca() throws SQLException {
+
+    public ArrayList<String> cargaComboPlaca() throws SQLException {
         consulta = "SELECT autobus.placa FROM autobus;";
         return buscarCon1(consulta);
     }
@@ -627,8 +672,8 @@ public class CConsultas {
                 + "reembolso;";
         return buscarCon1(consulta);
     }
-    
-     public ArrayList<String> cargaComboCantidad() throws SQLException {
+
+    public ArrayList<String> cargaComboCantidad() throws SQLException {
         consulta = "SELECT anio.anio FROM `anio`";
         return buscarCon1(consulta);
     }
@@ -637,12 +682,12 @@ public class CConsultas {
         consulta = "SELECT marca.nombre from marca";
         return buscarCon1(consulta);
     }
-    
+
     public ArrayList<String> cargaComboRutas() throws SQLException {
         consulta = "SELECT ruta.nombre from ruta";
         return buscarCon1(consulta);
     }
-    
+
     public ArrayList<String> cargaComboTerminales() throws SQLException {
         consulta = "SELECT terminal.nombre from terminal";
         return buscarCon1(consulta);
@@ -657,17 +702,17 @@ public class CConsultas {
         consulta = "SELECT DISTINCT capacidad FROM autobus ORDER BY capacidad ASC;";
         return buscarCon1(consulta);
     }
-    
+
     public ArrayList<String> cargaComboDuracion() throws SQLException {
         consulta = "SELECT DISTINCT ruta.duracion_ruta FROM ruta ORDER BY ruta.duracion_ruta ASC";
         return buscarCon1(consulta);
     }
-    
+
     public ArrayList<String> cargaComboDistacia() throws SQLException {
         consulta = "SELECT DISTINCT ruta.distancia FROM ruta ";
         return buscarCon1(consulta);
     }
-    
+
     //<editor-fold defaultstate="collapsed" desc="BOLETOS CONSULTA">
     public ArrayList<String> cargaComboOrigenes() throws SQLException {
         consulta = "SELECT DISTINCT terminal.nombre \n"
@@ -695,13 +740,13 @@ public class CConsultas {
         return buscarCon1(consulta);
     }
     //</editor-fold>
-    
+
     //<editor-fold defaultstate="collapsed" desc="TERMINALES CONSULTA">
     public ArrayList<String> cargaComboCiudad() throws SQLException {
         consulta = "SELECT ciudad.nombre FROM ciudad";
         return buscarCon1(consulta);
     }
-    
+
     public ArrayList<String> cargaComboEstado() throws SQLException {
         consulta = "SELECT estado.nombre FROM estado";
         return buscarCon1(consulta);
