@@ -109,7 +109,7 @@ public class JfRutasConsulta extends javax.swing.JFrame {
             }
 
         } catch (SQLException e) {
-            CMensajes.msg_error("No se pudo cargar la informacion en la tabla", "Cargando Tabla");
+            CMensajes.msg_error("No se pudo cargar la informacion en la tabla", "Cargando Tabla.");
         }
     }
     @SuppressWarnings("unchecked")
