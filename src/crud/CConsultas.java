@@ -567,7 +567,7 @@ public class CConsultas {
     }
     
     public ArrayList<String> cargaComboDuracion() throws SQLException {
-        consulta = "SELECT DISTINCT ruta.duracion_ruta FROM ruta ";
+        consulta = "SELECT DISTINCT ruta.duracion_ruta FROM ruta ORDER BY ruta.duracion_ruta ASC";
         return buscarCon1(consulta);
     }
     
@@ -598,11 +598,9 @@ public class CConsultas {
     }
 
     public ArrayList<String> cargaComboPrecio() throws SQLException {
-        consulta = "SELECT DISTINCT ruta.precio FROM ruta";
+        consulta = "SELECT DISTINCT ruta.precio FROM ruta GROUP BY ruta.precio ASC";
         return buscarCon1(consulta);
     }
-    
-    
 
     public int obtenIdFinalPersona() throws SQLException {
         consulta = "SELECT MAX(Id_persona) FROM flecha_amarilla.persona;";

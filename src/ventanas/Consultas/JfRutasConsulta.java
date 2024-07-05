@@ -71,7 +71,6 @@ public class JfRutasConsulta extends javax.swing.JFrame {
                     }
                     datosListas.clear();
                     break;
-
             }
 
         } catch (SQLException e) {
@@ -91,7 +90,6 @@ public class JfRutasConsulta extends javax.swing.JFrame {
     // Metodo para limpiar la tabla
     private void limpiarTabla() {
         modelo = (DefaultTableModel) JtableRutas.getModel();
-        // Por medio de un for, tomando en cuenta el numero de filas
         for (int i = (JtableRutas.getRowCount() - 1); i >= 0; i--) {
             modelo.removeRow(i);
         }
@@ -268,12 +266,12 @@ public class JfRutasConsulta extends javax.swing.JFrame {
 
     private void JcmbxDuracionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JcmbxDuracionesActionPerformed
         // TODO add your handling code here:
-        filtrar(JcmbxDuraciones, 4);
+        filtrar(JcmbxDuraciones, 6);
     }//GEN-LAST:event_JcmbxDuracionesActionPerformed
 
     private void JcmbxPreciosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JcmbxPreciosActionPerformed
         // TODO add your handling code here:
-        filtrar(JcmbxPrecios, 5);
+        filtrar(JcmbxPrecios, 7);
     }//GEN-LAST:event_JcmbxPreciosActionPerformed
 
     /**
