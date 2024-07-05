@@ -1,0 +1,267 @@
+package ventanas.Consultas;
+
+import crud.CConsultas;
+import crud.CMensajes;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import javax.swing.RowFilter;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
+
+public class JfConductorConsulta extends javax.swing.JFrame {
+
+    // Variable para manipular el modelo de la tabla
+    private DefaultTableModel modelo;
+    // Variable para poder agregar filtros
+    private TableRowSorter tr;
+    // Instancia de la clase que permite hacer las consultas "Transacciones"
+    private final CConsultas query = new CConsultas();
+    // Creacion de lista, para la obtencion de valores de la tabla
+    private ArrayList<String[]> datosConductores = new ArrayList<>();
+
+    public JfConductorConsulta() {
+        initComponents();
+        // Linea para impedir que sea posible mover los encabezados de cada tabla
+        JtableConductores.getTableHeader().setReorderingAllowed(false);
+        cargarTabla();
+
+    }
+
+    public void filtrar(String valor, int columna) {
+        // Obtenemos el modelo de la tabla para poder manipularlo
+        modelo = (DefaultTableModel) JtableConductores.getModel();
+        // Nuestro Filtro recibe el modelo de la tabla a filtrar
+        tr = new TableRowSorter(modelo);
+        // Le indicamos a la tabla el filtro se usara 
+        JtableConductores.setRowSorter(tr);
+        // Si la opcion seleccionada no es 'Seleccione una opcion'
+        if (valor != null) {
+            // Aplicamos el filtro para hacerlo coincidir con el item seleccionadao en la columna indicada
+            // tr.setRowFilter(RowFilter.regexFilter(lista.getSelectedItem().toString(), columna));
+//            tr.setRowFilter(RowFilter.regexFilter("^" + valor + "$", columna));
+            tr.setRowFilter(RowFilter.regexFilter(valor, columna));
+
+            // En caso de serlo, no queremos que aplique el filtro proporcionado
+        } else {
+            JtableConductores.setRowSorter(tr);
+        }
+    }
+
+    // Metodo para limpiar la tabla
+    private void limpiarTabla() {
+        // Obtenemos el modelo de la tabla para poder manipularlo
+        modelo = (DefaultTableModel) JtableConductores.getModel();
+        // Por medio de un for, tomando en cuenta el numero de filas
+        for (int i = (JtableConductores.getRowCount() - 1); i >= 0; i--) {
+            // Eliminaremos las filas hasta que el valor del iterador sea mayor o igual a 0
+            modelo.removeRow(i);
+        }
+    }
+
+    public void cargarTabla() {
+        // Obtenemos el modelo para poder manipularlo
+        modelo = (DefaultTableModel) JtableConductores.getModel();
+        try {
+            // Leer los datos
+            datosConductores = query.buscarConductores();
+            // Limpiamos la tabla
+            limpiarTabla();
+            // Asignamos los valores obtenidos en la tabla
+            for (String[] datosConductor : datosConductores) {
+                modelo.addRow(new Object[]{datosConductor[0], datosConductor[1], datosConductor[2], datosConductor[3]});
+            }
+
+        } catch (SQLException e) {
+            CMensajes.msg_error("No se pudo cargar la informacion en la tabla", "Cargando Tabla");
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        buttonGroup1 = new javax.swing.ButtonGroup();
+        JpnlLienzo = new javax.swing.JPanel();
+        JSPTablaConductores = new javax.swing.JScrollPane();
+        JtableConductores = new javax.swing.JTable();
+        JbtnActualizar = new javax.swing.JButton();
+        JbtnEliminar = new javax.swing.JButton();
+        JlblNombres = new javax.swing.JLabel();
+        JtxtNombres = new javax.swing.JTextField();
+        JspNombres = new javax.swing.JSeparator();
+        JlblApPaterno = new javax.swing.JLabel();
+        JtxtApPaterno = new javax.swing.JTextField();
+        JspApPaterno = new javax.swing.JSeparator();
+        JlblApMaterno = new javax.swing.JLabel();
+        JtxtApMaterno = new javax.swing.JTextField();
+        JspApMaterno = new javax.swing.JSeparator();
+        JlblTelefono = new javax.swing.JLabel();
+        JtxtTelefono = new javax.swing.JTextField();
+        JspTelefono = new javax.swing.JSeparator();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Conductores");
+        setResizable(false);
+
+        JpnlLienzo.setBackground(new java.awt.Color(255, 255, 255));
+        JpnlLienzo.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        JtableConductores.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Nombre(s)", "Apellido Paterno", "Apellido Materno", "Telefono"
+            }
+        ));
+        JtableConductores.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        JtableConductores.setEnabled(false);
+        JtableConductores.setOpaque(false);
+        JSPTablaConductores.setViewportView(JtableConductores);
+
+        JpnlLienzo.add(JSPTablaConductores, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 6, 500, 210));
+
+        JbtnActualizar.setBackground(new java.awt.Color(160, 16, 70));
+        JbtnActualizar.setForeground(new java.awt.Color(255, 255, 255));
+        JbtnActualizar.setText("Actualizar");
+        JpnlLienzo.add(JbtnActualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(732, 160, -1, -1));
+
+        JbtnEliminar.setBackground(new java.awt.Color(160, 16, 70));
+        JbtnEliminar.setForeground(new java.awt.Color(255, 255, 255));
+        JbtnEliminar.setText("Eliminar");
+        JpnlLienzo.add(JbtnEliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(732, 194, 82, -1));
+
+        JlblNombres.setText("Nombre(s)");
+        JpnlLienzo.add(JlblNombres, new org.netbeans.lib.awtextra.AbsoluteConstraints(518, 6, -1, -1));
+
+        JtxtNombres.setBorder(null);
+        JtxtNombres.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                JtxtNombresKeyReleased(evt);
+            }
+        });
+        JpnlLienzo.add(JtxtNombres, new org.netbeans.lib.awtextra.AbsoluteConstraints(518, 28, 190, -1));
+        JpnlLienzo.add(JspNombres, new org.netbeans.lib.awtextra.AbsoluteConstraints(518, 50, 190, 10));
+
+        JlblApPaterno.setText("Apellido Paterno");
+        JpnlLienzo.add(JlblApPaterno, new org.netbeans.lib.awtextra.AbsoluteConstraints(518, 66, -1, -1));
+
+        JtxtApPaterno.setBorder(null);
+        JtxtApPaterno.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                JtxtApPaternoKeyReleased(evt);
+            }
+        });
+        JpnlLienzo.add(JtxtApPaterno, new org.netbeans.lib.awtextra.AbsoluteConstraints(518, 88, 190, -1));
+        JpnlLienzo.add(JspApPaterno, new org.netbeans.lib.awtextra.AbsoluteConstraints(518, 110, 190, 10));
+
+        JlblApMaterno.setText("Apellido Materno");
+        JpnlLienzo.add(JlblApMaterno, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 120, -1, -1));
+
+        JtxtApMaterno.setBorder(null);
+        JtxtApMaterno.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                JtxtApMaternoKeyReleased(evt);
+            }
+        });
+        JpnlLienzo.add(JtxtApMaterno, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 140, 190, -1));
+        JpnlLienzo.add(JspApMaterno, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 160, 190, 10));
+
+        JlblTelefono.setText("Telefono");
+        JpnlLienzo.add(JlblTelefono, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 170, -1, -1));
+
+        JtxtTelefono.setBorder(null);
+        JtxtTelefono.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                JtxtTelefonoKeyReleased(evt);
+            }
+        });
+        JpnlLienzo.add(JtxtTelefono, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 190, 190, -1));
+        JpnlLienzo.add(JspTelefono, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 210, 190, 10));
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(JpnlLienzo, javax.swing.GroupLayout.DEFAULT_SIZE, 822, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(JpnlLienzo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void JtxtNombresKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JtxtNombresKeyReleased
+        filtrar(JtxtNombres.getText(), 0);
+    }//GEN-LAST:event_JtxtNombresKeyReleased
+
+    private void JtxtApPaternoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JtxtApPaternoKeyReleased
+        filtrar(JtxtApPaterno.getText(), 1);
+    }//GEN-LAST:event_JtxtApPaternoKeyReleased
+
+    private void JtxtApMaternoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JtxtApMaternoKeyReleased
+        filtrar(JtxtApMaterno.getText(), 2);
+    }//GEN-LAST:event_JtxtApMaternoKeyReleased
+
+    private void JtxtTelefonoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JtxtTelefonoKeyReleased
+        filtrar(JtxtTelefono.getText(), 3);
+    }//GEN-LAST:event_JtxtTelefonoKeyReleased
+
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(JfConductorConsulta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(JfConductorConsulta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(JfConductorConsulta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(JfConductorConsulta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new JfConductorConsulta().setVisible(true);
+
+            }
+        });
+
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JScrollPane JSPTablaConductores;
+    private javax.swing.JButton JbtnActualizar;
+    private javax.swing.JButton JbtnEliminar;
+    private javax.swing.JLabel JlblApMaterno;
+    private javax.swing.JLabel JlblApPaterno;
+    private javax.swing.JLabel JlblNombres;
+    private javax.swing.JLabel JlblTelefono;
+    private javax.swing.JPanel JpnlLienzo;
+    private javax.swing.JSeparator JspApMaterno;
+    private javax.swing.JSeparator JspApPaterno;
+    private javax.swing.JSeparator JspNombres;
+    private javax.swing.JSeparator JspTelefono;
+    private javax.swing.JTable JtableConductores;
+    private javax.swing.JTextField JtxtApMaterno;
+    private javax.swing.JTextField JtxtApPaterno;
+    private javax.swing.JTextField JtxtNombres;
+    private javax.swing.JTextField JtxtTelefono;
+    private javax.swing.ButtonGroup buttonGroup1;
+    // End of variables declaration//GEN-END:variables
+}
