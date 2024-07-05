@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package ventanas.Consultas;
 
 import crud.CConsultas;
@@ -14,31 +10,10 @@ import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
-
 public class JfReembolsoConsulta extends javax.swing.JFrame {
 
-    /**
-     * Creates new form JfReembolsoConsulta
-     */
-    public JfReembolsoConsulta() {
-        initComponents();
-        cargaComboBox(JcmbxAnios, 2);
-        cargaComboBox(JcmbxMeses, 1);
-        
-        cargarTabla();
-         // Linea para impedir que sea posible mover los encabezados de cada tabla
-     JtableReembolsos.getTableHeader().setReorderingAllowed(false);
-    }
-
-   
-    
-    
-    
-     
-    
-    
     //**************   ATRIBUTOS  *******************/
-     // Variable para manipular el modelo de la tabla
+    // Variable para manipular el modelo de la tabla
     private DefaultTableModel modelo;
     // Variable para poder manipular el modelo de las listas
     private DefaultComboBoxModel listas;
@@ -50,14 +25,19 @@ public class JfReembolsoConsulta extends javax.swing.JFrame {
     private ArrayList<String[]> datosReembol = new ArrayList<>();
     // Creacion de lista, para la obtencion de valores de las listas
     private ArrayList<String> datosListas = new ArrayList<>();
-    
-     // Linea para impedir que sea posible mover los encabezados de cada tabla
-      // JtableConducen.getTableHeader().setReorderingAllowed(false);
-       
-    
-    
+
+    public JfReembolsoConsulta() {
+        initComponents();
+        // Linea para impedir que sea posible mover los encabezados de cada tabla
+        JtableReembolsos.getTableHeader().setReorderingAllowed(false);
+        cargaComboBox(JcmbxAnios, 2);
+        cargaComboBox(JcmbxMeses, 1);
+
+        cargarTabla();
+    }
+
     //**************** METODOS ******************/
-       // Metodo que permite cargar las opciones en las listas
+    // Metodo que permite cargar las opciones en las listas
     // Recibe por parametro el JComboBox al que se agregaran items
     public void cargaComboBox(JComboBox combo, int metodoCarga) {
         //  Obtenemos el modelo del JComboBox
@@ -86,8 +66,6 @@ public class JfReembolsoConsulta extends javax.swing.JFrame {
                     }
                     datosListas.clear();
                     break;
-                    
-             
 
             }
 
@@ -95,15 +73,13 @@ public class JfReembolsoConsulta extends javax.swing.JFrame {
         }
 
     }
-    
-    
-    
+
     public void cargarTabla() {
         // Obtenemos el modelo para poder manipularlo
         modelo = (DefaultTableModel) JtableReembolsos.getModel();
         try {
             // Leer los datos
-            datosReembol = query.buscarReembolso();
+//            datosReembol = query.buscarReembolso();
             // Limpiamos la tabla
             limpiarTabla();
             // Asignamos los valores obtenidos en la tabla
@@ -115,8 +91,8 @@ public class JfReembolsoConsulta extends javax.swing.JFrame {
             CMensajes.msg_error("No se pudo cargar la informacion en la tabla", "Cargando Tabla");
         }
     }
-    
-       // Metodo para limpiar la tabla
+
+    // Metodo para limpiar la tabla
     private void limpiarTabla() {
         // Obtenemos el modelo de la tabla para poder manipularlo
         modelo = (DefaultTableModel) JtableReembolsos.getModel();
@@ -126,11 +102,7 @@ public class JfReembolsoConsulta extends javax.swing.JFrame {
             modelo.removeRow(i);
         }
     }
-    
-    
-    // Metodo que permite filtrar los valores dentro de la tabla
-    /* Recibe por parametro el JComboBox de donde tomaremos los valores para
-       filtrar, asi como el numero de la columna donde buscaremos las coincidencias*/
+
     public void filtrar(JComboBox lista, int columna) {
         // Obtenemos el modelo de la tabla para poder manipularlo
         modelo = (DefaultTableModel) JtableReembolsos.getModel();
@@ -147,28 +119,19 @@ public class JfReembolsoConsulta extends javax.swing.JFrame {
             // En caso de serlo, no queremos que aplique el filtro proporcionado
         }
     }
-    
-    
-    public void filtraCuadrOTexto(String valor, int columna){
-               // Obtenemos el modelo de la tabla para poder manipularlo
+
+    public void filtraCuadrOTexto(String valor, int columna) {
+        // Obtenemos el modelo de la tabla para poder manipularlo
         modelo = (DefaultTableModel) JtableReembolsos.getModel();
-        tr=new TableRowSorter(modelo);
+        tr = new TableRowSorter(modelo);
         JtableReembolsos.setRowSorter(tr);
         if (valor != null) {
             tr.setRowFilter(RowFilter.regexFilter(valor, columna));
-            
-        }
-    
-    }
-    
-    
-    
-    
-    
-    
 
-    
-    
+        }
+
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -372,7 +335,7 @@ public class JfReembolsoConsulta extends javax.swing.JFrame {
 
     private void JtxtNombresKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JtxtNombresKeyReleased
         // TODO add your handling code here:
-         filtraCuadrOTexto(JtxtNombres.getText(), 0);
+        filtraCuadrOTexto(JtxtNombres.getText(), 0);
     }//GEN-LAST:event_JtxtNombresKeyReleased
 
     private void JtxtApPaternoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JtxtApPaternoKeyReleased
@@ -382,7 +345,7 @@ public class JfReembolsoConsulta extends javax.swing.JFrame {
 
     private void JtxtApmMaternoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JtxtApmMaternoKeyReleased
         // TODO add your handling code here:
-             filtraCuadrOTexto(JtxtApmMaterno.getText(), 2);
+        filtraCuadrOTexto(JtxtApmMaterno.getText(), 2);
     }//GEN-LAST:event_JtxtApmMaternoKeyReleased
 
     private void JcmbxMesesItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxMesesItemStateChanged
