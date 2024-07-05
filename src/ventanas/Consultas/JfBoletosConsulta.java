@@ -1,4 +1,3 @@
-
 package ventanas.Consultas;
 
 import crud.CConsultas;
@@ -25,7 +24,7 @@ public class JfBoletosConsulta extends javax.swing.JFrame {
     private ArrayList<String[]> datosBoletos = new ArrayList<>();
     // Creacion de lista, para la obtencion de valores de las listas
     private ArrayList<String> datosListas = new ArrayList<>();
-    
+
     public JfBoletosConsulta() {
         initComponents();
         //Linea para bloquear los encabezados
@@ -41,8 +40,10 @@ public class JfBoletosConsulta extends javax.swing.JFrame {
         //Se carga la tabla
         cargarTabla();
     }
-    
-    /***********************     METODOS     ***********************/
+
+    /**
+     * ********************* METODOS **********************
+     */
     //Metodo para cargar de los combobox
     public void cargaComboBox(JComboBox combo, int metodoCarga) {
         listas = (DefaultComboBoxModel) combo.getModel();
@@ -72,14 +73,14 @@ public class JfBoletosConsulta extends javax.swing.JFrame {
                     }
                     datosListas.clear();
                     break;
-                case 4: 
+                case 4:
                     datosListas = query.cargaComboMeses();
                     for (int i = 1; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
                     datosListas.clear();
                     break;
-                case 5: 
+                case 5:
                     datosListas = query.cargaComboAnios();
                     for (int i = 1; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
@@ -106,7 +107,7 @@ public class JfBoletosConsulta extends javax.swing.JFrame {
         }
 
     }
-    
+
     //Metodo para filtrar
     public void filtrar(JComboBox lista, int columna) {
         // Obtenemos el modelo
@@ -122,7 +123,7 @@ public class JfBoletosConsulta extends javax.swing.JFrame {
             // En caso de serlo, no queremos que aplique el filtro proporcionado
         }
     }
-    
+
     // Metodo para limpiar la tabla
     private void limpiarTabla() {
         // Obtenemos el modelo
@@ -133,7 +134,7 @@ public class JfBoletosConsulta extends javax.swing.JFrame {
             modelo.removeRow(i);
         }
     }
-    
+
     //Metodo para traer los datos a la tabla
     public void cargarTabla() {
         // Obtenemos el modelo para poder manipularlo
@@ -145,10 +146,17 @@ public class JfBoletosConsulta extends javax.swing.JFrame {
             limpiarTabla();
             // Asignamos los valores obtenidos en la tabla
             for (String[] datosBoleto : datosBoletos) {
-                modelo.addRow(new Object[]{datosBoleto[0], datosBoleto[1], datosBoleto[2], datosBoleto[3], datosBoleto[4], datosBoleto[5],
-                                            datosBoleto[6], datosBoleto[7]});
+                switch (datosBoleto[6]) {
+                    case "PP":
+                        modelo.addRow(new Object[]{datosBoleto[0], datosBoleto[1], datosBoleto[2], datosBoleto[3], datosBoleto[4], datosBoleto[5],
+                            "Primera Plus", datosBoleto[7]});
+                        break;
+                    case "C":
+                        modelo.addRow(new Object[]{datosBoleto[0], datosBoleto[1], datosBoleto[2], datosBoleto[3], datosBoleto[4], datosBoleto[5],
+                            "Comercial", datosBoleto[7]});
+                        break;
+                }
             }
-
         } catch (SQLException e) {
             CMensajes.msg_error("No se pudo cargar la informacion en la tabla", "Cargando Tabla");
         }
