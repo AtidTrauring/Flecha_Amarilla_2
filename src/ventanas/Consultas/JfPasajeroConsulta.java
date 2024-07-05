@@ -3,8 +3,6 @@ package ventanas.Consultas;
 import crud.CConsultas;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import javax.swing.JComboBox;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
@@ -24,26 +22,48 @@ public class JfPasajeroConsulta extends javax.swing.JFrame {
 
     }
 
-    public void filtrarCuadroTexto(String valor, int columna) {
+    public void aplicaFiltros() {
+        // Obtener el modelo de la tabla de pasajeros
         modelo = (DefaultTableModel) JtblPasajeros.getModel();
-        tr = new TableRowSorter(modelo);
-        JtblPasajeros.setRowSorter(tr);
-        if (valor != null) {
-            tr.setRowFilter(RowFilter.regexFilter(valor, columna));
-        } else {
-            JtblPasajeros.setRowSorter(tr);
-        }
-    }
 
-    public void filtrarCombo(JComboBox combo, int columna) {
-        modelo = (DefaultTableModel) JtblPasajeros.getModel();
-        tr = new TableRowSorter(modelo);
+        // Crear un nuevo TableRowSorter utilizando el modelo de la tabla
+        tr = new TableRowSorter<>(modelo);
+
+        // Aplicar el TableRowSorter a la tabla JtblPasajeros
         JtblPasajeros.setRowSorter(tr);
-        if (combo.getSelectedIndex() != 0) {
-            tr.setRowFilter(RowFilter.regexFilter(combo.getSelectedItem().toString(), columna));
-        } else {
-            JtblPasajeros.setRowSorter(tr);
+
+        // Crear una lista para almacenar los filtros
+        ArrayList<RowFilter<String, Integer>> filtros = new ArrayList<>();
+
+        // Verificar si el campo de nombres no está vacío
+        if (!JtxtNombres.getText().trim().isEmpty()) {
+            // Agregar un filtro regex para filtrar por nombres (columna 0)
+            filtros.add(RowFilter.regexFilter(JtxtNombres.getText().trim(), 0));
         }
+
+        // Verificar si el campo de apellido paterno no está vacío
+        if (!JtxtApPaterno.getText().trim().isEmpty()) {
+            // Agregar un filtro regex para filtrar por apellido paterno (columna 1)
+            filtros.add(RowFilter.regexFilter(JtxtApPaterno.getText().trim(), 1));
+        }
+
+        // Verificar si el campo de apellido materno no está vacío
+        if (!JtxtApMaterno.getText().trim().isEmpty()) {
+            // Agregar un filtro regex para filtrar por apellido materno (columna 2)
+            filtros.add(RowFilter.regexFilter(JtxtApMaterno.getText().trim(), 2));
+        }
+
+        // Verificar si se ha seleccionado un tipo de pasajero en el JComboBox
+        if (JcmbxTIpoPasajero.getSelectedIndex() != 0) {
+            // Agregar un filtro regex para filtrar por tipo de pasajero (columna 3)
+            filtros.add(RowFilter.regexFilter(JcmbxTIpoPasajero.getSelectedItem().toString(), 3));
+        }
+
+        // Crear un filtro compuesto AND que combina todos los filtros en la lista
+        RowFilter<String, Integer> rf = RowFilter.andFilter(filtros);
+
+        // Aplicar el filtro compuesto al TableRowSorter
+        tr.setRowFilter(rf);
     }
 
     private void limpiarTabla() {
@@ -215,19 +235,19 @@ public class JfPasajeroConsulta extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void JcmbxTIpoPasajeroItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxTIpoPasajeroItemStateChanged
-        filtrarCombo(JcmbxTIpoPasajero, 3);
+        aplicaFiltros();
     }//GEN-LAST:event_JcmbxTIpoPasajeroItemStateChanged
 
     private void JtxtNombresKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JtxtNombresKeyReleased
-        filtrarCuadroTexto(JtxtNombres.getText(), 0);
+        aplicaFiltros();
     }//GEN-LAST:event_JtxtNombresKeyReleased
 
     private void JtxtApPaternoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JtxtApPaternoKeyReleased
-        filtrarCuadroTexto(JtxtApPaterno.getText(), 1);
+        aplicaFiltros();
     }//GEN-LAST:event_JtxtApPaternoKeyReleased
 
     private void JtxtApMaternoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JtxtApMaternoKeyReleased
-        filtrarCuadroTexto(JtxtApMaterno.getText(), 2);
+        aplicaFiltros();
     }//GEN-LAST:event_JtxtApMaternoKeyReleased
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
