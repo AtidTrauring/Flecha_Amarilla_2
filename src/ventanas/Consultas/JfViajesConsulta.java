@@ -24,20 +24,19 @@ public class JfViajesConsulta extends javax.swing.JFrame {
      */
     public JfViajesConsulta() {
         initComponents();
-           cargaComboBox(JcmbxMarca, 1);
+        cargaComboBox(JcmbxMarca, 1);
         cargaComboBox(JcmbxModelo, 2);
         cargaComboBox(JcmbxPlaca, 3);
         cargaComboBox(JcmbxMeses, 4);
         cargaComboBox(JcmbxOrigenes, 5);
         cargaComboBox(JcmbxDestinos, 6);
         cargarTabla();
-          // Linea para impedir que sea posible mover los encabezados de cada tabla
-     JTableViajes.getTableHeader().setReorderingAllowed(false);
+        // Linea para impedir que sea posible mover los encabezados de cada tabla
+        JTableViajes.getTableHeader().setReorderingAllowed(false);
     }
 
-    
-      //**************   ATRIBUTOS  *******************/
-     // Variable para manipular el modelo de la tabla
+    //**************   ATRIBUTOS  *******************/
+    // Variable para manipular el modelo de la tabla
     private DefaultTableModel modelo;
     // Variable para poder manipular el modelo de las listas
     private DefaultComboBoxModel listas;
@@ -49,10 +48,9 @@ public class JfViajesConsulta extends javax.swing.JFrame {
     private ArrayList<String[]> datosViajeConsulta = new ArrayList<>();
     // Creacion de lista, para la obtencion de valores de las listas
     private ArrayList<String> datosListas = new ArrayList<>();
-    
 
-     //**************** METODOS ******************/
-       // Metodo que permite cargar las opciones en las listas
+    //**************** METODOS ******************/
+    // Metodo que permite cargar las opciones en las listas
     // Recibe por parametro el JComboBox al que se agregaran items
     public void cargaComboBox(JComboBox combo, int metodoCarga) {
         //  Obtenemos el modelo del JComboBox
@@ -81,8 +79,8 @@ public class JfViajesConsulta extends javax.swing.JFrame {
                     }
                     datosListas.clear();
                     break;
-               case 3:
-                    datosListas = query.cargaComboPlaca();
+                case 3:
+//                    datosListas = query.cargaComboPlaca();
                     for (int i = 1; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
@@ -109,7 +107,6 @@ public class JfViajesConsulta extends javax.swing.JFrame {
                     }
                     datosListas.clear();
                     break;
-             
 
             }
 
@@ -117,13 +114,13 @@ public class JfViajesConsulta extends javax.swing.JFrame {
         }
 
     }
-    
-         public void cargarTabla() {
-             // Obtenemos el modelo para poder manipularlo
+
+    public void cargarTabla() {
+        // Obtenemos el modelo para poder manipularlo
         modelo = (DefaultTableModel) JTableViajes.getModel();
         try {
             // Leer los datos
-            datosViajeConsulta = query.buscaViaje();
+//            datosViajeConsulta = query.buscaViaje();
             // Limpiamos la tabla
             limpiarTabla();
             // Asignamos los valores obtenidos en la tabla
@@ -135,8 +132,8 @@ public class JfViajesConsulta extends javax.swing.JFrame {
             CMensajes.msg_error("No se pudo cargar la informacion en la tabla", "Cargando Tabla");
         }
     }
-      
-           // Metodo para limpiar la tabla
+
+    // Metodo para limpiar la tabla
     private void limpiarTabla() {
         // Obtenemos el modelo de la tabla para poder manipularlo
         modelo = (DefaultTableModel) JTableViajes.getModel();
@@ -146,10 +143,7 @@ public class JfViajesConsulta extends javax.swing.JFrame {
             modelo.removeRow(i);
         }
     }
-    
-    
-    
-        
+
     // Metodo que permite filtrar los valores dentro de la tabla
     /* Recibe por parametro el JComboBox de donde tomaremos los valores para
        filtrar, asi como el numero de la columna donde buscaremos las coincidencias*/
@@ -169,14 +163,7 @@ public class JfViajesConsulta extends javax.swing.JFrame {
             // En caso de serlo, no queremos que aplique el filtro proporcionado
         }
     }
-    
-    
-    
-    
-    
-    
-    
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -365,7 +352,7 @@ public class JfViajesConsulta extends javax.swing.JFrame {
     private void JcmbxPlacaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxPlacaItemStateChanged
         // TODO add your handling code here:
         filtrar(JcmbxPlaca, 2);
-       
+
     }//GEN-LAST:event_JcmbxPlacaItemStateChanged
 
     private void JcmbxDiasItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxDiasItemStateChanged
@@ -378,18 +365,18 @@ public class JfViajesConsulta extends javax.swing.JFrame {
 
     private void JcmbxOrigenesItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxOrigenesItemStateChanged
         // TODO add your handling code here:
-           filtrar(JcmbxOrigenes, 0);
+        filtrar(JcmbxOrigenes, 0);
     }//GEN-LAST:event_JcmbxOrigenesItemStateChanged
 
     private void JcmbxDestinosItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxDestinosItemStateChanged
         // TODO add your handling code here:
         filtrar(JcmbxDestinos, 1);
-        
+
     }//GEN-LAST:event_JcmbxDestinosItemStateChanged
 
     private void JcmbxModeloItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxModeloItemStateChanged
         // TODO add your handling code here:
-         filtrar(JcmbxModelo, 3);
+        filtrar(JcmbxModelo, 3);
     }//GEN-LAST:event_JcmbxModeloItemStateChanged
 
     private void JcmbxMarcaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxMarcaItemStateChanged
@@ -399,7 +386,7 @@ public class JfViajesConsulta extends javax.swing.JFrame {
 
     private void JcmbxMesesItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxMesesItemStateChanged
         // TODO add your handling code here:
-           filtrar(JcmbxMeses, 6);
+        filtrar(JcmbxMeses, 6);
     }//GEN-LAST:event_JcmbxMesesItemStateChanged
 
     /**
