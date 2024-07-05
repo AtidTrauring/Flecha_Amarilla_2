@@ -1,5 +1,9 @@
 package ventanas;
 // Importacion de los Frames de Consulta
+
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import ventanas.Consultas.JfAutobusConsulta;
 import ventanas.Consultas.JfBoletosConsulta;
@@ -376,10 +380,14 @@ public class JfPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_JmiParadasActionPerformed
 
     private void JmiBTerminalesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JmiBTerminalesActionPerformed
-        // Instanciamos JfTerminalesConsulta
-        JfTerminalesConsulta tc = new JfTerminalesConsulta();
-        // 1000, 300
-        creaFrame(tc, "Buscar terminales", 1013, 335);
+
+        JfTerminalesConsulta tc;
+        try {
+            tc = new JfTerminalesConsulta();
+            creaFrame(tc, "Buscar terminales", 1013, 335);
+        } catch (SQLException ex) {
+            Logger.getLogger(JfPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_JmiBTerminalesActionPerformed
 
     private void JmiBParadasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JmiBParadasActionPerformed
