@@ -568,6 +568,21 @@ public class CConsultas {
         return actualiza(consulta);
     }
 
+    public boolean eliminaTelefono(int id) throws SQLException {
+        consulta = "DELETE FROM flecha_amarilla.telefono_persona WHERE telefono_persona.Id_persona = " + id;
+        return elimina(consulta);
+    }
+
+    public boolean eliminaConductor(int id) throws SQLException {
+        consulta = "DELETE FROM flecha_amarilla.conductor WHERE conductor.Id_persona = " + id;
+        return elimina(consulta);
+    }
+
+    public boolean eliminaPersona(int id) throws SQLException {
+        consulta = "DELETE FROM persona WHERE persona.Id_persona = " + id;
+        return elimina(consulta);
+    }
+
     public ArrayList<String[]> buscarConductoresCompletos() throws SQLException {
         consulta = "SELECT conductor.id_conductor, persona.nombre, persona.ApPat, persona.ApMat, telefono_persona.telefono FROM conductor INNER JOIN persona ON conductor.Id_persona = persona.Id_persona INNER JOIN telefono_persona ON telefono_persona.Id_persona = persona.Id_persona";
         return buscarCon5(consulta);

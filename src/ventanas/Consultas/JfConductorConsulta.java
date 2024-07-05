@@ -4,7 +4,7 @@ import crud.CConsultas;
 import crud.CMensajes;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
+//import java.util.Arrays;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
@@ -19,13 +19,12 @@ public class JfConductorConsulta extends javax.swing.JFrame {
     private final CConsultas query = new CConsultas();
     // Creacion de lista, para la obtencion de valores de la tabla
     private ArrayList<String[]> datosConductores = new ArrayList<>();
-    private String nombre, apPat, apMat, telefono;
     private int idActualizar;
 
     public JfConductorConsulta() {
         initComponents();
         // Linea para impedir que sea posible mover los encabezados de cada tabla
-//        JtableConductore&s.getTableHeader().setReorderingAllowed(false);
+        JtableConductores.getTableHeader().setReorderingAllowed(false);
         cargarTabla();
 
     }
@@ -80,24 +79,7 @@ public class JfConductorConsulta extends javax.swing.JFrame {
         }
     }
 
-    private String[] valoresFinales() {
-        String[] valoresSeleccionados = new String[4];
-        DefaultTableModel modelTabla = (DefaultTableModel) JtableConductores.getModel();
-        if (modelTabla.getRowCount() != 0) { //Tabla con filas
-            if (JtableConductores.getSelectedRow() != -1) {
-                valoresSeleccionados[0] = (String) modelTabla.getValueAt(JtableConductores.getSelectedRow(), 0);
-                valoresSeleccionados[1] = (String) modelTabla.getValueAt(JtableConductores.getSelectedRow(), 1);
-                valoresSeleccionados[2] = (String) modelTabla.getValueAt(JtableConductores.getSelectedRow(), 2);
-                valoresSeleccionados[3] = (String) modelTabla.getValueAt(JtableConductores.getSelectedRow(), 3);
-                return valoresSeleccionados;
-            }
-        } else {//Tabla sin filas
-            CMensajes.msg_error("No hay valores para obtener", "Obteniendo datos fila");
-        }
-        return valoresSeleccionados;
-    }
-
-    private String[] valoresIniciales() {
+    private String[] obtenerValoresFilaTabla() {
         String[] valores = new String[4];
         DefaultTableModel modelTabla = (DefaultTableModel) JtableConductores.getModel();
         if (modelTabla.getRowCount() != 0) { //Tabla con filas
@@ -127,7 +109,7 @@ public class JfConductorConsulta extends javax.swing.JFrame {
     }
 
     public void actualizar(int id, String[] valoresActualizar) {
-        boolean comprueba = true;
+        boolean comprueba;
         try {
             comprueba = query.buscarConductor(id);
             if (comprueba) {
@@ -147,8 +129,44 @@ public class JfConductorConsulta extends javax.swing.JFrame {
                 // Mensaje de error
                 CMensajes.msg_error("Usuario no encontrado", "Actualizar-Buscar");
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
         } finally {
+            limpiarTabla();
+            cargarTabla();
+        }
+    }
+
+    public void eliminar(int id) {
+        boolean comprueba;
+        try {
+            comprueba = query.buscarConductor(id);
+            if (comprueba) {
+                // Eliminando
+                if (query.eliminaTelefono(id)) {
+                    // Eliminando telefonos de la tabla telefono_persona
+                    CMensajes.msg("Se elimino el telefono correspondiente", "Eliminar");
+                    // Eliminando relacion de la tabla Conductor
+                    if (query.eliminaConductor(id)) {
+                        // Eliminando la persona en la tabla persona
+                        if (query.eliminaPersona(id)) {
+                            CMensajes.msg("Se elimino al conductor seleccionado", "Eliminar");
+                        } else {
+                            CMensajes.msg_error("Ocurrio un error al eliminar a la persona", "Eliminando");
+                        }
+                    } else {
+                        CMensajes.msg_error("Ocurrio un error al eliminar al conductor", "Eliminar");
+                    }
+                } else {
+                    CMensajes.msg_error("Ocurrio un error al eliminar el telefono asociado al conductor", "Eliminar");
+                }
+
+            } else {
+                // Mensaje de error
+                CMensajes.msg_error("Usuario no encontrado", "Eliminar-Buscar");
+            }
+        } catch (SQLException e) {
+        } finally {
+            limpiarTabla();
             cargarTabla();
         }
     }
@@ -217,6 +235,11 @@ public class JfConductorConsulta extends javax.swing.JFrame {
         JbtnEliminar.setBackground(new java.awt.Color(160, 16, 70));
         JbtnEliminar.setForeground(new java.awt.Color(255, 255, 255));
         JbtnEliminar.setText("Eliminar");
+        JbtnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JbtnEliminarActionPerformed(evt);
+            }
+        });
         JpnlLienzo.add(JbtnEliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(732, 194, 82, -1));
 
         JlblNombres.setText("Nombre(s)");
@@ -314,17 +337,20 @@ public class JfConductorConsulta extends javax.swing.JFrame {
     }//GEN-LAST:event_JtxtTelefonoKeyReleased
 
     private void JbtnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnActualizarActionPerformed
-        String[] valoresIniciales = valoresIniciales();
-        System.out.println("Los valores actualizados son: " + valoresIniciales[0] + valoresIniciales[1] + valoresIniciales[2] + valoresIniciales[3]);
-        System.out.println("El id a actualizar es " + idActualizar);
+        String[] valoresIniciales = obtenerValoresFilaTabla();
         actualizar(idActualizar, valoresIniciales);
     }//GEN-LAST:event_JbtnActualizarActionPerformed
 
     private void JtableConductoresMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JtableConductoresMousePressed
-        String[] valoresIniciales = valoresIniciales();
-        System.out.println("Los valores obtenidos par buscar son: " + valoresIniciales[0] + valoresIniciales[1] + valoresIniciales[2] + valoresIniciales[3]);
+        String[] valoresIniciales = obtenerValoresFilaTabla();
         idActualizar = buscarId(valoresIniciales[0], valoresIniciales[1], valoresIniciales[2], valoresIniciales[3]);
     }//GEN-LAST:event_JtableConductoresMousePressed
+
+    private void JbtnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnEliminarActionPerformed
+        String[] valoresIniciales = obtenerValoresFilaTabla();
+        int idEliminar = buscarId(valoresIniciales[0], valoresIniciales[1], valoresIniciales[2], valoresIniciales[3]);
+        eliminar(idEliminar);
+    }//GEN-LAST:event_JbtnEliminarActionPerformed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
