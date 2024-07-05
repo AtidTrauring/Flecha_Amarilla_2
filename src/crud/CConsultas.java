@@ -578,6 +578,16 @@ public class CConsultas {
         return elimina(consulta);
     }
 
+    public boolean eliminaAutbousConductor(int id) throws SQLException {
+        consulta = "DELETE FROM `autobusconductor` WHERE autobusconductor.Id_conductor = " + id;
+        return elimina(consulta);
+    }
+
+    public boolean eliminaRutaConductor(int id) throws SQLException {
+        consulta = "DELETE FROM `rutaconductor` WHERE rutaconductor.Id_conductor = " + id;
+        return elimina(consulta);
+    }
+
     public boolean eliminaPersona(int id) throws SQLException {
         consulta = "DELETE FROM persona WHERE persona.Id_persona = " + id;
         return elimina(consulta);

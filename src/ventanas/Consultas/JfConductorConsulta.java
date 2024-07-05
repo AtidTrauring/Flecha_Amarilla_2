@@ -4,6 +4,7 @@ import crud.CConsultas;
 import crud.CMensajes;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 //import java.util.Arrays;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
@@ -347,9 +348,13 @@ public class JfConductorConsulta extends javax.swing.JFrame {
     }//GEN-LAST:event_JtableConductoresMousePressed
 
     private void JbtnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnEliminarActionPerformed
-        String[] valoresIniciales = obtenerValoresFilaTabla();
-        int idEliminar = buscarId(valoresIniciales[0], valoresIniciales[1], valoresIniciales[2], valoresIniciales[3]);
-        eliminar(idEliminar);
+        if (JOptionPane.showConfirmDialog(null, "¿Desea eliminar el registro seleccionado?", "Confimacion", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            String[] valoresIniciales = obtenerValoresFilaTabla();
+            int idEliminar = buscarId(valoresIniciales[0], valoresIniciales[1], valoresIniciales[2], valoresIniciales[3]);
+            eliminar(idEliminar);
+        } else {
+            CMensajes.msg("Accion cancelada", "Eliminacion");
+        }
     }//GEN-LAST:event_JbtnEliminarActionPerformed
 
     public static void main(String args[]) {
