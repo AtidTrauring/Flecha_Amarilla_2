@@ -456,22 +456,61 @@ public class CConsultas {
      * ***************************CONSULTAS***********************************
      */
     
+    public ArrayList<String[]> buscarReembolso() throws SQLException {
+        consulta = "SELECT p.nombre,\n"
+                + "       p.ApPat,\n"
+                + "       p.ApMat,\n"
+                + "       r.cantidad AS cantidad_reembolso,\n"
+                + "       f.dia,\n"
+                + "       m.mes,\n"
+                + "       a.anio\n"
+                + "FROM reembolso r\n"
+                + "JOIN boleto b ON r.Id_boleto = b.Id_boleto\n"
+                + "JOIN pasajero pas ON b.Id_pasajero = pas.Id_pasajero\n"
+                + "JOIN persona p ON pas.Id_persona = p.Id_persona\n"
+                + "JOIN fecha f ON r.Id_fecha = f.Id_fecha\n"
+                + "JOIN mes m ON f.Id_mes = m.Id_mes\n"
+                + "JOIN anio a ON f.Id_anio = a.Id_anio;";
+        return buscarCon7(consulta);
+
+    }
     
-         public ArrayList<String[]> buscaConduce() throws SQLException {
-        consulta = "SELECT\n" +
-"    persona.nombre,\n" +
-"    persona.ApPat,\n" +
-"    persona.ApMat,\n" +
-"    autobus.placa,\n" +
-"    marca.nombre AS nombre_marca,\n" +
-"    modelo.nombre AS nombre_modelo\n" +
-"FROM\n" +
-"    autobus\n" +
-"INNER JOIN autobusconductor ON autobus.Id_autobus = autobusconductor.Id_autobus\n" +
-"INNER JOIN conductor ON autobusconductor.Id_conductor = conductor.Id_conductor\n" +
-"INNER JOIN modelo ON autobus.Id_modelo = modelo.Id_modelo\n" +
-"INNER JOIN marca ON modelo.Id_marca = marca.Id_marca\n" +
-"INNER JOIN persona ON conductor.Id_persona = persona.Id_persona;";
+    
+    
+    public ArrayList<String[]> buscaViaje() throws SQLException {
+        consulta = "SELECT t_origen.nombre AS origen,\n"
+                + "       t_destino.nombre AS destino,\n"
+                + "       a.placa,\n"
+                + "       m.nombre AS modelo,\n"
+                + "       ma.nombre AS marca,\n"
+                + "       f.dia,\n"
+                + "       me.mes\n"
+                + "FROM ruta r\n"
+                + "JOIN terminal t_origen ON r.Id_origen = t_origen.Id_terminal\n"
+                + "JOIN terminal t_destino ON r.Id_destino = t_destino.Id_terminal\n"
+                + "JOIN rutaAutobus ra ON r.Id_ruta = ra.Id_ruta\n"
+                + "JOIN autobus a ON ra.Id_autobus = a.Id_autobus\n"
+                + "JOIN modelo m ON a.Id_modelo = m.Id_modelo\n"
+                + "JOIN marca ma ON m.Id_marca = ma.Id_marca \n"
+                + "JOIN fecha f ON ra.Id_fecha = f.Id_fecha\n"
+                + "JOIN mes me ON f.Id_mes = me.Id_mes;";
+        return buscarCon7(consulta);
+    }
+    public ArrayList<String[]> buscaConduce() throws SQLException {
+        consulta = "SELECT\n"
+                + "    persona.nombre,\n"
+                + "    persona.ApPat,\n"
+                + "    persona.ApMat,\n"
+                + "    autobus.placa,\n"
+                + "    marca.nombre AS nombre_marca,\n"
+                + "    modelo.nombre AS nombre_modelo\n"
+                + "FROM\n"
+                + "    autobus\n"
+                + "INNER JOIN autobusconductor ON autobus.Id_autobus = autobusconductor.Id_autobus\n"
+                + "INNER JOIN conductor ON autobusconductor.Id_conductor = conductor.Id_conductor\n"
+                + "INNER JOIN modelo ON autobus.Id_modelo = modelo.Id_modelo\n"
+                + "INNER JOIN marca ON modelo.Id_marca = marca.Id_marca\n"
+                + "INNER JOIN persona ON conductor.Id_persona = persona.Id_persona;";
         return buscarCon6(consulta);
     }
     
@@ -551,6 +590,10 @@ public class CConsultas {
         consulta = "SELECT fecha.dia FROM fecha";
         return buscarCon1(consulta);
     }
+       public ArrayList<String> cargaComboPlaca() throws SQLException {
+        consulta = "SELECT autobus.placa FROM autobus;";
+        return buscarCon1(consulta);
+    }
 
     public ArrayList<String> cargaComboMeses() throws SQLException {
         consulta = "SELECT mes.mes FROM `mes`";
@@ -558,6 +601,14 @@ public class CConsultas {
     }
 
     public ArrayList<String> cargaComboAnios() throws SQLException {
+        consulta = "SELECT\n"
+                + "reembolso.cantidad\n"
+                + "FROM\n"
+                + "reembolso;";
+        return buscarCon1(consulta);
+    }
+    
+     public ArrayList<String> cargaComboCantidad() throws SQLException {
         consulta = "SELECT anio.anio FROM `anio`";
         return buscarCon1(consulta);
     }
