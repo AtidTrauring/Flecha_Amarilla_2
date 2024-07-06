@@ -81,24 +81,22 @@ public class JfAutobusConsulta extends javax.swing.JFrame {
 
     }
 
-    // Metodo que permite filtrar los valores dentro de la tabla
-    /* Recibe por parametro el JComboBox de donde tomaremos los valores para
-       filtrar, asi como el numero de la columna donde buscaremos las coincidencias*/
-    public void filtrar(JComboBox lista, int columna) {
-        // Obtenemos el modelo de la tabla para poder manipularlo
+    public void aplicaFiltros() {
         modelo = (DefaultTableModel) JtableAutobuses.getModel();
-        // Nuestro Filtro recibe el modelo de la tabla a filtrar
-        tr = new TableRowSorter(modelo);
-        // Le indicamos a la tabla el filtro se usara 
+        tr = new TableRowSorter<>(modelo);
         JtableAutobuses.setRowSorter(tr);
-        // Si la opcion seleccionada no es 'Seleccione una opcion'
-        if (lista.getSelectedIndex() != 0) {
-            // Aplicamos el filtro para hacerlo coincidir con el item seleccionadao en la columna indicada
-            // tr.setRowFilter(RowFilter.regexFilter(lista.getSelectedItem().toString(), columna));
-            tr.setRowFilter(RowFilter.regexFilter("^" + lista.getSelectedItem().toString() + "$", columna));
-
-            // En caso de serlo, no queremos que aplique el filtro proporcionado
+        ArrayList<RowFilter<String, Integer>> filtros = new ArrayList<>();
+        if (JcmbxMarcas.getSelectedIndex() != 0) {
+            filtros.add(RowFilter.regexFilter(JcmbxMarcas.getSelectedItem().toString(), 0));
         }
+        if (JcmbxModelos.getSelectedIndex() != 0) {
+            filtros.add(RowFilter.regexFilter(JcmbxModelos.getSelectedItem().toString(), 1));
+        }
+        if (JcmbxCapacidad.getSelectedIndex() != 0) {
+            filtros.add(RowFilter.regexFilter(JcmbxCapacidad.getSelectedItem().toString(), 2));
+        }
+        RowFilter<String, Integer> rf = RowFilter.andFilter(filtros);
+        tr.setRowFilter(rf);
     }
 
     // Metodo para limpiar la tabla
@@ -221,6 +219,11 @@ public class JfAutobusConsulta extends javax.swing.JFrame {
         JpnlLienzo.add(JlblOrdenar, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 160, -1, -1));
 
         JcmbxOrdenar.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione una opcion" }));
+        JcmbxOrdenar.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                JcmbxOrdenarItemStateChanged(evt);
+            }
+        });
         JpnlLienzo.add(JcmbxOrdenar, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 180, 160, -1));
 
         JbtnActualizar.setBackground(new java.awt.Color(160, 16, 70));
@@ -243,16 +246,26 @@ public class JfAutobusConsulta extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void JcmbxMarcasItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxMarcasItemStateChanged
-        filtrar(JcmbxMarcas, 0);
+        aplicaFiltros();
+//         "^" + lista.getSelectedItem().toString() + "$"
     }//GEN-LAST:event_JcmbxMarcasItemStateChanged
 
     private void JcmbxModelosItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxModelosItemStateChanged
-        filtrar(JcmbxModelos, 1);
+        aplicaFiltros();
     }//GEN-LAST:event_JcmbxModelosItemStateChanged
 
     private void JcmbxCapacidadItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxCapacidadItemStateChanged
-        filtrar(JcmbxCapacidad, 2);
+        aplicaFiltros();
     }//GEN-LAST:event_JcmbxCapacidadItemStateChanged
+
+    private void JcmbxOrdenarItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxOrdenarItemStateChanged
+        if (JcmbxOrdenar.getSelectedIndex() != 0) {
+            if (JcmbxOrdenar.getSelectedIndex() == 1) {
+                
+            }
+        } else {
+        }
+    }//GEN-LAST:event_JcmbxOrdenarItemStateChanged
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */

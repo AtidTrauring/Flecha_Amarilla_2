@@ -41,7 +41,7 @@ public class JfConductorConsulta extends javax.swing.JFrame {
     public void aplicaFiltros() {
 
         // Obtener el modelo de la tabla de conductores
-//        modelo = (DefaultTableModel) JtableConductores.getModel();
+        modelo = (DefaultTableModel) JtableConductores.getModel();
         // Crear un nuevo TableRowSorter utilizando el modelo de la tabla
         tr = new TableRowSorter<>(modelo);
 
@@ -216,13 +216,6 @@ public class JfConductorConsulta extends javax.swing.JFrame {
             }
         } catch (SQLException e) {
         }
-
-//        System.out.println("La lista de identificadores contiene : " + identificadores.size() + " elementos antes de su limpieza");
-//        System.out.println("La lista de conductores contiene : " + datosConductores.size() + " elementos antes de su limpieza");
-        identificadores.clear();
-        datosConductores.clear();
-        limpiarCampos();
-        cargarTabla();
     }
 
     @SuppressWarnings("unchecked")
@@ -402,7 +395,6 @@ public class JfConductorConsulta extends javax.swing.JFrame {
 
     private void JbtnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnEliminarActionPerformed
         if (JOptionPane.showConfirmDialog(null, "¿Desea eliminar el registro seleccionado?", "Confimacion", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-
             String[] valoresIniciales = obtenerValoresFilaTabla();
             int idEliminar = buscarId(valoresIniciales[0], valoresIniciales[1], valoresIniciales[2], valoresIniciales[3]);
             eliminar(idEliminar);
