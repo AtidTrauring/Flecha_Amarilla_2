@@ -553,44 +553,9 @@ public class CConsultas {
         return buscarCon4(consulta);
     }
 
-    public boolean buscarConductor(int id) throws SQLException {
-        consulta = "SELECT conductor.Id_conductor FROM conductor WHERE conductor.Id_conductor = " + id;
-        return buscar(consulta);
-    }
-
-    public boolean actualizarPersona(String nombre, String ApPat, String ApMat, int id) throws SQLException {
-        consulta = "UPDATE flecha_amarilla.persona SET `nombre`='" + nombre + "',`ApPat`='" + ApPat + "',`ApMat`='" + ApMat + "' WHERE persona.Id_persona = " + id;
-        return actualiza(consulta);
-    }
-
-    public boolean actualizarTelefono(String tel, int id) throws SQLException {
-        consulta = "UPDATE flecha_amarilla.telefono_persona SET `telefono`='" + tel + "' WHERE telefono_persona.Id_persona = " + id;
-        return actualiza(consulta);
-    }
-
-    public boolean eliminaTelefono(int id) throws SQLException {
-        consulta = "DELETE FROM flecha_amarilla.telefono_persona WHERE telefono_persona.Id_persona = " + id;
-        return elimina(consulta);
-    }
-
-    public boolean eliminaConductor(int id) throws SQLException {
-        consulta = "DELETE FROM flecha_amarilla.conductor WHERE conductor.Id_persona = " + id;
-        return elimina(consulta);
-    }
-
-    public boolean eliminaAutbousConductor(int id) throws SQLException {
-        consulta = "DELETE FROM `autobusconductor` WHERE autobusconductor.Id_conductor = " + id;
-        return elimina(consulta);
-    }
-
-    public boolean eliminaRutaConductor(int id) throws SQLException {
-        consulta = "DELETE FROM `rutaconductor` WHERE rutaconductor.Id_conductor = " + id;
-        return elimina(consulta);
-    }
-
-    public boolean eliminaPersona(int id) throws SQLException {
-        consulta = "DELETE FROM persona WHERE persona.Id_persona = " + id;
-        return elimina(consulta);
+    public ArrayList<String[]> buscarConductor(int id) throws SQLException {
+        consulta = "SELECT conductor.Id_conductor, conductor.Id_persona FROM flecha_amarilla.conductor WHERE conductor.Id_persona = " + id;
+        return buscarCon2(consulta);
     }
 
     public ArrayList<String[]> buscarConductoresCompletos() throws SQLException {
@@ -675,6 +640,7 @@ public class CConsultas {
         return buscarCon8(consulta);
     }
 
+    /*                        CARGA DE LOS COMBOBOX                           */
     public ArrayList<String> cargaComboDias() throws SQLException {
         consulta = "SELECT DISTINCT fecha.dia FROM fecha ORDER BY fecha.dia ASC;";
         return buscarCon1(consulta);
@@ -738,7 +704,6 @@ public class CConsultas {
         return buscarCon1(consulta);
     }
 
-    //<editor-fold defaultstate="collapsed" desc="BOLETOS CONSULTA">
     public ArrayList<String> cargaComboOrigenes() throws SQLException {
         consulta = "SELECT DISTINCT terminal.nombre \n"
                 + "FROM origen \n"
@@ -764,9 +729,7 @@ public class CConsultas {
         consulta = "SELECT DISTINCT boleto.precioDescuento FROM boleto ORDER BY boleto.precioDescuento ASC;";
         return buscarCon1(consulta);
     }
-    //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="TERMINALES CONSULTA">
     public ArrayList<String> cargaComboCiudad() throws SQLException {
         consulta = "SELECT ciudad.nombre FROM ciudad";
         return buscarCon1(consulta);
@@ -776,7 +739,6 @@ public class CConsultas {
         consulta = "SELECT estado.nombre FROM estado";
         return buscarCon1(consulta);
     }
-    //</editor-fold>
 
     public int obtenIdFinalPersona() throws SQLException {
         consulta = "SELECT MAX(Id_persona) FROM flecha_amarilla.persona;";
@@ -834,13 +796,42 @@ public class CConsultas {
     /**
      * ***************************ACTUALIZACIONES*****************************
      */
-    public boolean actualiza_objeto_model(int id, String marca, String modelo, String color) throws SQLException {
-//        consulta = "UPDATE `autos` SET `Marca`='" + marca + "' WHERE autos.id = " + id + ";";
-        consulta = "UPDATE `autos` SET `Marca`='" + marca + "',`Modelo`='" + modelo + "',`Color`='" + color + "' WHERE autos.id = '" + id + "'";
+    public boolean actualizarPersona(String nombre, String ApPat, String ApMat, int id) throws SQLException {
+        consulta = "UPDATE flecha_amarilla.persona SET `nombre`='" + nombre + "',`ApPat`='" + ApPat + "',`ApMat`='" + ApMat + "' WHERE persona.Id_persona = " + id;
         return actualiza(consulta);
     }
+
+    public boolean actualizarTelefono(String tel, int id) throws SQLException {
+        consulta = "UPDATE flecha_amarilla.telefono_persona SET `telefono`='" + tel + "' WHERE telefono_persona.Id_persona = " + id;
+        return actualiza(consulta);
+    }
+
     /**
      * ***************************ELIMINACIONES*******************************
      */
+    public boolean eliminaTelefono(int id) throws SQLException {
+        consulta = "DELETE FROM flecha_amarilla.telefono_persona WHERE telefono_persona.Id_persona = " + id;
+        return elimina(consulta);
+    }
+
+    public boolean eliminaConductor(int id) throws SQLException {
+        consulta = "DELETE FROM flecha_amarilla.conductor WHERE conductor.Id_persona = " + id;
+        return elimina(consulta);
+    }
+
+    public boolean eliminaAutbousConductor(int idConductor) throws SQLException {
+        consulta = "DELETE FROM `autobusconductor` WHERE autobusconductor.Id_conductor = " + idConductor;
+        return elimina(consulta);
+    }
+
+    public boolean eliminaRutaConductor(int idConductor) throws SQLException {
+        consulta = "DELETE FROM `rutaconductor` WHERE rutaconductor.Id_conductor = " + idConductor;
+        return elimina(consulta);
+    }
+
+    public boolean eliminaPersona(int id) throws SQLException {
+        consulta = "DELETE FROM persona WHERE persona.Id_persona = " + id;
+        return elimina(consulta);
+    }
 
 }

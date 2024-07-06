@@ -4,6 +4,7 @@ import crud.CConsultas;
 import crud.CMensajes;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import javax.swing.JOptionPane;
 //import java.util.Arrays;
 import javax.swing.RowFilter;
@@ -30,24 +31,55 @@ public class JfConductorConsulta extends javax.swing.JFrame {
 
     }
 
-    public void filtrar(String valor, int columna) {
-        // Obtenemos el modelo de la tabla para poder manipularlo
-        modelo = (DefaultTableModel) JtableConductores.getModel();
-        // Nuestro Filtro recibe el modelo de la tabla a filtrar
-        tr = new TableRowSorter(modelo);
-        // Le indicamos a la tabla el filtro se usara 
-        JtableConductores.setRowSorter(tr);
-        // Si la opcion seleccionada no es 'Seleccione una opcion'
-        if (valor != null) {
-            // Aplicamos el filtro para hacerlo coincidir con el item seleccionadao en la columna indicada
-            // tr.setRowFilter(RowFilter.regexFilter(lista.getSelectedItem().toString(), columna));
-//            tr.setRowFilter(RowFilter.regexFilter("^" + valor + "$", columna));
-            tr.setRowFilter(RowFilter.regexFilter(valor, columna));
+    public void limpiarCampos() {
+        JtxtApMaterno.setText("");
+        JtxtApPaterno.setText("");
+        JtxtNombres.setText("");
+        JtxtTelefono.setText("");
+    }
 
-            // En caso de serlo, no queremos que aplique el filtro proporcionado
-        } else {
-            JtableConductores.setRowSorter(tr);
+    public void aplicaFiltros() {
+
+        // Obtener el modelo de la tabla de conductores
+//        modelo = (DefaultTableModel) JtableConductores.getModel();
+        // Crear un nuevo TableRowSorter utilizando el modelo de la tabla
+        tr = new TableRowSorter<>(modelo);
+
+        // Aplicar el TableRowSorter a la tabla JtableConductores
+        JtableConductores.setRowSorter(tr);
+
+        // Crear una lista para almacenar los filtros
+        ArrayList<RowFilter<String, Integer>> filtros = new ArrayList<>();
+
+        // Verificar si el campo de nombres no está vacío
+        if (!JtxtNombres.getText().trim().isEmpty()) {
+            // Agregar un filtro regex para filtrar por nombres (columna 0)
+            filtros.add(RowFilter.regexFilter(JtxtNombres.getText().trim(), 0));
         }
+
+        // Verificar si el campo de apellido paterno no está vacío
+        if (!JtxtApPaterno.getText().trim().isEmpty()) {
+            // Agregar un filtro regex para filtrar por apellido paterno (columna 1)
+            filtros.add(RowFilter.regexFilter(JtxtApPaterno.getText().trim(), 1));
+        }
+
+        // Verificar si el campo de apellido materno no está vacío
+        if (!JtxtApMaterno.getText().trim().isEmpty()) {
+            // Agregar un filtro regex para filtrar por apellido materno (columna 2)
+            filtros.add(RowFilter.regexFilter(JtxtApMaterno.getText().trim(), 2));
+        }
+
+        // Verificar si el campo de telefono no está vacío
+        if (!JtxtTelefono.getText().trim().isEmpty()) {
+            // Agregar un filtro regex para filtrar por apellido materno (columna 3)
+            filtros.add(RowFilter.regexFilter(JtxtTelefono.getText().trim(), 3));
+        }
+
+        // Crear un filtro compuesto AND que combina todos los filtros en la lista
+        RowFilter<String, Integer> rf = RowFilter.andFilter(filtros);
+
+        // Aplicar el filtro compuesto al TableRowSorter
+        tr.setRowFilter(rf);
     }
 
     // Metodo para limpiar la tabla
@@ -65,6 +97,8 @@ public class JfConductorConsulta extends javax.swing.JFrame {
         // Obtenemos el modelo para poder manipularlo
         modelo = (DefaultTableModel) JtableConductores.getModel();
         try {
+//            System.out.println("Antes del For");
+//            System.out.println("La lista de conductores contiene : " + datosConductores.size() + " elementos al ser llamada en cargaTabla");
             // Leer los datos
             datosConductores = query.buscarConductoresCompletos();
             // Limpiamos la tabla
@@ -74,10 +108,13 @@ public class JfConductorConsulta extends javax.swing.JFrame {
 //                modelo.addRow(new Object[]{datosConductor[0], datosConductor[1], datosConductor[2], datosConductor[3]});
                 modelo.addRow(new Object[]{datosConductor[1], datosConductor[2], datosConductor[3], datosConductor[4]});
             }
+//            System.out.println("Despues del For");
+//            System.out.println("La lista de conductores contiene : " + datosConductores.size() + " elementos al ser llamada en cargaTabla");
 
         } catch (SQLException e) {
             CMensajes.msg_error("No se pudo cargar la informacion en la tabla", "Cargando Tabla");
         }
+        modelo = null;
     }
 
     private String[] obtenerValoresFilaTabla() {
@@ -110,10 +147,10 @@ public class JfConductorConsulta extends javax.swing.JFrame {
     }
 
     public void actualizar(int id, String[] valoresActualizar) {
-        boolean comprueba;
+        ArrayList<String[]> ids = new ArrayList<>();
         try {
-            comprueba = query.buscarConductor(id);
-            if (comprueba) {
+            ids = query.buscarConductor(id);
+            if (ids != null || ids.isEmpty()) {
                 // Puedes actualizar
                 if (query.actualizarPersona(valoresActualizar[0], valoresActualizar[1], valoresActualizar[2], id)) {
                     CMensajes.msg("Se actualizo la informacion del conductor", "Actualizar");
@@ -132,44 +169,60 @@ public class JfConductorConsulta extends javax.swing.JFrame {
             }
         } catch (SQLException e) {
         } finally {
+            datosConductores.clear();
             limpiarTabla();
             cargarTabla();
         }
     }
 
     public void eliminar(int id) {
-        boolean comprueba;
+        ArrayList<String[]> identificadores = new ArrayList<>();
         try {
-            comprueba = query.buscarConductor(id);
-            if (comprueba) {
+            identificadores = query.buscarConductor(id);
+            String[] ids = new String[2];
+            ids = identificadores.get(0);
+            if (identificadores != null || identificadores.isEmpty()) {
                 // Eliminando
                 if (query.eliminaTelefono(id)) {
                     // Eliminando telefonos de la tabla telefono_persona
                     CMensajes.msg("Se elimino el telefono correspondiente", "Eliminar");
-                    // Eliminando relacion de la tabla Conductor
-                    if (query.eliminaConductor(id)) {
-                        // Eliminando la persona en la tabla persona
-                        if (query.eliminaPersona(id)) {
-                            CMensajes.msg("Se elimino al conductor seleccionado", "Eliminar");
+                    if (query.eliminaAutbousConductor(Integer.parseInt(ids[0]))) {
+                        CMensajes.msg("Se eliminaron las relaciones del conductor \ncon los autobuses correspondientes", "Eliminar");
+                        if (query.eliminaRutaConductor(Integer.parseInt(ids[0]))) {
+                            CMensajes.msg("Se eliminaron las relaciones del conductor \ncon los viajes correspondientes", "Eliminar");
+                            // Eliminando relacion de la tabla Conductor
+                            if (query.eliminaConductor(id)) {
+                                // Eliminando la persona en la tabla persona
+                                if (query.eliminaPersona(id)) {
+                                    CMensajes.msg("Se elimino al conductor seleccionado", "Eliminar");
+                                } else {
+                                    CMensajes.msg_error("Ocurrio un error al eliminar a la persona", "Eliminando");
+                                }
+                            } else {
+                                CMensajes.msg_error("Ocurrio un error al eliminar al conductor", "Eliminar");
+                            }
                         } else {
-                            CMensajes.msg_error("Ocurrio un error al eliminar a la persona", "Eliminando");
+                            CMensajes.msg_error("Ocurrio un error al eliminar \nlas rutas asociadas al conductor", "Eliminar");
                         }
                     } else {
-                        CMensajes.msg_error("Ocurrio un error al eliminar al conductor", "Eliminar");
+                        CMensajes.msg_error("Ocurrio un error al eliminar \nlos autobuses asociadas al conductor", "Eliminar");
                     }
                 } else {
                     CMensajes.msg_error("Ocurrio un error al eliminar el telefono asociado al conductor", "Eliminar");
                 }
-
             } else {
                 // Mensaje de error
                 CMensajes.msg_error("Usuario no encontrado", "Eliminar-Buscar");
             }
         } catch (SQLException e) {
-        } finally {
-            limpiarTabla();
-            cargarTabla();
         }
+
+//        System.out.println("La lista de identificadores contiene : " + identificadores.size() + " elementos antes de su limpieza");
+//        System.out.println("La lista de conductores contiene : " + datosConductores.size() + " elementos antes de su limpieza");
+        identificadores.clear();
+        datosConductores.clear();
+        limpiarCampos();
+        cargarTabla();
     }
 
     @SuppressWarnings("unchecked")
@@ -322,19 +375,19 @@ public class JfConductorConsulta extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void JtxtNombresKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JtxtNombresKeyReleased
-        filtrar(JtxtNombres.getText(), 0);
+        aplicaFiltros();
     }//GEN-LAST:event_JtxtNombresKeyReleased
 
     private void JtxtApPaternoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JtxtApPaternoKeyReleased
-        filtrar(JtxtApPaterno.getText(), 1);
+        aplicaFiltros();
     }//GEN-LAST:event_JtxtApPaternoKeyReleased
 
     private void JtxtApMaternoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JtxtApMaternoKeyReleased
-        filtrar(JtxtApMaterno.getText(), 2);
+        aplicaFiltros();
     }//GEN-LAST:event_JtxtApMaternoKeyReleased
 
     private void JtxtTelefonoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JtxtTelefonoKeyReleased
-        filtrar(JtxtTelefono.getText(), 3);
+        aplicaFiltros();
     }//GEN-LAST:event_JtxtTelefonoKeyReleased
 
     private void JbtnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnActualizarActionPerformed
@@ -349,6 +402,7 @@ public class JfConductorConsulta extends javax.swing.JFrame {
 
     private void JbtnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnEliminarActionPerformed
         if (JOptionPane.showConfirmDialog(null, "¿Desea eliminar el registro seleccionado?", "Confimacion", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+
             String[] valoresIniciales = obtenerValoresFilaTabla();
             int idEliminar = buscarId(valoresIniciales[0], valoresIniciales[1], valoresIniciales[2], valoresIniciales[3]);
             eliminar(idEliminar);
