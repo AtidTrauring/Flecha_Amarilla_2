@@ -1,5 +1,4 @@
 package ventanas.Consultas;
-
 import crud.CConsultas;
 import crud.CMensajes;
 import java.sql.SQLException;
@@ -14,72 +13,52 @@ import javax.swing.table.TableRowSorter;
 
 public class JfTerminalesConsulta extends javax.swing.JFrame {
 
-    // Variable del modelo
+    //**************   ATRIBUTOS  *******************/
     private DefaultTableModel modelo;
-    // Variable del moelo e las listas
     private DefaultComboBoxModel listas;
-    // Variable para poder agregar filtros
     private TableRowSorter tr;
-    // Instancia de la clase que permite hacer las consultas "Transacciones"
     private final CConsultas query = new CConsultas();
-    // Creacion de lista, para la obtencion de valores de la tabla
     private ArrayList<String[]> datosTerminales = new ArrayList<>();
-    // Creacion de lista, para la obtencion de valores de las listas
     private ArrayList<String> datosListas = new ArrayList<>();
 
     public JfTerminalesConsulta() throws SQLException {
         initComponents();
         JtableTerminales.getTableHeader().setReorderingAllowed(false);
-        //CArgamos valores del ComboBox
         cargaComboBox(JcmbxEstados, 1);
         cargaComboBox(JcmbxCiudades, 2);
-        //Cargamos la tabla
         cargarTabla();
     }
-    
-    /**
-     * ********* Metodos **********
-     */
+
+    //**************** METODOS ******************/
     private void limpiarTabla() {
-        // Obtenemos el modelo
         modelo = (DefaultTableModel) JtableTerminales.getModel();
-        // Por medio de un for, tomando en cuenta el numero de filas
         for (int i = (JtableTerminales.getRowCount() - 1); i >= 0; i--) {
-            // Eliminaremos las filas hasta que el valor del iterador sea mayor o igual a 0
             modelo.removeRow(i);
         }
     }
 
     public void cargarTabla() {
-        // Obtenemos el modelo para poder manipularlo
         modelo = (DefaultTableModel) JtableTerminales.getModel();
         try {
-            // Leer los datos
             datosTerminales = query.buscaTerminales();
-            // Limpiamos la tabla
             limpiarTabla();
-            // Asignamos los valores obtenidos en la tabla
             for (String[] datosTerminal : datosTerminales) {
                 modelo.addRow(new Object[]{datosTerminal[0], datosTerminal[1], datosTerminal[2], datosTerminal[3], datosTerminal[4], datosTerminal[5],
                     datosTerminal[6], datosTerminal[7]});
             }
-        }catch(SQLException ex) {
+        } catch (SQLException ex) {
             CMensajes.msg_error("No se pudo cargar la informacion en la tabla", "Cargando Tabla");
         }
     }
 
     public void cargaComboBox(JComboBox combo, int metodoCarga) throws SQLException {
-        //  Obtenemos el modelo del JComboBox
         listas = (DefaultComboBoxModel) combo.getModel();
         switch (metodoCarga) {
             case 1:
-                // Obtenemos los valores de la tabla
                 datosListas = query.cargaComboEstado();
                 for (int i = 1; i < datosListas.size(); i++) {
-                    // Añadimos items por string dentro de la lista
                     listas.addElement(datosListas.get(i));
                 }
-                // Limpiamos la lista para cargar los datos del siguiente JComboBox
                 datosListas.clear();
                 break;
             case 2:
@@ -92,30 +71,22 @@ public class JfTerminalesConsulta extends javax.swing.JFrame {
         }
     }
 
-    public void filtrar(JComboBox lista, int columna) {
+    public void aplicaFiltros() {
         modelo = (DefaultTableModel) JtableTerminales.getModel();
-        tr = new TableRowSorter(modelo);
-        // Le indicamos a la tabla el filtro se usara 
+        tr = new TableRowSorter<>(modelo);
         JtableTerminales.setRowSorter(tr);
-        // Si la opcion seleccionada no es 'Seleccione una opcion'
-        if (lista.getSelectedIndex() != 0) {
-            // Aplicamos el filtro para hacerlo coincidir con el item seleccionadao en la columna indicada
-            tr.setRowFilter(RowFilter.regexFilter("^" + lista.getSelectedItem().toString() + "$", columna));
+        ArrayList<RowFilter<String, Integer>> filtros = new ArrayList<>();
+        if (!JtxtNombreTerminal.getText().trim().isEmpty()) {
+            filtros.add(RowFilter.regexFilter(JtxtNombreTerminal.getText().trim(), 0));
         }
-    }
-
-    public void filtrarTextField(String valor, int columna) {
-        modelo = (DefaultTableModel) JtableTerminales.getModel();
-        // Nuestro Filtro recibe el modelo de la tabla a filtrar
-        tr = new TableRowSorter(modelo);
-        // Le indicamos a la tabla el filtro se usara 
-        JtableTerminales.setRowSorter(tr);
-        // Si la opcion seleccionada no es 'Seleccione una opcion'
-        if (valor != null) {
-            // Aplicamos el filtro para hacerlo coincidir con el item seleccionadao en la columna indicada
-            tr.setRowFilter(RowFilter.regexFilter(valor, columna));
-            // En caso de serlo, no queremos que aplique el filtro proporcionado
+        if (JcmbxEstados.getSelectedIndex() != 0) {
+            filtros.add(RowFilter.regexFilter(JcmbxEstados.getSelectedItem().toString(), 1));
         }
+        if (JcmbxCiudades.getSelectedIndex() != 0) {
+            filtros.add(RowFilter.regexFilter(JcmbxCiudades.getSelectedItem().toString(), 2));
+        }
+        RowFilter<String, Integer> rf = RowFilter.andFilter(filtros);
+        tr.setRowFilter(rf);
     }
 
     @SuppressWarnings("unchecked")
@@ -123,7 +94,7 @@ public class JfTerminalesConsulta extends javax.swing.JFrame {
     private void initComponents() {
 
         JpnlLienzo = new javax.swing.JPanel();
-        JSPtablaTerminales = new javax.swing.JScrollPane();
+        JSPTablaTerminales = new javax.swing.JScrollPane();
         JtableTerminales = new javax.swing.JTable();
         JlblEstado = new javax.swing.JLabel();
         JcmbxEstados = new javax.swing.JComboBox<>();
@@ -145,18 +116,15 @@ public class JfTerminalesConsulta extends javax.swing.JFrame {
 
         JtableTerminales.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+
             },
             new String [] {
                 "Nombre", "Estado", "Ciudad", "Vialidad", "Numero", "Colonia", "Codigo  Postal", "Telefono"
             }
         ));
-        JSPtablaTerminales.setViewportView(JtableTerminales);
+        JSPTablaTerminales.setViewportView(JtableTerminales);
 
-        JpnlLienzo.add(JSPtablaTerminales, new org.netbeans.lib.awtextra.AbsoluteConstraints(294, 6, 700, 288));
+        JpnlLienzo.add(JSPTablaTerminales, new org.netbeans.lib.awtextra.AbsoluteConstraints(294, 6, 700, 288));
 
         JlblEstado.setText("Estado");
         JpnlLienzo.add(JlblEstado, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
@@ -222,15 +190,15 @@ public class JfTerminalesConsulta extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void JcmbxEstadosItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxEstadosItemStateChanged
-        filtrar(JcmbxEstados, 1);
+        aplicaFiltros();
     }//GEN-LAST:event_JcmbxEstadosItemStateChanged
 
     private void JcmbxCiudadesItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxCiudadesItemStateChanged
-        filtrar(JcmbxCiudades, 2);
+        aplicaFiltros();
     }//GEN-LAST:event_JcmbxCiudadesItemStateChanged
 
     private void JtxtNombreTerminalKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JtxtNombreTerminalKeyReleased
-        filtrarTextField(JtxtNombreTerminal.getText(), 0);
+        aplicaFiltros();
     }//GEN-LAST:event_JtxtNombreTerminalKeyReleased
 
     public static void main(String args[]) {
@@ -271,7 +239,7 @@ public class JfTerminalesConsulta extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JScrollPane JSPtablaTerminales;
+    private javax.swing.JScrollPane JSPTablaTerminales;
     private javax.swing.JButton JbtnActualizar;
     private javax.swing.JButton JbtnBuscar;
     private javax.swing.JButton JbtnEliminar;

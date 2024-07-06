@@ -12,24 +12,17 @@ import javax.swing.table.TableRowSorter;
 
 public class JfBoletosConsulta extends javax.swing.JFrame {
 
-    // Variable del modelo
+    //**************   ATRIBUTOS  *******************/
     private DefaultTableModel modelo;
-    // Variable del moelo e las listas
     private DefaultComboBoxModel listas;
-    // Variable para poder agregar filtros
     private TableRowSorter tr;
-    // Instancia de la clase que permite hacer las consultas "Transacciones"
     private final CConsultas query = new CConsultas();
-    // Creacion de lista, para la obtencion de valores de la tabla
     private ArrayList<String[]> datosBoletos = new ArrayList<>();
-    // Creacion de lista, para la obtencion de valores de las listas
     private ArrayList<String> datosListas = new ArrayList<>();
 
     public JfBoletosConsulta() {
         initComponents();
-        //Linea para bloquear los encabezados
         JtableBoletos.getTableHeader().setReorderingAllowed(false);
-        //Cargar valores de los combo box
         cargaComboBox(JcmbxOrigenes, 1);
         cargaComboBox(JcmbxDestinos, 2);
         cargaComboBox(JcmbxDias, 3);
@@ -37,26 +30,48 @@ public class JfBoletosConsulta extends javax.swing.JFrame {
         cargaComboBox(JcmbxAnios, 5);
         cargaComboBox(JcmbxTiposBoletos, 6);
         cargaComboBox(JcmbxPrecios, 7);
-        //Se carga la tabla
         cargarTabla();
     }
 
-    /**
-     * ********************* METODOS **********************
-     */
-    //Metodo para cargar de los combobox
+    //**************** METODOS ******************/
+    private void limpiarTabla() {
+        modelo = (DefaultTableModel) JtableBoletos.getModel();
+        for (int i = (JtableBoletos.getRowCount() - 1); i >= 0; i--) {
+            modelo.removeRow(i);
+        }
+    }
+
+    public void cargarTabla() {
+        modelo = (DefaultTableModel) JtableBoletos.getModel();
+        try {
+            datosBoletos = query.buscaBoletos();
+            limpiarTabla();
+            for (String[] datosBoleto : datosBoletos) {
+                switch (datosBoleto[6]) {
+                    case "PP":
+                        modelo.addRow(new Object[]{datosBoleto[0], datosBoleto[1], datosBoleto[2], datosBoleto[3], datosBoleto[4], datosBoleto[5],
+                            "Primera Plus", datosBoleto[7]});
+                        break;
+                    case "C":
+                        modelo.addRow(new Object[]{datosBoleto[0], datosBoleto[1], datosBoleto[2], datosBoleto[3], datosBoleto[4], datosBoleto[5],
+                            "Comercial", datosBoleto[7]});
+                        break;
+                }
+            }
+        } catch (SQLException e) {
+            CMensajes.msg_error("No se pudo cargar la informacion en la tabla", "Cargando Tabla");
+        }
+    }
+
     public void cargaComboBox(JComboBox combo, int metodoCarga) {
         listas = (DefaultComboBoxModel) combo.getModel();
         try {
             switch (metodoCarga) {
                 case 1:
-                    // Obtenemos los valores de la tabla
                     datosListas = query.cargaComboOrigenes();
                     for (int i = 1; i < datosListas.size(); i++) {
-                        // Añadimos items por string dentro de la lista
                         listas.addElement(datosListas.get(i));
                     }
-                    // Limpiamos la lista para cargar los datos del siguiente JComboBox
                     datosListas.clear();
                     break;
                 case 2:
@@ -108,58 +123,34 @@ public class JfBoletosConsulta extends javax.swing.JFrame {
 
     }
 
-    //Metodo para filtrar
-    public void filtrar(JComboBox lista, int columna) {
-        // Obtenemos el modelo
+    public void aplicaFiltros() {
         modelo = (DefaultTableModel) JtableBoletos.getModel();
-        // Nuestro Filtro recibe el modelo de la tabla a filtrar
-        tr = new TableRowSorter(modelo);
-        // Le indicamos a la tabla el filtro se usara 
+        tr = new TableRowSorter<>(modelo);
         JtableBoletos.setRowSorter(tr);
-        // Si la opcion seleccionada no es 'Seleccione una opcion'
-        if (lista.getSelectedIndex() != 0) {
-            // Aplicamos el filtro para hacerlo coincidir con el item seleccionadao en la columna indicada
-            tr.setRowFilter(RowFilter.regexFilter("^" + lista.getSelectedItem().toString() + "$", columna));
-            // En caso de serlo, no queremos que aplique el filtro proporcionado
+        ArrayList<RowFilter<String, Integer>> filtros = new ArrayList<>();
+        if (JcmbxOrigenes.getSelectedIndex() != 0) {
+            filtros.add(RowFilter.regexFilter(JcmbxOrigenes.getSelectedItem().toString(), 1));
         }
-    }
-
-    // Metodo para limpiar la tabla
-    private void limpiarTabla() {
-        // Obtenemos el modelo
-        modelo = (DefaultTableModel) JtableBoletos.getModel();
-        // Por medio de un for, tomando en cuenta el numero de filas
-        for (int i = (JtableBoletos.getRowCount() - 1); i >= 0; i--) {
-            // Eliminaremos las filas hasta que el valor del iterador sea mayor o igual a 0
-            modelo.removeRow(i);
+        if (JcmbxDestinos.getSelectedIndex() != 0) {
+            filtros.add(RowFilter.regexFilter(JcmbxDestinos.getSelectedItem().toString(), 2));
         }
-    }
-
-    //Metodo para traer los datos a la tabla
-    public void cargarTabla() {
-        // Obtenemos el modelo para poder manipularlo
-        modelo = (DefaultTableModel) JtableBoletos.getModel();
-        try {
-            // Leer los datos
-            datosBoletos = query.buscaBoletos();
-            // Limpiamos la tabla
-            limpiarTabla();
-            // Asignamos los valores obtenidos en la tabla
-            for (String[] datosBoleto : datosBoletos) {
-                switch (datosBoleto[6]) {
-                    case "PP":
-                        modelo.addRow(new Object[]{datosBoleto[0], datosBoleto[1], datosBoleto[2], datosBoleto[3], datosBoleto[4], datosBoleto[5],
-                            "Primera Plus", datosBoleto[7]});
-                        break;
-                    case "C":
-                        modelo.addRow(new Object[]{datosBoleto[0], datosBoleto[1], datosBoleto[2], datosBoleto[3], datosBoleto[4], datosBoleto[5],
-                            "Comercial", datosBoleto[7]});
-                        break;
-                }
-            }
-        } catch (SQLException e) {
-            CMensajes.msg_error("No se pudo cargar la informacion en la tabla", "Cargando Tabla");
+        if (JcmbxDias.getSelectedIndex() != 0) {
+            filtros.add(RowFilter.regexFilter(JcmbxDias.getSelectedItem().toString(), 3));
         }
+        if (JcmbxMeses.getSelectedIndex() != 0) {
+            filtros.add(RowFilter.regexFilter(JcmbxMeses.getSelectedItem().toString(), 4));
+        }
+        if (JcmbxAnios.getSelectedIndex() != 0) {
+            filtros.add(RowFilter.regexFilter(JcmbxAnios.getSelectedItem().toString(), 5));
+        }
+        if (JcmbxTiposBoletos.getSelectedIndex() != 0) {
+            filtros.add(RowFilter.regexFilter(JcmbxTiposBoletos.getSelectedItem().toString(), 6));
+        }
+        if (JcmbxPrecios.getSelectedIndex() != 0) {
+            filtros.add(RowFilter.regexFilter(JcmbxPrecios.getSelectedItem().toString(), 7));
+        }
+        RowFilter<String, Integer> rf = RowFilter.andFilter(filtros);
+        tr.setRowFilter(rf);
     }
 
     @SuppressWarnings("unchecked")
@@ -193,10 +184,7 @@ public class JfBoletosConsulta extends javax.swing.JFrame {
 
         JtableBoletos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+
             },
             new String [] {
                 "Asiento", "Origen", "Destino", "Dia", "Mes", "Año", "Tipo de boleto", "Precio"
@@ -210,11 +198,6 @@ public class JfBoletosConsulta extends javax.swing.JFrame {
         JcmbxOrigenes.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 JcmbxOrigenesItemStateChanged(evt);
-            }
-        });
-        JcmbxOrigenes.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                JcmbxOrigenesActionPerformed(evt);
             }
         });
 
@@ -275,11 +258,6 @@ public class JfBoletosConsulta extends javax.swing.JFrame {
         JbtnEliminar.setBackground(new java.awt.Color(160, 16, 70));
         JbtnEliminar.setForeground(new java.awt.Color(255, 255, 255));
         JbtnEliminar.setText("Eliminar");
-        JbtnEliminar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                JbtnEliminarActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout JpnlLienzoLayout = new javax.swing.GroupLayout(JpnlLienzo);
         JpnlLienzo.setLayout(JpnlLienzoLayout);
@@ -378,41 +356,33 @@ public class JfBoletosConsulta extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void JcmbxOrigenesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JcmbxOrigenesActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_JcmbxOrigenesActionPerformed
-
     private void JcmbxOrigenesItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxOrigenesItemStateChanged
-        filtrar(JcmbxOrigenes, 1);
+        aplicaFiltros();
     }//GEN-LAST:event_JcmbxOrigenesItemStateChanged
 
     private void JcmbxDestinosItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxDestinosItemStateChanged
-        filtrar(JcmbxDestinos, 2);
+        aplicaFiltros();
     }//GEN-LAST:event_JcmbxDestinosItemStateChanged
 
     private void JcmbxDiasItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxDiasItemStateChanged
-        filtrar(JcmbxDias, 3);
+        aplicaFiltros();
     }//GEN-LAST:event_JcmbxDiasItemStateChanged
 
     private void JcmbxMesesItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxMesesItemStateChanged
-        filtrar(JcmbxMeses, 4);
+        aplicaFiltros();
     }//GEN-LAST:event_JcmbxMesesItemStateChanged
 
     private void JcmbxAniosItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxAniosItemStateChanged
-        filtrar(JcmbxAnios, 5);
+        aplicaFiltros();
     }//GEN-LAST:event_JcmbxAniosItemStateChanged
 
     private void JcmbxTiposBoletosItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxTiposBoletosItemStateChanged
-        filtrar(JcmbxTiposBoletos, 6);
+        aplicaFiltros();
     }//GEN-LAST:event_JcmbxTiposBoletosItemStateChanged
 
     private void JcmbxPreciosItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxPreciosItemStateChanged
-        filtrar(JcmbxPrecios, 7);
+        aplicaFiltros();
     }//GEN-LAST:event_JcmbxPreciosItemStateChanged
-
-    private void JbtnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnEliminarActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_JbtnEliminarActionPerformed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */

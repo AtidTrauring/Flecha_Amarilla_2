@@ -1,5 +1,4 @@
 package ventanas.Consultas;
-
 import crud.CConsultas;
 import crud.CMensajes;
 import java.sql.SQLException;
@@ -12,6 +11,7 @@ import javax.swing.table.TableRowSorter;
 
 public class JfAutobusConsulta extends javax.swing.JFrame {
 
+    //**************   ATRIBUTOS  *******************/
     // Variable para manipular el modelo de la tabla
     private DefaultTableModel modelo;
     // Variable para poder manipular el modelo de las listas
@@ -37,14 +37,41 @@ public class JfAutobusConsulta extends javax.swing.JFrame {
         cargarTabla();
     }
 
-    // Metodo que permite cargar las opciones en las listas
-    // Recibe por parametro el JComboBox al que se agregaran items
+    //**************** METODOS ******************/
+    // Metodo para limpiar la tabla
+    private void limpiarTabla() {
+        // Obtenemos el modelo de la tabla para poder manipularlo
+        modelo = (DefaultTableModel) JtableAutobuses.getModel();
+        // Por medio de un for, tomando en cuenta el numero de filas
+        for (int i = (JtableAutobuses.getRowCount() - 1); i >= 0; i--) {
+            // Eliminaremos las filas hasta que el valor del iterador sea mayor o igual a 0
+            modelo.removeRow(i);
+        }
+    }
+
+    // Metodo que permite ingresar los valores necesarios a la tabla
+    public void cargarTabla() {
+        // Obtenemos el modelo para poder manipularlo
+        modelo = (DefaultTableModel) JtableAutobuses.getModel();
+        try {
+            // Leer los datos
+            datosAutobuses = query.buscaAutobuses();
+            // Limpiamos la tabla
+            limpiarTabla();
+            // Asignamos los valores obtenidos en la tabla
+            for (String[] datosAutobus : datosAutobuses) {
+                modelo.addRow(new Object[]{datosAutobus[0], datosAutobus[1], datosAutobus[2], datosAutobus[3]});
+            }
+        } catch (SQLException e) {
+            CMensajes.msg_error("No se pudo cargar la informacion en la tabla", "Cargando Tabla");
+        }
+    }
+
+    /* Metodo que permite cargar las opciones en las listas
+     Recibe por parametro el JComboBox al que se agregaran items */
     public void cargaComboBox(JComboBox combo, int metodoCarga) {
         //  Obtenemos el modelo del JComboBox
-//        listas = new DefaultComboBoxModel();
-
         listas = (DefaultComboBoxModel) combo.getModel();
-        // combo.setModel(listas);
         try {
             switch (metodoCarga) {
                 case 1:
@@ -81,51 +108,34 @@ public class JfAutobusConsulta extends javax.swing.JFrame {
 
     }
 
+    /*Metodo que permite crear una lista de filtros que se puedan aplicar de
+    manera simultanea*/
     public void aplicaFiltros() {
+        // Obtenemos el modelo de la tabla y lo guardamos en la variable 'modelo'
         modelo = (DefaultTableModel) JtableAutobuses.getModel();
+        // Creamos un TableRowSorter para el modelo de la tabla y lo guardamos en la variable 'tr'
         tr = new TableRowSorter<>(modelo);
+        // Asignamos el TableRowSorter a la tabla para que se pueda ordenar y filtrar
         JtableAutobuses.setRowSorter(tr);
+        // Creamos una lista para almacenar los filtros que se van a aplicar
         ArrayList<RowFilter<String, Integer>> filtros = new ArrayList<>();
+        // Si se selecciona una marca (índice diferente de 0), agregamos un filtro para esa marca
         if (JcmbxMarcas.getSelectedIndex() != 0) {
             filtros.add(RowFilter.regexFilter(JcmbxMarcas.getSelectedItem().toString(), 0));
         }
+        // Si se selecciona un modelo (índice diferente de 0), agregamos un filtro para ese modelo
         if (JcmbxModelos.getSelectedIndex() != 0) {
             filtros.add(RowFilter.regexFilter(JcmbxModelos.getSelectedItem().toString(), 1));
         }
+        // Si se selecciona una capacidad (índice diferente de 0), agregamos un filtro para esa capacidad
         if (JcmbxCapacidad.getSelectedIndex() != 0) {
             filtros.add(RowFilter.regexFilter(JcmbxCapacidad.getSelectedItem().toString(), 2));
         }
+        // Creamos un filtro combinando todos los filtros de la lista
         RowFilter<String, Integer> rf = RowFilter.andFilter(filtros);
+
+        // Aplicamos el filtro combinado al TableRowSorter
         tr.setRowFilter(rf);
-    }
-
-    // Metodo para limpiar la tabla
-    private void limpiarTabla() {
-        // Obtenemos el modelo de la tabla para poder manipularlo
-        modelo = (DefaultTableModel) JtableAutobuses.getModel();
-        // Por medio de un for, tomando en cuenta el numero de filas
-        for (int i = (JtableAutobuses.getRowCount() - 1); i >= 0; i--) {
-            // Eliminaremos las filas hasta que el valor del iterador sea mayor o igual a 0
-            modelo.removeRow(i);
-        }
-    }
-
-    public void cargarTabla() {
-        // Obtenemos el modelo para poder manipularlo
-        modelo = (DefaultTableModel) JtableAutobuses.getModel();
-        try {
-            // Leer los datos
-            datosAutobuses = query.buscaAutobuses();
-            // Limpiamos la tabla
-            limpiarTabla();
-            // Asignamos los valores obtenidos en la tabla
-            for (String[] datosAutobus : datosAutobuses) {
-                modelo.addRow(new Object[]{datosAutobus[0], datosAutobus[1], datosAutobus[2], datosAutobus[3]});
-            }
-
-        } catch (SQLException e) {
-            CMensajes.msg_error("No se pudo cargar la informacion en la tabla", "Cargando Tabla");
-        }
     }
 
     @SuppressWarnings("unchecked")
@@ -133,7 +143,7 @@ public class JfAutobusConsulta extends javax.swing.JFrame {
     private void initComponents() {
 
         JpnlLienzo = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        JSPTablaAutobuses = new javax.swing.JScrollPane();
         JtableAutobuses = new javax.swing.JTable();
         JbtnEliminar = new javax.swing.JButton();
         JlblMarcas = new javax.swing.JLabel();
@@ -155,10 +165,7 @@ public class JfAutobusConsulta extends javax.swing.JFrame {
 
         JtableAutobuses.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
                 "Marca", "Modelo", "Capacidad", "Fecha de Registro"
@@ -166,7 +173,7 @@ public class JfAutobusConsulta extends javax.swing.JFrame {
         ));
         JtableAutobuses.getTableHeader().setResizingAllowed(false);
         JtableAutobuses.getTableHeader().setReorderingAllowed(false);
-        jScrollPane1.setViewportView(JtableAutobuses);
+        JSPTablaAutobuses.setViewportView(JtableAutobuses);
         if (JtableAutobuses.getColumnModel().getColumnCount() > 0) {
             JtableAutobuses.getColumnModel().getColumn(0).setResizable(false);
             JtableAutobuses.getColumnModel().getColumn(1).setResizable(false);
@@ -175,7 +182,7 @@ public class JfAutobusConsulta extends javax.swing.JFrame {
             JtableAutobuses.getColumnModel().getColumn(3).setPreferredWidth(100);
         }
 
-        JpnlLienzo.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 500, 320));
+        JpnlLienzo.add(JSPTablaAutobuses, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 500, 320));
 
         JbtnEliminar.setBackground(new java.awt.Color(160, 16, 70));
         JbtnEliminar.setForeground(new java.awt.Color(255, 255, 255));
@@ -246,8 +253,8 @@ public class JfAutobusConsulta extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void JcmbxMarcasItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxMarcasItemStateChanged
+        // Llamada al metodo aplicafiltros
         aplicaFiltros();
-//         "^" + lista.getSelectedItem().toString() + "$"
     }//GEN-LAST:event_JcmbxMarcasItemStateChanged
 
     private void JcmbxModelosItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxModelosItemStateChanged
@@ -259,9 +266,9 @@ public class JfAutobusConsulta extends javax.swing.JFrame {
     }//GEN-LAST:event_JcmbxCapacidadItemStateChanged
 
     private void JcmbxOrdenarItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxOrdenarItemStateChanged
+        // Aun no esta programado
         if (JcmbxOrdenar.getSelectedIndex() != 0) {
             if (JcmbxOrdenar.getSelectedIndex() == 1) {
-                
             }
         } else {
         }
@@ -291,8 +298,6 @@ public class JfAutobusConsulta extends javax.swing.JFrame {
         }
         //</editor-fold>
         //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -303,6 +308,7 @@ public class JfAutobusConsulta extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JScrollPane JSPTablaAutobuses;
     private javax.swing.JButton JbtnActualizar;
     private javax.swing.JButton JbtnEliminar;
     private javax.swing.JComboBox<String> JcmbxCapacidad;
@@ -315,6 +321,5 @@ public class JfAutobusConsulta extends javax.swing.JFrame {
     private javax.swing.JLabel JlblOrdenar;
     private javax.swing.JPanel JpnlLienzo;
     private javax.swing.JTable JtableAutobuses;
-    private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }

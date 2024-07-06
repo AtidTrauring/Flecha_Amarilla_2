@@ -1,5 +1,4 @@
 package ventanas.Consultas;
-
 import crud.CConsultas;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -9,36 +8,21 @@ import javax.swing.table.TableRowSorter;
 
 public class JfClientesConsulta extends javax.swing.JFrame {
 
+    //**************   ATRIBUTOS  *******************/
     private DefaultTableModel modelo;
     private TableRowSorter tr;
     private final CConsultas query = new CConsultas();
-    // Creacion de lista, para la obtencion de valores de la tabla
     private ArrayList<String[]> datosClientes = new ArrayList<>();
-    // Creacion de lista, para la obtencion de valores de las listas
     private ArrayList<String> datosListas = new ArrayList<>();
 
     public JfClientesConsulta() {
         initComponents();
-        // Linea para impedir que sea posible mover los encabezados de cada tabla
         JtableClientes.getTableHeader().setReorderingAllowed(false);
         cargaTabla();
 
     }
 
-    @SuppressWarnings("unchecked")
-
-    public void filtrar(String valor, int columna) {
-        modelo = (DefaultTableModel) JtableClientes.getModel();
-        tr = new TableRowSorter(modelo);
-        JtableClientes.setRowSorter(tr);
-        if (valor != null) {
-            // Aplicamos el filtro para hacerlo coincidir con el item seleccionadao en la columna indicada
-            // tr.setRowFilter(RowFilter.regexFilter(lista.getSelectedItem().toString(), columna));
-            tr.setRowFilter(RowFilter.regexFilter(valor, columna));
-
-            // En caso de serlo, no queremos que aplique el filtro proporcionado
-        }
-    }
+    //**************** METODOS ******************/
     private void limpiarTabla() {
         modelo = (DefaultTableModel) JtableClientes.getModel();
         for (int i = (JtableClientes.getRowCount() - 1); i >= 0; i--) {
@@ -47,26 +31,43 @@ public class JfClientesConsulta extends javax.swing.JFrame {
     }
 
     public void cargaTabla() {
-        //Obtener el modelo de la tabla de datos
         modelo = (DefaultTableModel) JtableClientes.getModel();
         try {
-            // Leer los datos
             datosClientes = query.buscarClientes();
-            // Limpiar la tabla
             limpiarTabla();
-            // Asignar los datos en la tabla
             for (String[] datosCliente : datosClientes) {
-                //Añadirle datos al modelo de la tabla
                 modelo.addRow(new Object[]{datosCliente[0], datosCliente[1], datosCliente[2], datosCliente[3]});
             }
-
         } catch (SQLException e) {
         }
     }
+    
+    public void aplicaFiltros() {
+        modelo = (DefaultTableModel) JtableClientes.getModel();
+        tr = new TableRowSorter<>(modelo);
+        JtableClientes.setRowSorter(tr);
+        ArrayList<RowFilter<String, Integer>> filtros = new ArrayList<>();
+        if (JtxtNombres.getText().trim().isEmpty()) {
+            filtros.add(RowFilter.regexFilter(JtxtNombres.getText(), 0));
+        }
+        if (JtxtApPaterno.getText().trim().isEmpty()) {
+            filtros.add(RowFilter.regexFilter(JtxtApPaterno.getText(), 1));
+        }
+        if (JtxtApMaterno.getText().trim().isEmpty()) {
+            filtros.add(RowFilter.regexFilter(JtxtApMaterno.getText(), 2));
+        }
+        if (JtxtCorreo.getText().trim().isEmpty()) {
+            filtros.add(RowFilter.regexFilter(JtxtCorreo.getText(), 3));
+        }
+
+        RowFilter<String, Integer> rf = RowFilter.andFilter(filtros);
+        tr.setRowFilter(rf);
+    }
+
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        buttonGroup1 = new javax.swing.ButtonGroup();
         JpnlLienzo = new javax.swing.JPanel();
         JSPTablaClientes = new javax.swing.JScrollPane();
         JtableClientes = new javax.swing.JTable();
@@ -187,23 +188,19 @@ public class JfClientesConsulta extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void JtxtNombresKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JtxtNombresKeyReleased
-        // TODO add your handling code here:
-        filtrar(JtxtNombres.getText(), 0);
+        aplicaFiltros();
     }//GEN-LAST:event_JtxtNombresKeyReleased
 
     private void JtxtApPaternoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JtxtApPaternoKeyReleased
-        // TODO add your handling code here:
-        filtrar(JtxtApPaterno.getText(), 1);
+        aplicaFiltros();
     }//GEN-LAST:event_JtxtApPaternoKeyReleased
 
     private void JtxtApMaternoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JtxtApMaternoKeyReleased
-        // TODO add your handling code here:
-        filtrar(JtxtApMaterno.getText(), 2);
+        aplicaFiltros();
     }//GEN-LAST:event_JtxtApMaternoKeyReleased
 
     private void JtxtCorreoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JtxtCorreoKeyReleased
-        // TODO add your handling code here:
-        filtrar(JtxtCorreo.getText(), 3);
+        aplicaFiltros();
     }//GEN-LAST:event_JtxtCorreoKeyReleased
 
     public static void main(String args[]) {
@@ -260,6 +257,5 @@ public class JfClientesConsulta extends javax.swing.JFrame {
     private javax.swing.JTextField JtxtApPaterno;
     private javax.swing.JTextField JtxtCorreo;
     private javax.swing.JTextField JtxtNombres;
-    private javax.swing.ButtonGroup buttonGroup1;
     // End of variables declaration//GEN-END:variables
 }

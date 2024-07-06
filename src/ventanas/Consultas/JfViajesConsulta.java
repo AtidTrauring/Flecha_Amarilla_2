@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package ventanas.Consultas;
 
 import crud.CConsultas;
@@ -13,15 +9,16 @@ import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
-/**
- *
- * @author gelog
- */
 public class JfViajesConsulta extends javax.swing.JFrame {
 
-    /**
-     * Creates new form JfViajesConsulta
-     */
+    //**************   ATRIBUTOS  *******************/
+    private DefaultTableModel modelo;
+    private DefaultComboBoxModel listas;
+    private TableRowSorter tr;
+    private final CConsultas query = new CConsultas();
+    private ArrayList<String[]> datosViaje = new ArrayList<>();
+    private ArrayList<String> datosListas = new ArrayList<>();
+
     public JfViajesConsulta() {
         initComponents();
         cargaComboBox(JcmbxMarca, 1);
@@ -31,45 +28,40 @@ public class JfViajesConsulta extends javax.swing.JFrame {
         cargaComboBox(JcmbxOrigenes, 5);
         cargaComboBox(JcmbxDestinos, 6);
         cargarTabla();
-        // Linea para impedir que sea posible mover los encabezados de cada tabla
-        JTableViajes.getTableHeader().setReorderingAllowed(false);
+        JtableViajes.getTableHeader().setReorderingAllowed(false);
     }
 
-    //**************   ATRIBUTOS  *******************/
-    // Variable para manipular el modelo de la tabla
-    private DefaultTableModel modelo;
-    // Variable para poder manipular el modelo de las listas
-    private DefaultComboBoxModel listas;
-    // Variable para poder agregar filtros
-    private TableRowSorter tr;
-    // Instancia de la clase que permite hacer las consultas "Transacciones"
-    private final CConsultas query = new CConsultas();
-    // Creacion de lista, para la obtencion de valores de la tabla
-    private ArrayList<String[]> datosViajeConsulta = new ArrayList<>();
-    // Creacion de lista, para la obtencion de valores de las listas
-    private ArrayList<String> datosListas = new ArrayList<>();
-
     //**************** METODOS ******************/
-    // Metodo que permite cargar las opciones en las listas
-    // Recibe por parametro el JComboBox al que se agregaran items
-    public void cargaComboBox(JComboBox combo, int metodoCarga) {
-        //  Obtenemos el modelo del JComboBox
-//        listas = new DefaultComboBoxModel();
+    private void limpiarTabla() {
+        modelo = (DefaultTableModel) JtableViajes.getModel();
+        for (int i = (JtableViajes.getRowCount() - 1); i >= 0; i--) {
+            modelo.removeRow(i);
+        }
+    }
 
+    public void cargarTabla() {
+        modelo = (DefaultTableModel) JtableViajes.getModel();
+        try {
+            datosViaje = query.buscaViaje();
+            limpiarTabla();
+            for (String[] datosVia : datosViaje) {
+                modelo.addRow(new Object[]{datosVia[0], datosVia[1], datosVia[2], datosVia[3], datosVia[4], datosVia[5], datosVia[6]});
+            }
+
+        } catch (Exception e) {
+            CMensajes.msg_error("No se pudo cargar la informacion en la tabla", "Cargando Tabla");
+        }
+    }
+
+    public void cargaComboBox(JComboBox combo, int metodoCarga) {
         listas = (DefaultComboBoxModel) combo.getModel();
-        // combo.setModel(listas);
         try {
             switch (metodoCarga) {
                 case 1:
-                    // Obtenemos los valores de la tabla
                     datosListas = query.cargaComboMarca();
-                    // listas.addElement("Seleccione una opcion");
-                    // Asiganamos los valores obtenidos al JComboBox
                     for (int i = 1; i < datosListas.size(); i++) {
-                        // Añadimos items por string dentro de la lista
                         listas.addElement(datosListas.get(i));
                     }
-                    // Limpiamos la lista para cargar los datos del siguiente JComboBox
                     datosListas.clear();
                     break;
                 case 2:
@@ -80,7 +72,6 @@ public class JfViajesConsulta extends javax.swing.JFrame {
                     datosListas.clear();
                     break;
                 case 3:
-//                    datosListas = query.cargaComboPlaca();
                     for (int i = 1; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
@@ -107,61 +98,41 @@ public class JfViajesConsulta extends javax.swing.JFrame {
                     }
                     datosListas.clear();
                     break;
-
             }
-
         } catch (Exception e) {
         }
 
     }
 
-    public void cargarTabla() {
-        // Obtenemos el modelo para poder manipularlo
-        modelo = (DefaultTableModel) JTableViajes.getModel();
-        try {
-            // Leer los datos
-//            datosViajeConsulta = query.buscaViaje();
-            // Limpiamos la tabla
-            limpiarTabla();
-            // Asignamos los valores obtenidos en la tabla
-            for (String[] datosVia : datosViajeConsulta) {
-                modelo.addRow(new Object[]{datosVia[0], datosVia[1], datosVia[2], datosVia[3], datosVia[4], datosVia[5], datosVia[6]});
-            }
-
-        } catch (Exception e) {
-            CMensajes.msg_error("No se pudo cargar la informacion en la tabla", "Cargando Tabla");
+    public void aplicaFiltros() {
+        modelo = (DefaultTableModel) JtableViajes.getModel();
+        tr = new TableRowSorter<>(modelo);
+        JtableViajes.setRowSorter(tr);
+        ArrayList<RowFilter<String, Integer>> filtros = new ArrayList<>();
+        if (JcmbxOrigenes.getSelectedIndex() != 0) {
+            filtros.add(RowFilter.regexFilter(JcmbxOrigenes.getSelectedItem().toString(), 0));
         }
-    }
-
-    // Metodo para limpiar la tabla
-    private void limpiarTabla() {
-        // Obtenemos el modelo de la tabla para poder manipularlo
-        modelo = (DefaultTableModel) JTableViajes.getModel();
-        // Por medio de un for, tomando en cuenta el numero de filas
-        for (int i = (JTableViajes.getRowCount() - 1); i >= 0; i--) {
-            // Eliminaremos las filas hasta que el valor del iterador sea mayor o igual a 0
-            modelo.removeRow(i);
+        if (JcmbxDestinos.getSelectedIndex() != 0) {
+            filtros.add(RowFilter.regexFilter(JcmbxDestinos.getSelectedItem().toString(), 1));
         }
-    }
-
-    // Metodo que permite filtrar los valores dentro de la tabla
-    /* Recibe por parametro el JComboBox de donde tomaremos los valores para
-       filtrar, asi como el numero de la columna donde buscaremos las coincidencias*/
-    public void filtrar(JComboBox lista, int columna) {
-        // Obtenemos el modelo de la tabla para poder manipularlo
-        modelo = (DefaultTableModel) JTableViajes.getModel();
-        // Nuestro Filtro recibe el modelo de la tabla a filtrar
-        tr = new TableRowSorter(modelo);
-        // Le indicamos a la tabla el filtro se usara 
-        JTableViajes.setRowSorter(tr);
-        // Si la opcion seleccionada no es 'Seleccione una opcion'
-        if (lista.getSelectedIndex() != 0) {
-            // Aplicamos el filtro para hacerlo coincidir con el item seleccionadao en la columna indicada
-            // tr.setRowFilter(RowFilter.regexFilter(lista.getSelectedItem().toString(), columna));
-            tr.setRowFilter(RowFilter.regexFilter("^" + lista.getSelectedItem().toString() + "$", columna));
-
-            // En caso de serlo, no queremos que aplique el filtro proporcionado
+        if (JcmbxPlaca.getSelectedIndex() != 0) {
+            filtros.add(RowFilter.regexFilter(JcmbxPlaca.getSelectedItem().toString(), 2));
         }
+        if (JcmbxModelo.getSelectedIndex() != 0) {
+            filtros.add(RowFilter.regexFilter(JcmbxModelo.getSelectedItem().toString(), 3));
+        }
+        if (JcmbxMarca.getSelectedIndex() != 0) {
+            filtros.add(RowFilter.regexFilter(JcmbxMarca.getSelectedItem().toString(), 4));
+        }
+        if (JcmbxDias.getSelectedIndex() != 0) {
+            filtros.add(RowFilter.regexFilter(JcmbxDias.getSelectedItem().toString(), 5));
+        }
+        if (JcmbxMeses.getSelectedIndex() != 0) {
+            filtros.add(RowFilter.regexFilter(JcmbxMeses.getSelectedItem().toString(), 6));
+        }
+
+        RowFilter<String, Integer> rf = RowFilter.andFilter(filtros);
+        tr.setRowFilter(rf);
     }
 
     @SuppressWarnings("unchecked")
@@ -169,8 +140,8 @@ public class JfViajesConsulta extends javax.swing.JFrame {
     private void initComponents() {
 
         JpnlLienzo = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        JTableViajes = new javax.swing.JTable();
+        JSPTablaViajes = new javax.swing.JScrollPane();
+        JtableViajes = new javax.swing.JTable();
         JlblDia = new javax.swing.JLabel();
         JlblMes = new javax.swing.JLabel();
         JcmbxMeses = new javax.swing.JComboBox<>();
@@ -192,18 +163,15 @@ public class JfViajesConsulta extends javax.swing.JFrame {
 
         JpnlLienzo.setBackground(new java.awt.Color(255, 255, 255));
 
-        JTableViajes.setModel(new javax.swing.table.DefaultTableModel(
+        JtableViajes.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
+
             },
             new String [] {
                 "Origen", "Destino", "Placa", "Modelo", "Marca", "Dia", "Mes"
             }
         ));
-        jScrollPane1.setViewportView(JTableViajes);
+        JSPTablaViajes.setViewportView(JtableViajes);
 
         JlblDia.setText("Dia");
 
@@ -267,11 +235,6 @@ public class JfViajesConsulta extends javax.swing.JFrame {
                 JcmbxDiasItemStateChanged(evt);
             }
         });
-        JcmbxDias.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                JcmbxDiasActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout JpnlLienzoLayout = new javax.swing.GroupLayout(JpnlLienzo);
         JpnlLienzo.setLayout(JpnlLienzoLayout);
@@ -280,7 +243,7 @@ public class JfViajesConsulta extends javax.swing.JFrame {
             .addGroup(JpnlLienzoLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(JpnlLienzoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
+                    .addComponent(JSPTablaViajes)
                     .addGroup(JpnlLienzoLayout.createSequentialGroup()
                         .addGroup(JpnlLienzoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(JlblDia)
@@ -331,7 +294,7 @@ public class JfViajesConsulta extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(JcmbxPlaca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(JSPTablaViajes, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -350,48 +313,33 @@ public class JfViajesConsulta extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void JcmbxPlacaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxPlacaItemStateChanged
-        // TODO add your handling code here:
-        filtrar(JcmbxPlaca, 2);
-
+        aplicaFiltros();
     }//GEN-LAST:event_JcmbxPlacaItemStateChanged
 
     private void JcmbxDiasItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxDiasItemStateChanged
-        filtrar(JcmbxDias, 5);
+        aplicaFiltros();
     }//GEN-LAST:event_JcmbxDiasItemStateChanged
 
-    private void JcmbxDiasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JcmbxDiasActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_JcmbxDiasActionPerformed
-
     private void JcmbxOrigenesItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxOrigenesItemStateChanged
-        // TODO add your handling code here:
-        filtrar(JcmbxOrigenes, 0);
+        aplicaFiltros();
     }//GEN-LAST:event_JcmbxOrigenesItemStateChanged
 
     private void JcmbxDestinosItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxDestinosItemStateChanged
-        // TODO add your handling code here:
-        filtrar(JcmbxDestinos, 1);
-
+        aplicaFiltros();
     }//GEN-LAST:event_JcmbxDestinosItemStateChanged
 
     private void JcmbxModeloItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxModeloItemStateChanged
-        // TODO add your handling code here:
-        filtrar(JcmbxModelo, 3);
+        aplicaFiltros();
     }//GEN-LAST:event_JcmbxModeloItemStateChanged
 
     private void JcmbxMarcaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxMarcaItemStateChanged
-        // TODO add your handling code here:
-        filtrar(JcmbxMarca, 4);
+        aplicaFiltros();
     }//GEN-LAST:event_JcmbxMarcaItemStateChanged
 
     private void JcmbxMesesItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxMesesItemStateChanged
-        // TODO add your handling code here:
-        filtrar(JcmbxMeses, 6);
+        aplicaFiltros();
     }//GEN-LAST:event_JcmbxMesesItemStateChanged
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -425,7 +373,7 @@ public class JfViajesConsulta extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTable JTableViajes;
+    private javax.swing.JScrollPane JSPTablaViajes;
     private javax.swing.JComboBox<String> JcmbxDestinos;
     private javax.swing.JComboBox<String> JcmbxDias;
     private javax.swing.JComboBox<String> JcmbxMarca;
@@ -441,6 +389,6 @@ public class JfViajesConsulta extends javax.swing.JFrame {
     private javax.swing.JLabel JlblModelo;
     private javax.swing.JLabel JlblOrigen;
     private javax.swing.JPanel JpnlLienzo;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable JtableViajes;
     // End of variables declaration//GEN-END:variables
 }

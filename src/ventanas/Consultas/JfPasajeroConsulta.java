@@ -9,6 +9,7 @@ import javax.swing.table.TableRowSorter;
 
 public class JfPasajeroConsulta extends javax.swing.JFrame {
 
+    //**************   ATRIBUTOS  *******************/
     private DefaultTableModel modelo;
     private TableRowSorter tr;
     private final CConsultas query = new CConsultas();
@@ -16,72 +17,23 @@ public class JfPasajeroConsulta extends javax.swing.JFrame {
 
     public JfPasajeroConsulta() {
         initComponents();
-        // Linea para impedir que sea posible mover los encabezados de cada tabla
-        JtblPasajeros.getTableHeader().setReorderingAllowed(false);
+        JtablePasajeros.getTableHeader().setReorderingAllowed(false);
         cargaTabla();
-
     }
 
-    public void aplicaFiltros() {
-        // Obtener el modelo de la tabla de pasajeros
-        modelo = (DefaultTableModel) JtblPasajeros.getModel();
-
-        // Crear un nuevo TableRowSorter utilizando el modelo de la tabla
-        tr = new TableRowSorter<>(modelo);
-
-        // Aplicar el TableRowSorter a la tabla JtblPasajeros
-        JtblPasajeros.setRowSorter(tr);
-
-        // Crear una lista para almacenar los filtros
-        ArrayList<RowFilter<String, Integer>> filtros = new ArrayList<>();
-
-        // Verificar si el campo de nombres no está vacío
-        if (!JtxtNombres.getText().trim().isEmpty()) {
-            // Agregar un filtro regex para filtrar por nombres (columna 0)
-            filtros.add(RowFilter.regexFilter(JtxtNombres.getText().trim(), 0));
-        }
-
-        // Verificar si el campo de apellido paterno no está vacío
-        if (!JtxtApPaterno.getText().trim().isEmpty()) {
-            // Agregar un filtro regex para filtrar por apellido paterno (columna 1)
-            filtros.add(RowFilter.regexFilter(JtxtApPaterno.getText().trim(), 1));
-        }
-
-        // Verificar si el campo de apellido materno no está vacío
-        if (!JtxtApMaterno.getText().trim().isEmpty()) {
-            // Agregar un filtro regex para filtrar por apellido materno (columna 2)
-            filtros.add(RowFilter.regexFilter(JtxtApMaterno.getText().trim(), 2));
-        }
-
-        // Verificar si se ha seleccionado un tipo de pasajero en el JComboBox
-        if (JcmbxTIpoPasajero.getSelectedIndex() != 0) {
-            // Agregar un filtro regex para filtrar por tipo de pasajero (columna 3)
-            filtros.add(RowFilter.regexFilter(JcmbxTIpoPasajero.getSelectedItem().toString(), 3));
-        }
-
-        // Crear un filtro compuesto AND que combina todos los filtros en la lista
-        RowFilter<String, Integer> rf = RowFilter.andFilter(filtros);
-
-        // Aplicar el filtro compuesto al TableRowSorter
-        tr.setRowFilter(rf);
-    }
-
+    //**************** METODOS ******************/
     private void limpiarTabla() {
-        modelo = (DefaultTableModel) JtblPasajeros.getModel();
-        for (int i = (JtblPasajeros.getRowCount() - 1); i >= 0; i--) {
+        modelo = (DefaultTableModel) JtablePasajeros.getModel();
+        for (int i = (JtablePasajeros.getRowCount() - 1); i >= 0; i--) {
             modelo.removeRow(i);
         }
     }
 
     public void cargaTabla() {
-        // Obtener el modelo de la tabla de datos
-        modelo = (DefaultTableModel) JtblPasajeros.getModel();
+        modelo = (DefaultTableModel) JtablePasajeros.getModel();
         try {
-            // Leer los datos
             datosPasajeros = query.buscarPasajeros();
-            // Limpiar la tabla
             limpiarTabla();
-            // Asignar los datos en la tabla
             for (String[] datosPasajero : datosPasajeros) {
                 /* Añadimos datos al modelo de la tabla Hacemos la seleccion con respecto al tipo de pasajero que sea /*
                     N -> Niño
@@ -113,14 +65,34 @@ public class JfPasajeroConsulta extends javax.swing.JFrame {
         }
     }
 
+    public void aplicaFiltros() {
+        modelo = (DefaultTableModel) JtablePasajeros.getModel();
+        tr = new TableRowSorter<>(modelo);
+        JtablePasajeros.setRowSorter(tr);
+        ArrayList<RowFilter<String, Integer>> filtros = new ArrayList<>();
+        if (!JtxtNombres.getText().trim().isEmpty()) {
+            filtros.add(RowFilter.regexFilter(JtxtNombres.getText().trim(), 0));
+        }
+        if (!JtxtApPaterno.getText().trim().isEmpty()) {
+            filtros.add(RowFilter.regexFilter(JtxtApPaterno.getText().trim(), 1));
+        }
+        if (!JtxtApMaterno.getText().trim().isEmpty()) {
+            filtros.add(RowFilter.regexFilter(JtxtApMaterno.getText().trim(), 2));
+        }
+        if (JcmbxTIpoPasajero.getSelectedIndex() != 0) {
+            filtros.add(RowFilter.regexFilter(JcmbxTIpoPasajero.getSelectedItem().toString(), 3));
+        }
+        RowFilter<String, Integer> rf = RowFilter.andFilter(filtros);
+        tr.setRowFilter(rf);
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        buttonGroup1 = new javax.swing.ButtonGroup();
         JpnlLienzo = new javax.swing.JPanel();
         JSPTablaPasajeros = new javax.swing.JScrollPane();
-        JtblPasajeros = new javax.swing.JTable();
+        JtablePasajeros = new javax.swing.JTable();
         JlblTipoPasajero = new javax.swing.JLabel();
         JcmbxTIpoPasajero = new javax.swing.JComboBox<>();
         JlblNombres = new javax.swing.JLabel();
@@ -143,7 +115,7 @@ public class JfPasajeroConsulta extends javax.swing.JFrame {
         JpnlLienzo.setBackground(new java.awt.Color(255, 255, 255));
         JpnlLienzo.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        JtblPasajeros.setModel(new javax.swing.table.DefaultTableModel(
+        JtablePasajeros.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -151,10 +123,10 @@ public class JfPasajeroConsulta extends javax.swing.JFrame {
                 "Nombre(s)", "Apellido Paterno", "Apellido Materno", "Tipo", "% de Descuento"
             }
         ));
-        JtblPasajeros.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        JtblPasajeros.setEnabled(false);
-        JtblPasajeros.setOpaque(false);
-        JSPTablaPasajeros.setViewportView(JtblPasajeros);
+        JtablePasajeros.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        JtablePasajeros.setEnabled(false);
+        JtablePasajeros.setOpaque(false);
+        JSPTablaPasajeros.setViewportView(JtablePasajeros);
 
         JpnlLienzo.add(JSPTablaPasajeros, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 520, 390));
 
@@ -249,6 +221,7 @@ public class JfPasajeroConsulta extends javax.swing.JFrame {
     private void JtxtApMaternoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JtxtApMaternoKeyReleased
         aplicaFiltros();
     }//GEN-LAST:event_JtxtApMaternoKeyReleased
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -297,10 +270,9 @@ public class JfPasajeroConsulta extends javax.swing.JFrame {
     private javax.swing.JSeparator JspApMaterno;
     private javax.swing.JSeparator JspApPaterno;
     private javax.swing.JSeparator JspNombres;
-    private javax.swing.JTable JtblPasajeros;
+    private javax.swing.JTable JtablePasajeros;
     private javax.swing.JTextField JtxtApMaterno;
     private javax.swing.JTextField JtxtApPaterno;
     private javax.swing.JTextField JtxtNombres;
-    private javax.swing.ButtonGroup buttonGroup1;
     // End of variables declaration//GEN-END:variables
 }

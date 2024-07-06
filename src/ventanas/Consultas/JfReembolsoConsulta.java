@@ -1,5 +1,4 @@
 package ventanas.Consultas;
-
 import crud.CConsultas;
 import crud.CMensajes;
 import java.sql.SQLException;
@@ -13,50 +12,38 @@ import javax.swing.table.TableRowSorter;
 public class JfReembolsoConsulta extends javax.swing.JFrame {
 
     //**************   ATRIBUTOS  *******************/
-    // Variable para manipular el modelo de la tabla
     private DefaultTableModel modelo;
-    // Variable para poder manipular el modelo de las listas
     private DefaultComboBoxModel listas;
-    // Variable para poder agregar filtros
     private TableRowSorter tr;
-    // Instancia de la clase que permite hacer las consultas "Transacciones"
     private final CConsultas query = new CConsultas();
-    // Creacion de lista, para la obtencion de valores de la tabla
-    private ArrayList<String[]> datosReembol = new ArrayList<>();
-    // Creacion de lista, para la obtencion de valores de las listas
+    private ArrayList<String[]> datosReembolso = new ArrayList<>();
     private ArrayList<String> datosListas = new ArrayList<>();
 
     public JfReembolsoConsulta() {
         initComponents();
-        // Linea para impedir que sea posible mover los encabezados de cada tabla
         JtableReembolsos.getTableHeader().setReorderingAllowed(false);
         cargaComboBox(JcmbxAnios, 2);
         cargaComboBox(JcmbxMeses, 1);
-
         cargarTabla();
     }
 
     //**************** METODOS ******************/
-    // Metodo que permite cargar las opciones en las listas
-    // Recibe por parametro el JComboBox al que se agregaran items
-    public void cargaComboBox(JComboBox combo, int metodoCarga) {
-        //  Obtenemos el modelo del JComboBox
-//        listas = new DefaultComboBoxModel();
+    private void limpiarTabla() {
+        modelo = (DefaultTableModel) JtableReembolsos.getModel();
+        for (int i = (JtableReembolsos.getRowCount() - 1); i >= 0; i--) {
+            modelo.removeRow(i);
+        }
+    }
 
+    public void cargaComboBox(JComboBox combo, int metodoCarga) {
         listas = (DefaultComboBoxModel) combo.getModel();
-        // combo.setModel(listas);
         try {
             switch (metodoCarga) {
                 case 1:
-                    // Obtenemos los valores de la tabla
                     datosListas = query.cargaComboMeses();
-                    // listas.addElement("Seleccione una opcion");
-                    // Asiganamos los valores obtenidos al JComboBox
                     for (int i = 1; i < datosListas.size(); i++) {
-                        // Añadimos items por string dentro de la lista
                         listas.addElement(datosListas.get(i));
                     }
-                    // Limpiamos la lista para cargar los datos del siguiente JComboBox
                     datosListas.clear();
                     break;
                 case 2:
@@ -75,61 +62,43 @@ public class JfReembolsoConsulta extends javax.swing.JFrame {
     }
 
     public void cargarTabla() {
-        // Obtenemos el modelo para poder manipularlo
         modelo = (DefaultTableModel) JtableReembolsos.getModel();
         try {
-            // Leer los datos
-//            datosReembol = query.buscarReembolso();
-            // Limpiamos la tabla
+            datosReembolso = query.buscarReembolso();
             limpiarTabla();
-            // Asignamos los valores obtenidos en la tabla
-            for (String[] datosRee : datosReembol) {
+            for (String[] datosRee : datosReembolso) {
                 modelo.addRow(new Object[]{datosRee[0], datosRee[1], datosRee[2], datosRee[3], datosRee[4], datosRee[5], datosRee[6]});
             }
-
         } catch (Exception e) {
             CMensajes.msg_error("No se pudo cargar la informacion en la tabla", "Cargando Tabla");
         }
     }
 
-    // Metodo para limpiar la tabla
-    private void limpiarTabla() {
-        // Obtenemos el modelo de la tabla para poder manipularlo
+    public void aplicaFiltros() {
         modelo = (DefaultTableModel) JtableReembolsos.getModel();
-        // Por medio de un for, tomando en cuenta el numero de filas
-        for (int i = (JtableReembolsos.getRowCount() - 1); i >= 0; i--) {
-            // Eliminaremos las filas hasta que el valor del iterador sea mayor o igual a 0
-            modelo.removeRow(i);
-        }
-    }
-
-    public void filtrar(JComboBox lista, int columna) {
-        // Obtenemos el modelo de la tabla para poder manipularlo
-        modelo = (DefaultTableModel) JtableReembolsos.getModel();
-        // Nuestro Filtro recibe el modelo de la tabla a filtrar
-        tr = new TableRowSorter(modelo);
-        // Le indicamos a la tabla el filtro se usara 
+        tr = new TableRowSorter<>(modelo);
         JtableReembolsos.setRowSorter(tr);
-        // Si la opcion seleccionada no es 'Seleccione una opcion'
-        if (lista.getSelectedIndex() != 0) {
-            // Aplicamos el filtro para hacerlo coincidir con el item seleccionadao en la columna indicada
-            // tr.setRowFilter(RowFilter.regexFilter(lista.getSelectedItem().toString(), columna));
-            tr.setRowFilter(RowFilter.regexFilter("^" + lista.getSelectedItem().toString() + "$", columna));
-
-            // En caso de serlo, no queremos que aplique el filtro proporcionado
+        ArrayList<RowFilter<String, Integer>> filtros = new ArrayList<>();
+        if (!JtxtNombres.getText().trim().isEmpty()) {
+            filtros.add(RowFilter.regexFilter(JtxtNombres.getText().trim(), 0));
         }
-    }
-
-    public void filtraCuadrOTexto(String valor, int columna) {
-        // Obtenemos el modelo de la tabla para poder manipularlo
-        modelo = (DefaultTableModel) JtableReembolsos.getModel();
-        tr = new TableRowSorter(modelo);
-        JtableReembolsos.setRowSorter(tr);
-        if (valor != null) {
-            tr.setRowFilter(RowFilter.regexFilter(valor, columna));
-
+        if (!JtxtApPaterno.getText().trim().isEmpty()) {
+            filtros.add(RowFilter.regexFilter(JtxtApPaterno.getText().trim(), 1));
         }
-
+        if (!JtxtApMaterno.getText().trim().isEmpty()) {
+            filtros.add(RowFilter.regexFilter(JtxtApMaterno.getText().trim(), 2));
+        }
+        if (JcmbxDias.getSelectedIndex() != 0) {
+            filtros.add(RowFilter.regexFilter(JcmbxDias.getSelectedItem().toString(), 4));
+        }
+        if (JcmbxMeses.getSelectedIndex() != 0) {
+            filtros.add(RowFilter.regexFilter(JcmbxMeses.getSelectedItem().toString(), 5));
+        }
+        if (JcmbxAnios.getSelectedIndex() != 0) {
+            filtros.add(RowFilter.regexFilter(JcmbxAnios.getSelectedItem().toString(), 6));
+        }
+        RowFilter<String, Integer> rf = RowFilter.andFilter(filtros);
+        tr.setRowFilter(rf);
     }
 
     @SuppressWarnings("unchecked")
@@ -152,9 +121,9 @@ public class JfReembolsoConsulta extends javax.swing.JFrame {
         JlblApPaterno = new javax.swing.JLabel();
         JtxtApPaterno = new javax.swing.JTextField();
         JspApPaterno = new javax.swing.JSeparator();
-        JlblApPaterno1 = new javax.swing.JLabel();
-        JtxtApmMaterno = new javax.swing.JTextField();
-        JspApPaterno1 = new javax.swing.JSeparator();
+        JlblApMaterno = new javax.swing.JLabel();
+        JtxtApMaterno = new javax.swing.JTextField();
+        JspApMaterno = new javax.swing.JSeparator();
         JspNombres = new javax.swing.JSeparator();
         JtxtNombres = new javax.swing.JTextField();
         JlblNombres = new javax.swing.JLabel();
@@ -237,12 +206,12 @@ public class JfReembolsoConsulta extends javax.swing.JFrame {
             }
         });
 
-        JlblApPaterno1.setText("Apellido Materno");
+        JlblApMaterno.setText("Apellido Materno");
 
-        JtxtApmMaterno.setBorder(null);
-        JtxtApmMaterno.addKeyListener(new java.awt.event.KeyAdapter() {
+        JtxtApMaterno.setBorder(null);
+        JtxtApMaterno.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                JtxtApmMaternoKeyReleased(evt);
+                JtxtApMaternoKeyReleased(evt);
             }
         });
 
@@ -268,9 +237,9 @@ public class JfReembolsoConsulta extends javax.swing.JFrame {
                     .addComponent(JlblApPaterno)
                     .addComponent(JtxtApPaterno, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(JspApPaterno, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(JlblApPaterno1)
-                    .addComponent(JtxtApmMaterno, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(JspApPaterno1, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(JlblApMaterno)
+                    .addComponent(JtxtApMaterno, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(JspApMaterno, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         JpnlDatosClienteLayout.setVerticalGroup(
@@ -289,11 +258,11 @@ public class JfReembolsoConsulta extends javax.swing.JFrame {
                 .addGap(4, 4, 4)
                 .addComponent(JspApPaterno, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(JlblApPaterno1)
+                .addComponent(JlblApMaterno)
                 .addGap(4, 4, 4)
-                .addComponent(JtxtApmMaterno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(JtxtApMaterno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(4, 4, 4)
-                .addComponent(JspApPaterno1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(JspApMaterno, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         JpnlLienzo.add(JpnlDatosCliente, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 10, 160, 190));
@@ -302,11 +271,6 @@ public class JfReembolsoConsulta extends javax.swing.JFrame {
         JcmbxDias.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 JcmbxDiasItemStateChanged(evt);
-            }
-        });
-        JcmbxDias.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                JcmbxDiasActionPerformed(evt);
             }
         });
         JpnlLienzo.add(JcmbxDias, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, -1, -1));
@@ -326,41 +290,29 @@ public class JfReembolsoConsulta extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void JcmbxDiasItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxDiasItemStateChanged
-        filtrar(JcmbxDias, 4);
+        aplicaFiltros();
     }//GEN-LAST:event_JcmbxDiasItemStateChanged
 
-    private void JcmbxDiasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JcmbxDiasActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_JcmbxDiasActionPerformed
-
     private void JtxtNombresKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JtxtNombresKeyReleased
-        // TODO add your handling code here:
-        filtraCuadrOTexto(JtxtNombres.getText(), 0);
+        aplicaFiltros();
     }//GEN-LAST:event_JtxtNombresKeyReleased
 
     private void JtxtApPaternoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JtxtApPaternoKeyReleased
-        // TODO add your handling code here:
-        filtraCuadrOTexto(JtxtApPaterno.getText(), 1);
+        aplicaFiltros();
     }//GEN-LAST:event_JtxtApPaternoKeyReleased
 
-    private void JtxtApmMaternoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JtxtApmMaternoKeyReleased
-        // TODO add your handling code here:
-        filtraCuadrOTexto(JtxtApmMaterno.getText(), 2);
-    }//GEN-LAST:event_JtxtApmMaternoKeyReleased
+    private void JtxtApMaternoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JtxtApMaternoKeyReleased
+        aplicaFiltros();
+    }//GEN-LAST:event_JtxtApMaternoKeyReleased
 
     private void JcmbxMesesItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxMesesItemStateChanged
-        // TODO add your handling code here:
-        filtrar(JcmbxMeses, 5);
+        aplicaFiltros();
     }//GEN-LAST:event_JcmbxMesesItemStateChanged
 
     private void JcmbxAniosItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxAniosItemStateChanged
-        // TODO add your handling code here:
-        filtrar(JcmbxDias, NORMAL);
+        aplicaFiltros();
     }//GEN-LAST:event_JcmbxAniosItemStateChanged
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -402,20 +354,20 @@ public class JfReembolsoConsulta extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> JcmbxDias;
     private javax.swing.JComboBox<String> JcmbxMeses;
     private javax.swing.JLabel JlblAnio;
+    private javax.swing.JLabel JlblApMaterno;
     private javax.swing.JLabel JlblApPaterno;
-    private javax.swing.JLabel JlblApPaterno1;
     private javax.swing.JLabel JlblDia;
     private javax.swing.JLabel JlblFondo;
     private javax.swing.JLabel JlblMes;
     private javax.swing.JLabel JlblNombres;
     private javax.swing.JPanel JpnlDatosCliente;
     private javax.swing.JPanel JpnlLienzo;
+    private javax.swing.JSeparator JspApMaterno;
     private javax.swing.JSeparator JspApPaterno;
-    private javax.swing.JSeparator JspApPaterno1;
     private javax.swing.JSeparator JspNombres;
     private javax.swing.JTable JtableReembolsos;
+    private javax.swing.JTextField JtxtApMaterno;
     private javax.swing.JTextField JtxtApPaterno;
-    private javax.swing.JTextField JtxtApmMaterno;
     private javax.swing.JTextField JtxtNombres;
     // End of variables declaration//GEN-END:variables
 }

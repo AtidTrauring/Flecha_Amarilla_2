@@ -11,8 +11,9 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
 public class JfRutasConsulta extends javax.swing.JFrame {
-    
- private DefaultTableModel modelo;
+
+    //**************   ATRIBUTOS  *******************/
+    private DefaultTableModel modelo;
     private DefaultComboBoxModel listas;
     private TableRowSorter tr;
     private final CConsultas query = new CConsultas();
@@ -21,22 +22,42 @@ public class JfRutasConsulta extends javax.swing.JFrame {
 
     public JfRutasConsulta() {
         initComponents();
-         JtableRutas.getTableHeader().setReorderingAllowed(false);
+        JtableRutas.getTableHeader().setReorderingAllowed(false);
         cargaComboBox(JcmbxOrigenes, 1);
         cargaComboBox(JcmbxDestinos, 2);
         cargaComboBox(JcmbxDistancias, 3);
         cargaComboBox(JcmbxDuraciones, 4);
         cargaComboBox(JcmbxPrecios, 5);
-        // Cargas los valores de la tabla
         cargarTabla();
     }
 
-     public void cargaComboBox(JComboBox combo, int metodoCarga) {
+    //**************** METODOS ******************/  
+    private void limpiarTabla() {
+        modelo = (DefaultTableModel) JtableRutas.getModel();
+        for (int i = (JtableRutas.getRowCount() - 1); i >= 0; i--) {
+            modelo.removeRow(i);
+        }
+    }
+
+    public void cargarTabla() {
+        modelo = (DefaultTableModel) JtableRutas.getModel();
+        try {
+            datosRutas = query.buscaRutas();
+            limpiarTabla();
+            for (String[] datosRutas : datosRutas) {
+                modelo.addRow(new Object[]{datosRutas[0], datosRutas[1], datosRutas[2], datosRutas[3], datosRutas[4], datosRutas[5], datosRutas[6], datosRutas[7]});
+            }
+
+        } catch (SQLException e) {
+            CMensajes.msg_error("No se pudo cargar la informacion en la tabla", "Cargando Tabla.");
+        }
+    }
+
+    public void cargaComboBox(JComboBox combo, int metodoCarga) {
         listas = (DefaultComboBoxModel) combo.getModel();
         try {
             switch (metodoCarga) {
                 case 1:
-                    // Obtenemos los valores de la tabla
                     datosListas = query.cargaComboOrigenes();
                     for (int i = 1; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
@@ -78,40 +99,33 @@ public class JfRutasConsulta extends javax.swing.JFrame {
 
     }
 
-    public void filtrar(JComboBox lista, int columna) {
+    public void aplicaFiltros() {
         modelo = (DefaultTableModel) JtableRutas.getModel();
-        tr = new TableRowSorter(modelo);
+        tr = new TableRowSorter<>(modelo);
         JtableRutas.setRowSorter(tr);
-        if (lista.getSelectedIndex() != 0) {
-            tr.setRowFilter(RowFilter.regexFilter("^" + lista.getSelectedItem().toString() + "$", columna));
+        ArrayList<RowFilter<String, Integer>> filtros = new ArrayList<>();
+        if (!JtxtNombreTerminal.getText().trim().isEmpty()) {
+            filtros.add(RowFilter.regexFilter(JtxtNombreTerminal.getText().trim(), 0));
         }
+        if (JcmbxOrigenes.getSelectedIndex() != 0) {
+            filtros.add(RowFilter.regexFilter(JcmbxOrigenes.getSelectedItem().toString(), 1));
+        }
+        if (JcmbxDestinos.getSelectedIndex() != 0) {
+            filtros.add(RowFilter.regexFilter(JcmbxDestinos.getSelectedItem().toString(), 2));
+        }
+        if (JcmbxDistancias.getSelectedIndex() != 0) {
+            filtros.add(RowFilter.regexFilter(JcmbxDistancias.getSelectedItem().toString(), 3));
+        }
+        if (JcmbxDuraciones.getSelectedIndex() != 0) {
+            filtros.add(RowFilter.regexFilter(JcmbxDuraciones.getSelectedItem().toString(), 6));
+        }
+        if (JcmbxPrecios.getSelectedIndex() != 0) {
+            filtros.add(RowFilter.regexFilter(JcmbxPrecios.getSelectedItem().toString(), 7));
+        }
+        RowFilter<String, Integer> rf = RowFilter.andFilter(filtros);
+        tr.setRowFilter(rf);
     }
 
-    // Metodo para limpiar la tabla
-    private void limpiarTabla() {
-        modelo = (DefaultTableModel) JtableRutas.getModel();
-        for (int i = (JtableRutas.getRowCount() - 1); i >= 0; i--) {
-            modelo.removeRow(i);
-        }
-    }
-
-    public void cargarTabla() {
-        // Obtenemos el modelo para poder manipularlo
-        modelo = (DefaultTableModel) JtableRutas.getModel();
-        try {
-            // Leer los datos
-            datosRutas = query.buscaRutas();
-            // Limpiamos la tabla
-            limpiarTabla();
-            // Asignamos los valores obtenidos en la tabla
-            for (String[] datosRutas : datosRutas) {
-                modelo.addRow(new Object[]{datosRutas[0], datosRutas[1], datosRutas[2], datosRutas[3],datosRutas[4], datosRutas[5], datosRutas[6], datosRutas[7]});
-            }
-
-        } catch (SQLException e) {
-            CMensajes.msg_error("No se pudo cargar la informacion en la tabla", "Cargando Tabla.");
-        }
-    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -145,10 +159,7 @@ public class JfRutasConsulta extends javax.swing.JFrame {
 
         JtableRutas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+
             },
             new String [] {
                 "Nombre", "Origen", "Destino", "Distancia", "Salida", "Llegada", "Duracion", "Precio"
@@ -250,33 +261,25 @@ public class JfRutasConsulta extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void JcmbxOrigenesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JcmbxOrigenesActionPerformed
-        // TODO add your handling code here:
-        filtrar(JcmbxOrigenes, 1);
+        aplicaFiltros();
     }//GEN-LAST:event_JcmbxOrigenesActionPerformed
 
     private void JcmbxDestinosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JcmbxDestinosActionPerformed
-        // TODO add your handling code here:
-        filtrar(JcmbxDestinos, 2);
+        aplicaFiltros();
     }//GEN-LAST:event_JcmbxDestinosActionPerformed
 
     private void JcmbxDistanciasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JcmbxDistanciasActionPerformed
-        // TODO add your handling code here:
-        filtrar(JcmbxDistancias, 3);
+        aplicaFiltros();
     }//GEN-LAST:event_JcmbxDistanciasActionPerformed
 
     private void JcmbxDuracionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JcmbxDuracionesActionPerformed
-        // TODO add your handling code here:
-        filtrar(JcmbxDuraciones, 6);
+        aplicaFiltros();
     }//GEN-LAST:event_JcmbxDuracionesActionPerformed
 
     private void JcmbxPreciosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JcmbxPreciosActionPerformed
-        // TODO add your handling code here:
-        filtrar(JcmbxPrecios, 7);
+        aplicaFiltros();
     }//GEN-LAST:event_JcmbxPreciosActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">

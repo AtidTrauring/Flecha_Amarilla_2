@@ -280,9 +280,9 @@
                           <Component id="JlblApPaterno" min="-2" max="-2" attributes="0"/>
                           <Component id="JtxtApPaterno" min="-2" pref="137" max="-2" attributes="0"/>
                           <Component id="JspApPaterno" min="-2" pref="137" max="-2" attributes="0"/>
-                          <Component id="JlblApPaterno1" min="-2" max="-2" attributes="0"/>
-                          <Component id="JtxtApmMaterno" min="-2" pref="137" max="-2" attributes="0"/>
-                          <Component id="JspApPaterno1" min="-2" pref="137" max="-2" attributes="0"/>
+                          <Component id="JlblApMaterno" min="-2" max="-2" attributes="0"/>
+                          <Component id="JtxtApMaterno" min="-2" pref="137" max="-2" attributes="0"/>
+                          <Component id="JspApMaterno" min="-2" pref="137" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
@@ -304,11 +304,11 @@
                       <EmptySpace min="4" pref="4" max="-2" attributes="0"/>
                       <Component id="JspApPaterno" min="-2" pref="10" max="-2" attributes="0"/>
                       <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                      <Component id="JlblApPaterno1" min="-2" max="-2" attributes="0"/>
+                      <Component id="JlblApMaterno" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="4" pref="4" max="-2" attributes="0"/>
-                      <Component id="JtxtApmMaterno" min="-2" max="-2" attributes="0"/>
+                      <Component id="JtxtApMaterno" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="4" pref="4" max="-2" attributes="0"/>
-                      <Component id="JspApPaterno1" min="-2" pref="10" max="-2" attributes="0"/>
+                      <Component id="JspApMaterno" min="-2" pref="10" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -331,22 +331,22 @@
             </Component>
             <Component class="javax.swing.JSeparator" name="JspApPaterno">
             </Component>
-            <Component class="javax.swing.JLabel" name="JlblApPaterno1">
+            <Component class="javax.swing.JLabel" name="JlblApMaterno">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Apellido Materno"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JTextField" name="JtxtApmMaterno">
+            <Component class="javax.swing.JTextField" name="JtxtApMaterno">
               <Properties>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="null"/>
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="JtxtApmMaternoKeyReleased"/>
+                <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="JtxtApMaternoKeyReleased"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JSeparator" name="JspApPaterno1">
+            <Component class="javax.swing.JSeparator" name="JspApMaterno">
             </Component>
             <Component class="javax.swing.JSeparator" name="JspNombres">
             </Component>
@@ -408,7 +408,6 @@
           </Properties>
           <Events>
             <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="JcmbxDiasItemStateChanged"/>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JcmbxDiasActionPerformed"/>
           </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>

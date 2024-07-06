@@ -1,6 +1,4 @@
-
 package ventanas.Consultas;
-
 import crud.CConsultas;
 import crud.CMensajes;
 import java.sql.SQLException;
@@ -11,15 +9,16 @@ import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
-
 public class JfParadasConsulta extends javax.swing.JFrame {
+
+    //**************   ATRIBUTOS  *******************/
     private DefaultTableModel modelo;
     private DefaultComboBoxModel listas;
     private TableRowSorter tr;
     private final CConsultas query = new CConsultas();
     private ArrayList<String[]> datosParadas = new ArrayList<>();
     private ArrayList<String> datosListas = new ArrayList<>();
-    
+
     public JfParadasConsulta() {
         initComponents();
         JtableParadas.getTableHeader().setReorderingAllowed(false);
@@ -27,48 +26,8 @@ public class JfParadasConsulta extends javax.swing.JFrame {
         cargaComboBox(JcmbxTerminales, 2);
         cargarTabla();
     }
-  
 
-    public void cargaComboBox(JComboBox combo, int metodoCarga) {
-        listas = (DefaultComboBoxModel) combo.getModel();
-        try {
-            switch (metodoCarga) {
-                case 1:
-                    datosListas = query.cargaComboRutas();
-                    for (int i = 1; i < datosListas.size(); i++) {
-                        // Añadimos items por string dentro de la lista
-                        listas.addElement(datosListas.get(i));
-                    }
-                    // Limpiamos la lista para cargar los datos del siguiente JComboBox
-                    datosListas.clear();
-                    break;
-                case 2:
-                    datosListas = query.cargaComboTerminales();
-                    for (int i = 1; i < datosListas.size(); i++) {
-                        listas.addElement(datosListas.get(i));
-                    }
-                    datosListas.clear();
-                    break;
-
-            }
-
-        } catch (SQLException e) {
-        }
-
-    }
-
-    public void filtrar(JComboBox lista, int columna) {
-        modelo = (DefaultTableModel) JtableParadas.getModel();
-        // Nuestro Filtro recibe el modelo de la tabla a filtrar
-        tr = new TableRowSorter(modelo);
-        JtableParadas.setRowSorter(tr);
-        if (lista.getSelectedIndex() != 0) {
-            tr.setRowFilter(RowFilter.regexFilter("^" + lista.getSelectedItem().toString() + "$", columna));
-
-            // En caso de serlo, no queremos que aplique el filtro proporcionado
-        }
-    }
-
+    //**************** METODOS ******************/
     private void limpiarTabla() {
         modelo = (DefaultTableModel) JtableParadas.getModel();
         for (int i = (JtableParadas.getRowCount() - 1); i >= 0; i--) {
@@ -79,18 +38,53 @@ public class JfParadasConsulta extends javax.swing.JFrame {
     public void cargarTabla() {
         modelo = (DefaultTableModel) JtableParadas.getModel();
         try {
-            // Leer los datos
             datosParadas = query.buscaParadas();
             limpiarTabla();
             for (String[] datosParadas : datosParadas) {
                 modelo.addRow(new Object[]{datosParadas[0], datosParadas[1]});
             }
-
         } catch (SQLException e) {
             CMensajes.msg_error("No se pudo cargar la informacion en la tabla", "Cargando Tabla");
         }
     }
 
+    public void cargaComboBox(JComboBox combo, int metodoCarga) {
+        listas = (DefaultComboBoxModel) combo.getModel();
+        try {
+            switch (metodoCarga) {
+                case 1:
+                    datosListas = query.cargaComboRutas();
+                    for (int i = 1; i < datosListas.size(); i++) {
+                        listas.addElement(datosListas.get(i));
+                    }
+                    datosListas.clear();
+                    break;
+                case 2:
+                    datosListas = query.cargaComboTerminales();
+                    for (int i = 1; i < datosListas.size(); i++) {
+                        listas.addElement(datosListas.get(i));
+                    }
+                    datosListas.clear();
+                    break;
+            }
+        } catch (SQLException e) {
+        }
+    }
+
+    public void aplicaFiltros() {
+        modelo = (DefaultTableModel) JtableParadas.getModel();
+        tr = new TableRowSorter<>(modelo);
+        JtableParadas.setRowSorter(tr);
+        ArrayList<RowFilter<String, Integer>> filtros = new ArrayList<>();
+        if (JcmbxRutas.getSelectedIndex() != 0) {
+            filtros.add(RowFilter.regexFilter(JcmbxRutas.getSelectedItem().toString(), 0));
+        }
+        if (JcmbxTerminales.getSelectedIndex() != 0) {
+            filtros.add(RowFilter.regexFilter(JcmbxTerminales.getSelectedItem().toString(), 1));
+        }
+        RowFilter<String, Integer> rf = RowFilter.andFilter(filtros);
+        tr.setRowFilter(rf);
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -114,10 +108,7 @@ public class JfParadasConsulta extends javax.swing.JFrame {
 
         JtableParadas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null}
+
             },
             new String [] {
                 "Nombre Ruta", "Terminal (Parada)"
@@ -207,18 +198,13 @@ public class JfParadasConsulta extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void JcmbxRutasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JcmbxRutasActionPerformed
-        // TODO add your handling code here:
-        filtrar(JcmbxRutas, 0);
+        aplicaFiltros();
     }//GEN-LAST:event_JcmbxRutasActionPerformed
 
     private void JcmbxTerminalesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JcmbxTerminalesActionPerformed
-        // TODO add your handling code here:
-        filtrar(JcmbxTerminales, 1);
+        aplicaFiltros();
     }//GEN-LAST:event_JcmbxTerminalesActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
