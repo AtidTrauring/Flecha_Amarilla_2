@@ -28,8 +28,7 @@ public class JfBoletosConsulta extends javax.swing.JFrame {
         cargaComboBox(JcmbxDias, 3);
         cargaComboBox(JcmbxMeses, 4);
         cargaComboBox(JcmbxAnios, 5);
-        cargaComboBox(JcmbxTiposBoletos, 6);
-        cargaComboBox(JcmbxPrecios, 7);
+        cargaComboBox(JcmbxPrecios, 6);
         cargarTabla();
     }
 
@@ -103,13 +102,6 @@ public class JfBoletosConsulta extends javax.swing.JFrame {
                     datosListas.clear();
                     break;
                 case 6:
-                    datosListas = query.cargaComboTipoBoletos();
-                    for (int i = 1; i < datosListas.size(); i++) {
-                        listas.addElement(datosListas.get(i));
-                    }
-                    datosListas.clear();
-                    break;
-                case 7:
                     datosListas = query.cargaComboPrecio();
                     for (int i = 1; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
@@ -230,7 +222,7 @@ public class JfBoletosConsulta extends javax.swing.JFrame {
 
         JlblTipo.setText("Tipo de Boleto");
 
-        JcmbxTiposBoletos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione una opcion", "PP" }));
+        JcmbxTiposBoletos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione una opcion", "Primera Plus", "Comercial" }));
         JcmbxTiposBoletos.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 JcmbxTiposBoletosItemStateChanged(evt);

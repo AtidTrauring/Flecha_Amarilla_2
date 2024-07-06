@@ -103,8 +103,6 @@ public class JfClientesConsulta extends javax.swing.JFrame {
             }
         ));
         JtableClientes.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        JtableClientes.setEnabled(false);
-        JtableClientes.setOpaque(false);
         JtableClientes.getTableHeader().setReorderingAllowed(false);
         JSPTablaClientes.setViewportView(JtableClientes);
 

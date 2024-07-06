@@ -124,8 +124,6 @@ public class JfPasajeroConsulta extends javax.swing.JFrame {
             }
         ));
         JtablePasajeros.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        JtablePasajeros.setEnabled(false);
-        JtablePasajeros.setOpaque(false);
         JSPTablaPasajeros.setViewportView(JtablePasajeros);
 
         JpnlLienzo.add(JSPTablaPasajeros, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 520, 390));

@@ -454,8 +454,8 @@ public class JfPrincipal extends javax.swing.JFrame {
     private void JmiBViajesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JmiBViajesActionPerformed
         // Instanciamos JfViajessConsulta
         JfViajesConsulta vc = new JfViajesConsulta();
-        // 528, 279
-        creaFrame(vc, "Buscar viajes", 567, 319);
+        // 540, 304
+        creaFrame(vc, "Buscar viajes", 580, 340);
     }//GEN-LAST:event_JmiBViajesActionPerformed
 
     private void JmiBConductoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JmiBConductoresActionPerformed
