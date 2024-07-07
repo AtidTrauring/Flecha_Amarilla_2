@@ -4,6 +4,7 @@ import crud.CConsultas;
 import crud.CMensajes;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
@@ -17,6 +18,9 @@ public class JfConductorConsulta extends javax.swing.JFrame {
     private final CConsultas query = new CConsultas();
     private ArrayList<String[]> datosConductores = new ArrayList<>();
     private int idActualizar;
+    private int idEliminar;
+    private int filaSeleccionada;
+    private String[] valoresFila;
 
     public JfConductorConsulta() {
         initComponents();
@@ -211,8 +215,8 @@ public class JfConductorConsulta extends javax.swing.JFrame {
         JtableConductores.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         JtableConductores.setShowGrid(false);
         JtableConductores.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                JtableConductoresMousePressed(evt);
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                JtableConductoresMouseClicked(evt);
             }
         });
         JSPTablaConductores.setViewportView(JtableConductores);
@@ -334,24 +338,24 @@ public class JfConductorConsulta extends javax.swing.JFrame {
     }//GEN-LAST:event_JtxtTelefonoKeyReleased
 
     private void JbtnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnActualizarActionPerformed
-        String[] valoresIniciales = obtenerValoresFilaTabla();
-        actualizar(idActualizar, valoresIniciales);
+        valoresFila = obtenerValoresFilaTabla();
+        actualizar(idActualizar, valoresFila);
     }//GEN-LAST:event_JbtnActualizarActionPerformed
 
-    private void JtableConductoresMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JtableConductoresMousePressed
-        String[] valoresIniciales = obtenerValoresFilaTabla();
-        idActualizar = buscarId(valoresIniciales[0], valoresIniciales[1], valoresIniciales[2], valoresIniciales[3]);
-    }//GEN-LAST:event_JtableConductoresMousePressed
-
     private void JbtnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnEliminarActionPerformed
-        if (JOptionPane.showConfirmDialog(null, "¿Desea eliminar el registro seleccionado?", "Confimacion", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-            String[] valoresIniciales = obtenerValoresFilaTabla();
-            int idEliminar = buscarId(valoresIniciales[0], valoresIniciales[1], valoresIniciales[2], valoresIniciales[3]);
+        if (JOptionPane.showConfirmDialog(null, "¿Desea eliminar el registro seleccionado?", "Confimacion", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            valoresFila = obtenerValoresFilaTabla();
+            idEliminar = buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3]);
             eliminar(idEliminar);
         } else {
             CMensajes.msg("Accion cancelada", "Eliminacion");
         }
     }//GEN-LAST:event_JbtnEliminarActionPerformed
+
+    private void JtableConductoresMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JtableConductoresMouseClicked
+        valoresFila = obtenerValoresFilaTabla();
+        idActualizar = buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3]);
+    }//GEN-LAST:event_JtableConductoresMouseClicked
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */

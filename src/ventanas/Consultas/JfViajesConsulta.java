@@ -2,6 +2,7 @@ package ventanas.Consultas;
 
 import crud.CConsultas;
 import crud.CMensajes;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -9,7 +10,7 @@ import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
-public class JfViajesConsulta extends javax.swing.JFrame {
+public final class JfViajesConsulta extends javax.swing.JFrame {
 
     //**************   ATRIBUTOS  *******************/
     private DefaultTableModel modelo;
@@ -48,7 +49,7 @@ public class JfViajesConsulta extends javax.swing.JFrame {
                 modelo.addRow(new Object[]{datosVia[0], datosVia[1], datosVia[2], datosVia[3], datosVia[4], datosVia[5], datosVia[6]});
             }
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             CMensajes.msg_error("No se pudo cargar la informacion en la tabla", "Cargando Tabla");
         }
     }
@@ -72,17 +73,18 @@ public class JfViajesConsulta extends javax.swing.JFrame {
                     datosListas.clear();
                     break;
                 case 3:
+                    datosListas = query.cargaComboPlaca();
                     for (int i = 1; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
                     datosListas.clear();
                     break;
                 case 4:
-                    datosListas = query.cargaComboMeses();
-                    for (int i = 1; i < datosListas.size(); i++) {
-                        listas.addElement(datosListas.get(i));
+                    ArrayList<String[]> Meses = query.cargaComboMeses();
+                    for (String[] Mes : Meses) {
+                        listas.addElement(Mes[1]);
                     }
-                    datosListas.clear();
+                    Meses.clear();
                     break;
                 case 5:
                     datosListas = query.cargaComboOrigenes();
@@ -98,10 +100,54 @@ public class JfViajesConsulta extends javax.swing.JFrame {
                     }
                     datosListas.clear();
                     break;
+                case 7:
+                    String[] dias = asignaDias(JcmbxMeses);
+                    if (dias != null) {
+                        for (String dia : dias) {
+                            listas.addElement(dia);
+                        }
+                        dias = null;
+                    }
+                    break;
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
         }
 
+    }
+
+    public String[] asignaDias(JComboBox mes) {
+        String[] Dias = null;
+        String mesSeleccionado = mes.getSelectedItem().toString();
+        switch (mesSeleccionado) {
+            case "Enero":
+            case "Marzo":
+            case "Mayo":
+            case "Julio":
+            case "Agosto":
+            case "Octubre":
+            case "Diciembre":
+                Dias = new String[31];
+                for (int i = 0; i < 31; i++) {
+                    Dias[i] = String.valueOf(i + 1);
+                }
+                break;
+            case "Abril":
+            case "Junio":
+            case "Septiembre":
+            case "Noviembre":
+                Dias = new String[30];
+                for (int i = 0; i < 30; i++) {
+                    Dias[i] = String.valueOf(i + 1);
+                }
+                break;
+            case "Febrero":
+                Dias = new String[29];
+                for (int i = 0; i < 29; i++) {
+                    Dias[i] = String.valueOf(i + 1);
+                }
+                break;
+        }
+        return Dias;
     }
 
     public void aplicaFiltros() {
@@ -229,7 +275,7 @@ public class JfViajesConsulta extends javax.swing.JFrame {
             }
         });
 
-        JcmbxDias.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecciona una opcion", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31" }));
+        JcmbxDias.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione un mes" }));
         JcmbxDias.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 JcmbxDiasItemStateChanged(evt);
@@ -337,6 +383,21 @@ public class JfViajesConsulta extends javax.swing.JFrame {
     }//GEN-LAST:event_JcmbxMarcaItemStateChanged
 
     private void JcmbxMesesItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxMesesItemStateChanged
+        if (JcmbxMeses.getSelectedIndex() != 0) {
+            if (JcmbxDias.getItemCount() == 1) {
+                
+                cargaComboBox(JcmbxDias, 7);
+            } else if (JcmbxDias.getItemCount() > 1) {
+                while (JcmbxDias.getItemCount() > 1) {
+                    JcmbxDias.removeItemAt(1);
+                }
+                cargaComboBox(JcmbxDias, 7);
+            }
+        } else {
+            while (JcmbxDias.getItemCount() > 1) {
+                JcmbxDias.removeItemAt(1);
+            }
+        }
         aplicaFiltros();
     }//GEN-LAST:event_JcmbxMesesItemStateChanged
 

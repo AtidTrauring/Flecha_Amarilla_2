@@ -47,7 +47,7 @@ public class JfClientesConsulta extends javax.swing.JFrame {
         tr = new TableRowSorter<>(modelo);
         JtableClientes.setRowSorter(tr);
         ArrayList<RowFilter<String, Integer>> filtros = new ArrayList<>();
-        if (JtxtNombres.getText().trim().isEmpty()) {
+        if (!JtxtNombres.getText().trim().isEmpty()) {
             filtros.add(RowFilter.regexFilter(JtxtNombres.getText(), 0));
         }
         if (JtxtApPaterno.getText().trim().isEmpty()) {

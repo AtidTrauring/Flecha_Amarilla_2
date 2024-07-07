@@ -10,7 +10,7 @@ import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
-public class JfRutasConsulta extends javax.swing.JFrame {
+public final class JfRutasConsulta extends javax.swing.JFrame {
 
     //**************   ATRIBUTOS  *******************/
     private DefaultTableModel modelo;
@@ -44,8 +44,8 @@ public class JfRutasConsulta extends javax.swing.JFrame {
         try {
             datosRutas = query.buscaRutas();
             limpiarTabla();
-            for (String[] datosRutas : datosRutas) {
-                modelo.addRow(new Object[]{datosRutas[0], datosRutas[1], datosRutas[2], datosRutas[3], datosRutas[4], datosRutas[5], datosRutas[6], datosRutas[7]});
+            for (String[] ruta : datosRutas) {
+                modelo.addRow(new Object[]{ruta[0], ruta[1], ruta[2], ruta[3], ruta[4], ruta[5], ruta[6], ruta[7]});
             }
 
         } catch (SQLException e) {
@@ -86,7 +86,7 @@ public class JfRutasConsulta extends javax.swing.JFrame {
                     datosListas.clear();
                     break;
                 case 5:
-                    datosListas = query.cargaComboPrecio();
+                    datosListas = query.cargaComboPrecioRuta();
                     for (int i = 1; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }

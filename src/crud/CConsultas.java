@@ -479,7 +479,11 @@ public class CConsultas {
 
     // *************** Declaracion de consultas ******************
     /**
-     * ***************************CONSULTAS***********************************
+     * ***************************CONSULTAS
+     *
+     ***********************************
+     * @return
+     * @throws java.sql.SQLException
      */
     public ArrayList<String[]> buscarReembolso() throws SQLException {
         consulta = "SELECT p.nombre,\n"
@@ -651,17 +655,14 @@ public class CConsultas {
         return buscarCon1(consulta);
     }
 
-    public ArrayList<String> cargaComboMeses() throws SQLException {
-        consulta = "SELECT mes.mes FROM `mes`";
-        return buscarCon1(consulta);
+    public ArrayList<String[]> cargaComboMeses() throws SQLException {
+        consulta = "SELECT mes.Id_mes, mes.mes FROM `mes` ORDER BY mes.Id_mes ASC";
+        return buscarCon2(consulta);
     }
 
-    public ArrayList<String> cargaComboAnios() throws SQLException {
-        consulta = "SELECT\n"
-                + "reembolso.cantidad\n"
-                + "FROM\n"
-                + "reembolso;";
-        return buscarCon1(consulta);
+    public ArrayList<String[]> cargaComboAnios() throws SQLException {
+        consulta = "SELECT anio.Id_anio, anio.anio FROM anio ORDER BY anio.Id_anio ASC";
+        return buscarCon2(consulta);
     }
 
     public ArrayList<String> cargaComboCantidad() throws SQLException {
@@ -695,12 +696,12 @@ public class CConsultas {
     }
 
     public ArrayList<String> cargaComboDuracion() throws SQLException {
-        consulta = "SELECT DISTINCT ruta.duracion_ruta FROM ruta ORDER BY ruta.duracion_ruta ASC";
+        consulta = "SELECT DISTINCT duracion_ruta FROM ruta ORDER BY CAST(SUBSTRING_INDEX(duracion_ruta, ' ', 1) AS UNSIGNED) ASC";
         return buscarCon1(consulta);
     }
 
     public ArrayList<String> cargaComboDistacia() throws SQLException {
-        consulta = "SELECT DISTINCT ruta.distancia FROM ruta ";
+        consulta = "SELECT DISTINCT distancia FROM ruta ORDER BY CAST(SUBSTRING_INDEX(distancia, ' ', 1) AS DECIMAL(10, 2)) ASC";
         return buscarCon1(consulta);
     }
 
@@ -727,6 +728,11 @@ public class CConsultas {
 
     public ArrayList<String> cargaComboPrecio() throws SQLException {
         consulta = "SELECT DISTINCT boleto.precioDescuento FROM boleto ORDER BY boleto.precioDescuento ASC;";
+        return buscarCon1(consulta);
+    }
+
+    public ArrayList<String> cargaComboPrecioRuta() throws SQLException {
+        consulta = "SELECT DISTINCT ruta.precio FROM ruta ORDER BY ruta.precio ASC";
         return buscarCon1(consulta);
     }
 

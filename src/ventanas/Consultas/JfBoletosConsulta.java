@@ -10,7 +10,7 @@ import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
-public class JfBoletosConsulta extends javax.swing.JFrame {
+public final class JfBoletosConsulta extends javax.swing.JFrame {
 
     //**************   ATRIBUTOS  *******************/
     private DefaultTableModel modelo;
@@ -25,7 +25,6 @@ public class JfBoletosConsulta extends javax.swing.JFrame {
         JtableBoletos.getTableHeader().setReorderingAllowed(false);
         cargaComboBox(JcmbxOrigenes, 1);
         cargaComboBox(JcmbxDestinos, 2);
-        cargaComboBox(JcmbxDias, 3);
         cargaComboBox(JcmbxMeses, 4);
         cargaComboBox(JcmbxAnios, 5);
         cargaComboBox(JcmbxPrecios, 6);
@@ -81,25 +80,28 @@ public class JfBoletosConsulta extends javax.swing.JFrame {
                     datosListas.clear();
                     break;
                 case 3:
-                    datosListas = query.cargaComboDias();
-                    for (int i = 1; i < datosListas.size(); i++) {
-                        listas.addElement(datosListas.get(i));
+                    String[] dias = asignaDias(JcmbxMeses, JcmbxAnios);
+                    if (dias != null) {
+                        for (String dia : dias) {
+                            listas.addElement(dia);
+                        }
                     }
-                    datosListas.clear();
+                    dias = null;
                     break;
+
                 case 4:
-                    datosListas = query.cargaComboMeses();
-                    for (int i = 1; i < datosListas.size(); i++) {
-                        listas.addElement(datosListas.get(i));
+                    ArrayList<String[]> Meses = query.cargaComboMeses();
+                    for (String[] Mes : Meses) {
+                        listas.addElement(Mes[1]);
                     }
-                    datosListas.clear();
+                    Meses.clear();
                     break;
                 case 5:
-                    datosListas = query.cargaComboAnios();
-                    for (int i = 1; i < datosListas.size(); i++) {
-                        listas.addElement(datosListas.get(i));
+                    ArrayList<String[]> Anios = query.cargaComboAnios();
+                    for (String[] Anio : Anios) {
+                        listas.addElement(Anio[1]);
                     }
-                    datosListas.clear();
+                    Anios.clear();
                     break;
                 case 6:
                     datosListas = query.cargaComboPrecio();
@@ -108,11 +110,104 @@ public class JfBoletosConsulta extends javax.swing.JFrame {
                     }
                     datosListas.clear();
                     break;
+                case 7:
+
             }
 
         } catch (SQLException e) {
         }
 
+    }
+
+    public String[] asignaDias(JComboBox mes, JComboBox anio) {
+        String[] Dias = null;
+        int anios = 0;
+        if (anio.getSelectedIndex() != 0) {
+            anios = Integer.parseInt(anio.getSelectedItem().toString());
+        }
+        String mesSeleccionado = mes.getSelectedItem().toString();
+
+        switch (mesSeleccionado) {
+            case "Enero":
+            case "Marzo":
+            case "Mayo":
+            case "Julio":
+            case "Agosto":
+            case "Octubre":
+            case "Diciembre":
+                Dias = new String[31];
+                for (int i = 0; i < 31; i++) {
+                    Dias[i] = String.valueOf(i + 1);
+                }
+                break;
+            case "Abril":
+            case "Junio":
+            case "Septiembre":
+            case "Noviembre":
+                Dias = new String[30];
+                for (int i = 0; i < 30; i++) {
+                    Dias[i] = String.valueOf(i + 1);
+                }
+                break;
+            case "Febrero":
+                if (anios != 0) {
+                    if ((anios % 4 == 0 && anios % 100 != 0) || (anios % 400 == 0)) {
+                        Dias = new String[29];
+                        for (int i = 0; i < 29; i++) {
+                            Dias[i] = String.valueOf(i + 1);
+                        }
+                    } else {
+                        Dias = new String[28];
+                        for (int i = 0; i < 28; i++) {
+                            Dias[i] = String.valueOf(i + 1);
+                        }
+                    }
+                } else {
+                    Dias = new String[28];
+                    for (int i = 0; i < 28; i++) {
+                        Dias[i] = String.valueOf(i + 1);
+                    }
+                }
+                break;
+        }
+        return Dias;
+    }
+
+    public void cargaComboDias(int opcion) {
+        switch (opcion) {
+            case 1:
+                if (JcmbxAnios.getSelectedIndex() != 0 && JcmbxMeses.getSelectedIndex() != 0) {
+                    if (JcmbxDias.getItemCount() == 1) {
+                        cargaComboBox(JcmbxDias, 3);
+                    } else if (JcmbxDias.getItemCount() > 1) {
+                        while (JcmbxDias.getItemCount() > 1) {
+                            JcmbxDias.removeItemAt(1);
+                        }
+                        cargaComboBox(JcmbxDias, 3);
+                    }
+                } else {
+                    while (JcmbxDias.getItemCount() > 1) {
+                        JcmbxDias.removeItemAt(1);
+                    }
+                }
+                break;
+            case 2:
+                if (JcmbxAnios.getSelectedIndex() != 0 || JcmbxMeses.getSelectedIndex() != 0) {
+                    if (JcmbxDias.getItemCount() == 1) {
+                        cargaComboBox(JcmbxDias, 3);
+                    } else if (JcmbxDias.getItemCount() > 1) {
+                        while (JcmbxDias.getItemCount() > 1) {
+                            JcmbxDias.removeItemAt(1);
+                        }
+                        cargaComboBox(JcmbxDias, 3);
+                    }
+                } else {
+                    while (JcmbxDias.getItemCount() > 1) {
+                        JcmbxDias.removeItemAt(1);
+                    }
+                }
+                break;
+        }
     }
 
     public void aplicaFiltros() {
@@ -204,7 +299,7 @@ public class JfBoletosConsulta extends javax.swing.JFrame {
 
         JlblDia.setText("Dia");
 
-        JcmbxDias.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione una opcion" }));
+        JcmbxDias.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione un mes" }));
         JcmbxDias.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 JcmbxDiasItemStateChanged(evt);
@@ -361,10 +456,12 @@ public class JfBoletosConsulta extends javax.swing.JFrame {
     }//GEN-LAST:event_JcmbxDiasItemStateChanged
 
     private void JcmbxMesesItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxMesesItemStateChanged
+        cargaComboDias(2);
         aplicaFiltros();
     }//GEN-LAST:event_JcmbxMesesItemStateChanged
 
     private void JcmbxAniosItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxAniosItemStateChanged
+        cargaComboDias(1);
         aplicaFiltros();
     }//GEN-LAST:event_JcmbxAniosItemStateChanged
 

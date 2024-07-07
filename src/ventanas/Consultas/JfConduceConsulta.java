@@ -76,16 +76,16 @@ public class JfConduceConsulta extends javax.swing.JFrame {
         tr = new TableRowSorter<>(modelo);
         JtableConducen.setRowSorter(tr);
         ArrayList<RowFilter<String, Integer>> filtros = new ArrayList<>();
-        if (JtxtNombres.getText().trim().isEmpty()) {
+        if (!JtxtNombres.getText().trim().isEmpty()) {
             filtros.add(RowFilter.regexFilter(JtxtNombres.getText(), 0));
         }
-        if (JtxtApPaterno.getText().trim().isEmpty()) {
+        if (!JtxtApPaterno.getText().trim().isEmpty()) {
             filtros.add(RowFilter.regexFilter(JtxtApPaterno.getText(), 1));
         }
-        if (JtxtApMaterno.getText().trim().isEmpty()) {
+        if (!JtxtApMaterno.getText().trim().isEmpty()) {
             filtros.add(RowFilter.regexFilter(JtxtApMaterno.getText(), 2));
         }
-        if (JtxtPlaca.getText().trim().isEmpty()) {
+        if (!JtxtPlaca.getText().trim().isEmpty()) {
             filtros.add(RowFilter.regexFilter(JtxtPlaca.getText(), 3));
         }
         if (JcmbxMarcas.getSelectedIndex() != 0) {
