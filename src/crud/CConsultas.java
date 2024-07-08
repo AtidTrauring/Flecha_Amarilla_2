@@ -2,7 +2,6 @@ package crud;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class CConsultas {
 
@@ -12,22 +11,22 @@ public class CConsultas {
     private ResultSet rs = null;
     private final CConecta conector = new CConecta();
     private ArrayList<String[]> resultados;
-    private ArrayList<String> resultadosSimples;
+    private ArrayList<String> resultadosCombos;
+    private String valorObtenido = null;
 
     //************ Metodos ************
-    public ArrayList<String> buscarCon1(String consulta) throws SQLException {
+    public String buscarValor(String consulta) throws SQLException {
         //1. Abrir la conexion
         conn = conector.conecta();
         //2. Ejecutar la query(consulta)
         try {
-            resultadosSimples = new ArrayList<>();
             stmt = conn.createStatement();
             rs = stmt.executeQuery(consulta);
             if (rs == null) {
                 CMensajes.msg_advertencia("Elementos no encontrados", "buscar objetos");
             } else {
                 while (rs.next()) {
-                    resultadosSimples.add(rs.getString(1));
+                    valorObtenido = rs.getString(1);
                 }
             }
         } catch (SQLException ex) {
@@ -50,7 +49,45 @@ public class CConsultas {
             //cerrar conexion
             conector.desconecta(conn);
         }
-        return resultadosSimples;
+        return valorObtenido;
+    }
+    
+    public ArrayList<String> buscarValoresCombos(String consulta) throws SQLException {
+        //1. Abrir la conexion
+        conn = conector.conecta();
+        //2. Ejecutar la query(consulta)
+        try {
+            resultadosCombos = new ArrayList<>();
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery(consulta);
+            if (rs == null) {
+                CMensajes.msg_advertencia("Elementos no encontrados", "buscar objetos");
+            } else {
+                while (rs.next()) {
+                    resultadosCombos.add(rs.getString(1));
+                }
+            }
+        } catch (SQLException ex) {
+            String cadena = "SQLException: " + ex.getMessage() + "\n"
+                    + "SQLState: " + ex.getSQLState() + "\n"
+                    + "VendorError: " + ex.getErrorCode();
+            CMensajes.msg_error(cadena, "Conexion");
+        } //3. 
+        finally {
+            //Cerrar los resultados
+            try {
+                rs.close();
+            } catch (SQLException e) {
+            }
+            //Cerrar el statement
+            try {
+                stmt.close();
+            } catch (SQLException e) {
+            }
+            //cerrar conexion
+            conector.desconecta(conn);
+        }
+        return resultadosCombos;
     }
     
     public ArrayList<String[]> buscarValores(String consulta, int numCampos) throws SQLException {
@@ -92,356 +129,7 @@ public class CConsultas {
             //cerrar conexion
             conector.desconecta(conn);
         }
-        for (String[] resultado : resultados) {
-            System.out.println(Arrays.toString(resultado));
-        }
         return resultados;
-    }
-    
-    public ArrayList<String[]> buscarCon2(String consulta) throws SQLException {
-        //1. Abrir la conexion
-        conn = conector.conecta();
-        //2. Ejecutar la query(consulta)
-        try {
-            resultados = new ArrayList<>();
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery(consulta);
-            if (rs == null) {
-                CMensajes.msg_advertencia("Elementos no encontrados", "buscar objetos");
-            } else {
-                while (rs.next()) {
-                    resultados.add(new String[]{
-                        rs.getString(1),
-                        rs.getString(2)});
-                    
-                }
-            }
-        } catch (SQLException ex) {
-            String cadena = "SQLException: " + ex.getMessage() + "\n"
-                    + "SQLState: " + ex.getSQLState() + "\n"
-                    + "VendorError: " + ex.getErrorCode();
-            CMensajes.msg_error(cadena, "Conexion");
-        } //3. 
-        finally {
-            //Cerrar los resultados
-            try {
-                rs.close();
-            } catch (SQLException e) {
-            }
-            //Cerrar el statement
-            try {
-                stmt.close();
-            } catch (SQLException e) {
-            }
-            //cerrar conexion
-            conector.desconecta(conn);
-        }
-        return resultados;
-    }
-    
-    public ArrayList<String[]> buscarCon3(String consulta) throws SQLException {
-        //1. Abrir la conexion
-        conn = conector.conecta();
-        //2. Ejecutar la query(consulta)
-        try {
-            resultados = new ArrayList<>();
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery(consulta);
-            if (rs == null) {
-                CMensajes.msg_advertencia("Elementos no encontrados", "buscar objetos");
-            } else {
-                while (rs.next()) {
-                    resultados.add(new String[]{
-                        rs.getString(1),
-                        rs.getString(2),
-                        rs.getString(3)});
-                    
-                }
-            }
-        } catch (SQLException ex) {
-            String cadena = "SQLException: " + ex.getMessage() + "\n"
-                    + "SQLState: " + ex.getSQLState() + "\n"
-                    + "VendorError: " + ex.getErrorCode();
-            CMensajes.msg_error(cadena, "Conexion");
-        } //3. 
-        finally {
-            //Cerrar los resultados
-            try {
-                rs.close();
-            } catch (SQLException e) {
-            }
-            //Cerrar el statement
-            try {
-                stmt.close();
-            } catch (SQLException e) {
-            }
-            //cerrar conexion
-            conector.desconecta(conn);
-        }
-        return resultados;
-    }
-    
-    public ArrayList<String[]> buscarCon4(String consulta) throws SQLException {
-        //1. Abrir la conexion
-        conn = conector.conecta();
-        //2. Ejecutar la query(consulta)
-        try {
-            resultados = new ArrayList<>();
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery(consulta);
-            if (rs == null) {
-                CMensajes.msg_advertencia("Elementos no encontrados", "buscar objetos");
-            } else {
-                while (rs.next()) {
-                    resultados.add(new String[]{
-                        rs.getString(1),
-                        rs.getString(2),
-                        rs.getString(3),
-                        rs.getString(4)});
-                    
-                }
-            }
-        } catch (SQLException ex) {
-            String cadena = "SQLException: " + ex.getMessage() + "\n"
-                    + "SQLState: " + ex.getSQLState() + "\n"
-                    + "VendorError: " + ex.getErrorCode();
-            CMensajes.msg_error(cadena, "Conexion");
-        } //3. 
-        finally {
-            //Cerrar los resultados
-            try {
-                rs.close();
-            } catch (SQLException e) {
-            }
-            //Cerrar el statement
-            try {
-                stmt.close();
-            } catch (SQLException e) {
-            }
-            //cerrar conexion
-            conector.desconecta(conn);
-        }
-        return resultados;
-    }
-    
-    public ArrayList<String[]> buscarCon5(String consulta) throws SQLException {
-        //1. Abrir la conexion
-        conn = conector.conecta();
-        //2. Ejecutar la query(consulta)
-        try {
-            resultados = new ArrayList<>();
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery(consulta);
-            if (rs == null) {
-                CMensajes.msg_advertencia("Elementos no encontrados", "buscar objetos");
-            } else {
-                while (rs.next()) {
-                    resultados.add(new String[]{
-                        rs.getString(1),
-                        rs.getString(2),
-                        rs.getString(3),
-                        rs.getString(4),
-                        rs.getString(5)});
-                    
-                }
-            }
-        } catch (SQLException ex) {
-            String cadena = "SQLException: " + ex.getMessage() + "\n"
-                    + "SQLState: " + ex.getSQLState() + "\n"
-                    + "VendorError: " + ex.getErrorCode();
-            CMensajes.msg_error(cadena, "Conexion");
-        } //3. 
-        finally {
-            //Cerrar los resultados
-            try {
-                rs.close();
-            } catch (SQLException e) {
-            }
-            //Cerrar el statement
-            try {
-                stmt.close();
-            } catch (SQLException e) {
-            }
-            //cerrar conexion
-            conector.desconecta(conn);
-        }
-        return resultados;
-    }
-    
-    public ArrayList<String[]> buscarCon6(String consulta) throws SQLException {
-        //1. Abrir la conexion
-        conn = conector.conecta();
-        //2. Ejecutar la query(consulta)
-        try {
-            resultados = new ArrayList<>();
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery(consulta);
-            if (rs == null) {
-                CMensajes.msg_advertencia("Elementos no encontrados", "buscar objetos");
-            } else {
-                while (rs.next()) {
-                    resultados.add(new String[]{
-                        rs.getString(1),
-                        rs.getString(2),
-                        rs.getString(3),
-                        rs.getString(4),
-                        rs.getString(5),
-                        rs.getString(6)});
-                    
-                }
-            }
-        } catch (SQLException ex) {
-            String cadena = "SQLException: " + ex.getMessage() + "\n"
-                    + "SQLState: " + ex.getSQLState() + "\n"
-                    + "VendorError: " + ex.getErrorCode();
-            CMensajes.msg_error(cadena, "Conexion");
-        } //3. 
-        finally {
-            //Cerrar los resultados
-            try {
-                rs.close();
-            } catch (SQLException e) {
-            }
-            //Cerrar el statement
-            try {
-                stmt.close();
-            } catch (SQLException e) {
-            }
-            //cerrar conexion
-            conector.desconecta(conn);
-        }
-        return resultados;
-    }
-    
-    public ArrayList<String[]> buscarCon7(String consulta) throws SQLException {
-        //1. Abrir la conexion
-        conn = conector.conecta();
-        //2. Ejecutar la query(consulta)
-        try {
-            resultados = new ArrayList<>();
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery(consulta);
-            if (rs == null) {
-                CMensajes.msg_advertencia("Elementos no encontrados", "buscar objetos");
-            } else {
-                while (rs.next()) {
-                    resultados.add(new String[]{
-                        rs.getString(1),
-                        rs.getString(2),
-                        rs.getString(3),
-                        rs.getString(4),
-                        rs.getString(5),
-                        rs.getString(6),
-                        rs.getString(7)});
-                    
-                }
-            }
-        } catch (SQLException ex) {
-            String cadena = "SQLException: " + ex.getMessage() + "\n"
-                    + "SQLState: " + ex.getSQLState() + "\n"
-                    + "VendorError: " + ex.getErrorCode();
-            CMensajes.msg_error(cadena, "Conexion");
-        } //3. 
-        finally {
-            //Cerrar los resultados
-            try {
-                rs.close();
-            } catch (SQLException e) {
-            }
-            //Cerrar el statement
-            try {
-                stmt.close();
-            } catch (SQLException e) {
-            }
-            //cerrar conexion
-            conector.desconecta(conn);
-        }
-        return resultados;
-    }
-    
-    public ArrayList<String[]> buscarCon8(String consulta) throws SQLException {
-        //1. Abrir la conexion
-        conn = conector.conecta();
-        //2. Ejecutar la query(consulta)
-        try {
-            resultados = new ArrayList<>();
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery(consulta);
-            if (rs == null) {
-                CMensajes.msg_advertencia("Elementos no encontrados", "buscar objetos");
-            } else {
-                while (rs.next()) {
-                    resultados.add(new String[]{
-                        rs.getString(1),
-                        rs.getString(2),
-                        rs.getString(3),
-                        rs.getString(4),
-                        rs.getString(5),
-                        rs.getString(6),
-                        rs.getString(7),
-                        rs.getString(8)});
-                    
-                }
-            }
-        } catch (SQLException ex) {
-            String cadena = "SQLException: " + ex.getMessage() + "\n"
-                    + "SQLState: " + ex.getSQLState() + "\n"
-                    + "VendorError: " + ex.getErrorCode();
-            CMensajes.msg_error(cadena, "Conexion");
-        } //3. 
-        finally {
-            //Cerrar los resultados
-            try {
-                rs.close();
-            } catch (SQLException e) {
-            }
-            //Cerrar el statement
-            try {
-                stmt.close();
-            } catch (SQLException e) {
-            }
-            //cerrar conexion
-            conector.desconecta(conn);
-        }
-        return resultados;
-    }
-    
-    public int obtieneIdFinal(String consulta) throws SQLException {
-        int id = 1;
-        //1. Abrir la conexion
-        conn = conector.conecta();
-        //2, Ejecutar la query
-        try {
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery(consulta);
-            if (rs == null) {
-                return 0;
-            } else {
-                while (rs.next()) {
-                    if (rs.getString(1) == null) {
-                        return 0;
-                    } else {
-                        id = Integer.parseInt(rs.getString(1));
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            CMensajes.msg_error("Error: \n" + e.getMessage(), "ObtieneIdFinal");
-        } finally {
-            //Cerrar los resultados
-            try {
-                rs.close();
-            } catch (SQLException e) {
-            }
-            //Cerrar el statement
-            try {
-                stmt.close();
-            } catch (SQLException e) {
-            }
-            //cerrar conexion
-            conector.desconecta(conn);
-        }
-        return id;
     }
     
     public boolean inserta(String consulta) throws SQLException {

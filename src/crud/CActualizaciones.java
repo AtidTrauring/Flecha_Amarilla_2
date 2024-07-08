@@ -4,7 +4,7 @@ import java.sql.SQLException;
 
 public class CActualizaciones {
 
-    private CConsultas cnslt = new CConsultas();
+    private final CConsultas cnslt = new CConsultas();
     private String consulta;
 
     public boolean actualizarPersona(String nombre, String ApPat, String ApMat, int id) throws SQLException {

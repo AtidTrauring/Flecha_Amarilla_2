@@ -4,7 +4,7 @@ import java.sql.SQLException;
 
 public class CEliminaciones {
 
-    private CConsultas cnslt = new CConsultas();
+    private final CConsultas cnslt = new CConsultas();
     private String consulta;
 
     public boolean eliminaTelefono(int id) throws SQLException {

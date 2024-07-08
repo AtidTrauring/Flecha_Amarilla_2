@@ -4,7 +4,7 @@ import java.sql.SQLException;
 
 public class CInserciones {
 
-    private CConsultas cnslt = new CConsultas();
+    private final CConsultas cnslt = new CConsultas();
     private String consulta;
 
     public boolean insertaTelefonos(int idTelefono, String telefono, int idPersona) throws SQLException {
