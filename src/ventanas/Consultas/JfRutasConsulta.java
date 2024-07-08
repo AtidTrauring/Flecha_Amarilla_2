@@ -1,6 +1,10 @@
 package ventanas.Consultas;
 
-import crud.CConsultas;
+import crud.CActualizaciones;
+import crud.CBusquedas;
+import crud.CCargaCombos;
+import crud.CEliminaciones;
+import crud.CInserciones;
 import crud.CMensajes;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -16,7 +20,11 @@ public final class JfRutasConsulta extends javax.swing.JFrame {
     private DefaultTableModel modelo;
     private DefaultComboBoxModel listas;
     private TableRowSorter tr;
-    private final CConsultas query = new CConsultas();
+    private final CInserciones queryInserta = new CInserciones();
+    private final CBusquedas queryBusca = new CBusquedas();
+    private final CEliminaciones queryElimina = new CEliminaciones();
+    private final CActualizaciones queryActualiza = new CActualizaciones();
+    private final CCargaCombos queryCarga = new CCargaCombos();
     private ArrayList<String[]> datosRutas = new ArrayList<>();
     private ArrayList<String> datosListas = new ArrayList<>();
 
@@ -42,7 +50,7 @@ public final class JfRutasConsulta extends javax.swing.JFrame {
     public void cargarTabla() {
         modelo = (DefaultTableModel) JtableRutas.getModel();
         try {
-            datosRutas = query.buscaRutas();
+            datosRutas = queryBusca.buscaRutas();
             limpiarTabla();
             for (String[] ruta : datosRutas) {
                 modelo.addRow(new Object[]{ruta[0], ruta[1], ruta[2], ruta[3], ruta[4], ruta[5], ruta[6], ruta[7]});
@@ -58,35 +66,35 @@ public final class JfRutasConsulta extends javax.swing.JFrame {
         try {
             switch (metodoCarga) {
                 case 1:
-                    datosListas = query.cargaComboOrigenes();
+                    datosListas = queryCarga.cargaComboOrigenes();
                     for (int i = 1; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
                     datosListas.clear();
                     break;
                 case 2:
-                    datosListas = query.cargaComboDestinos();
+                    datosListas = queryCarga.cargaComboDestinos();
                     for (int i = 1; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
                     datosListas.clear();
                     break;
                 case 3:
-                    datosListas = query.cargaComboDistacia();
+                    datosListas = queryCarga.cargaComboDistacia();
                     for (int i = 1; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
                     datosListas.clear();
                     break;
                 case 4:
-                    datosListas = query.cargaComboDuracion();
+                    datosListas = queryCarga.cargaComboDuracion();
                     for (int i = 1; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
                     datosListas.clear();
                     break;
                 case 5:
-                    datosListas = query.cargaComboPrecioRuta();
+                    datosListas = queryCarga.cargaComboPrecioRuta();
                     for (int i = 1; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }

@@ -1,6 +1,9 @@
 package ventanas.Registros;
 
-import crud.CConsultas;
+import crud.CActualizaciones;
+import crud.CBusquedas;
+import crud.CEliminaciones;
+import crud.CInserciones;
 import crud.CMensajes;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -15,7 +18,10 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
         JcmbxTipoPasajeros.setEditable(false);
     }
 
-    private CConsultas query = new CConsultas();
+    private CInserciones queryInserta = new CInserciones();
+    private CBusquedas queryBusca = new CBusquedas();
+    private CEliminaciones queryElimina = new CEliminaciones();
+    private CActualizaciones queryActualiza = new CActualizaciones();
     private ArrayList<String> telefonos = new ArrayList<>();
     private String nombres, apPaterno, apMaterno, correo, telefono;
     private boolean sinTelefono = false;
@@ -206,15 +212,15 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
                 if (sinTelefono == false) {
                     asignaValores();
                     try {
-                        id = query.obtenIdFinalPersona();
+                        id = queryBusca.obtenIdFinalPersona();
                         System.out.println("Nombre" + nombres + "\nApellido P" + apPaterno + "\nApellido M" + apMaterno);
-                        query.insertaPersona((id + 1), nombres, apPaterno, apMaterno);
-                        idTel = query.obtenIdFinalTelefono();
+                        queryInserta.insertaPersona((id + 1), nombres, apPaterno, apMaterno);
+                        idTel = queryBusca.obtenIdFinalTelefono();
                         for (int i = 0; i < telefonos.size(); i++) {
                             idTel++;
-                            query.insertaTelefonos(idTel, telefonos.get(i), query.obtenIdFinalPersona());
+                            queryInserta.insertaTelefonos(idTel, telefonos.get(i), queryBusca.obtenIdFinalPersona());
                         }
-                        query.insertaPasajeros((query.obtenIdFinalPasajero() + 1), asignaTipoPasajero(), asignaDescuento(), query.obtenIdFinalPersona());
+                        queryInserta.insertaPasajeros((queryBusca.obtenIdFinalPasajero() + 1), asignaTipoPasajero(), asignaDescuento(), queryBusca.obtenIdFinalPersona());
                         CMensajes.msg("Usuario Registrado", "Registro Usuarios");
                     } catch (SQLException ex) {
                     } finally {

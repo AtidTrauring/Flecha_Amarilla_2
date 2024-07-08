@@ -1,6 +1,9 @@
 package ventanas.Registros;
 
-import crud.CConsultas;
+import crud.CActualizaciones;
+import crud.CBusquedas;
+import crud.CEliminaciones;
+import crud.CInserciones;
 import crud.CMensajes;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -15,7 +18,10 @@ public class JfRegistroConductores extends javax.swing.JFrame {
     
     //*************** ATRIBUTOS ******************
 
-    private CConsultas query = new CConsultas();
+    private CInserciones queryInserta = new CInserciones();
+    private CBusquedas queryBusca = new CBusquedas();
+    private CEliminaciones queryElimina = new CEliminaciones();
+    private CActualizaciones queryActualiza = new CActualizaciones();
     private ArrayList<String> telefonos = new ArrayList<>();
     private String nombres, apPaterno, apMaterno, telefono;
     private boolean sinTelefono = false;
@@ -155,15 +161,15 @@ public class JfRegistroConductores extends javax.swing.JFrame {
                 if (sinTelefono == false) {
                     asignaValores();
                     try {
-                        id = query.obtenIdFinalPersona();
+                        id = queryBusca.obtenIdFinalPersona();
                         System.out.println("Nombre" + nombres + "\nApellido P" + apPaterno + "\nApellido M" + apMaterno);
-                        query.insertaPersona((id + 1), nombres, apPaterno, apMaterno);
-                        idTel = query.obtenIdFinalTelefono();
+                        queryInserta.insertaPersona((id + 1), nombres, apPaterno, apMaterno);
+                        idTel = queryBusca.obtenIdFinalTelefono();
                         for (int i = 0; i < telefonos.size(); i++) {
                             idTel++;
-                            query.insertaTelefonos(idTel, telefonos.get(i), query.obtenIdFinalPersona());
+                            queryInserta.insertaTelefonos(idTel, telefonos.get(i), queryBusca.obtenIdFinalPersona());
                         }
-                        query.insertaConductores((query.obtenIdFinalConductor() + 1), query.obtenIdFinalPersona());
+                        queryInserta.insertaConductores((queryBusca.obtenIdFinalConductor() + 1), queryBusca.obtenIdFinalPersona());
                         CMensajes.msg("Usuario Registrado", "Registro Usuarios");
                     } catch (SQLException ex) {
                     } finally {

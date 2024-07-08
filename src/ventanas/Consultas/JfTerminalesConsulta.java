@@ -1,5 +1,9 @@
 package ventanas.Consultas;
-import crud.CConsultas;
+import crud.CActualizaciones;
+import crud.CBusquedas;
+import crud.CCargaCombos;
+import crud.CEliminaciones;
+import crud.CInserciones;
 import crud.CMensajes;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -11,13 +15,17 @@ import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
-public class JfTerminalesConsulta extends javax.swing.JFrame {
+public final class JfTerminalesConsulta extends javax.swing.JFrame {
 
     //**************   ATRIBUTOS  *******************/
     private DefaultTableModel modelo;
     private DefaultComboBoxModel listas;
     private TableRowSorter tr;
-    private final CConsultas query = new CConsultas();
+    private final CInserciones queryInserta = new CInserciones();
+    private final CBusquedas queryBusca = new CBusquedas();
+    private final CEliminaciones queryElimina = new CEliminaciones();
+    private final CActualizaciones queryActualiza = new CActualizaciones();
+    private final CCargaCombos queryCarga = new CCargaCombos();
     private ArrayList<String[]> datosTerminales = new ArrayList<>();
     private ArrayList<String> datosListas = new ArrayList<>();
 
@@ -40,7 +48,7 @@ public class JfTerminalesConsulta extends javax.swing.JFrame {
     public void cargarTabla() {
         modelo = (DefaultTableModel) JtableTerminales.getModel();
         try {
-            datosTerminales = query.buscaTerminales();
+            datosTerminales = queryBusca.buscaTerminales();
             limpiarTabla();
             for (String[] datosTerminal : datosTerminales) {
                 modelo.addRow(new Object[]{datosTerminal[0], datosTerminal[1], datosTerminal[2], datosTerminal[3], datosTerminal[4], datosTerminal[5],
@@ -55,14 +63,14 @@ public class JfTerminalesConsulta extends javax.swing.JFrame {
         listas = (DefaultComboBoxModel) combo.getModel();
         switch (metodoCarga) {
             case 1:
-                datosListas = query.cargaComboEstado();
+                datosListas = queryCarga.cargaComboEstado();
                 for (int i = 1; i < datosListas.size(); i++) {
                     listas.addElement(datosListas.get(i));
                 }
                 datosListas.clear();
                 break;
             case 2:
-                datosListas = query.cargaComboCiudad();
+                datosListas = queryCarga.cargaComboCiudad();
                 for (int i = 1; i < datosListas.size(); i++) {
                     listas.addElement(datosListas.get(i));
                 }

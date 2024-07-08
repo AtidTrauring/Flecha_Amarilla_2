@@ -1,5 +1,10 @@
 package ventanas.Consultas;
-import crud.CConsultas;
+
+import crud.CActualizaciones;
+import crud.CBusquedas;
+import crud.CCargaCombos;
+import crud.CEliminaciones;
+import crud.CInserciones;
 import crud.CMensajes;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -9,13 +14,17 @@ import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
-public class JfParadasConsulta extends javax.swing.JFrame {
+public final class JfParadasConsulta extends javax.swing.JFrame {
 
     //**************   ATRIBUTOS  *******************/
     private DefaultTableModel modelo;
     private DefaultComboBoxModel listas;
     private TableRowSorter tr;
-    private final CConsultas query = new CConsultas();
+    private final CInserciones queryInserta = new CInserciones();
+    private final CBusquedas queryBusca = new CBusquedas();
+    private final CEliminaciones queryElimina = new CEliminaciones();
+    private final CActualizaciones queryActualiza = new CActualizaciones();
+    private final CCargaCombos queryCarga = new CCargaCombos();
     private ArrayList<String[]> datosParadas = new ArrayList<>();
     private ArrayList<String> datosListas = new ArrayList<>();
 
@@ -38,7 +47,7 @@ public class JfParadasConsulta extends javax.swing.JFrame {
     public void cargarTabla() {
         modelo = (DefaultTableModel) JtableParadas.getModel();
         try {
-            datosParadas = query.buscaParadas();
+            datosParadas = queryBusca.buscaParadas();
             limpiarTabla();
             for (String[] datosParadas : datosParadas) {
                 modelo.addRow(new Object[]{datosParadas[0], datosParadas[1]});
@@ -53,14 +62,14 @@ public class JfParadasConsulta extends javax.swing.JFrame {
         try {
             switch (metodoCarga) {
                 case 1:
-                    datosListas = query.cargaComboRutas();
+                    datosListas = queryCarga.cargaComboRutas();
                     for (int i = 1; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
                     datosListas.clear();
                     break;
                 case 2:
-                    datosListas = query.cargaComboTerminales();
+                    datosListas = queryCarga.cargaComboTerminales();
                     for (int i = 1; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }

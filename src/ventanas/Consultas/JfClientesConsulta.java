@@ -1,17 +1,25 @@
 package ventanas.Consultas;
-import crud.CConsultas;
+import crud.CActualizaciones;
+import crud.CBusquedas;
+import crud.CCargaCombos;
+import crud.CEliminaciones;
+import crud.CInserciones;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
-public class JfClientesConsulta extends javax.swing.JFrame {
+public final class JfClientesConsulta extends javax.swing.JFrame {
 
     //**************   ATRIBUTOS  *******************/
     private DefaultTableModel modelo;
     private TableRowSorter tr;
-    private final CConsultas query = new CConsultas();
+    private final CInserciones queryInserta = new CInserciones();
+    private final CBusquedas queryBusca = new CBusquedas();
+    private final CEliminaciones queryElimina = new CEliminaciones();
+    private final CActualizaciones queryActualiza = new CActualizaciones();
+    private final CCargaCombos queryCarga = new CCargaCombos();
     private ArrayList<String[]> datosClientes = new ArrayList<>();
     private ArrayList<String> datosListas = new ArrayList<>();
 
@@ -33,7 +41,7 @@ public class JfClientesConsulta extends javax.swing.JFrame {
     public void cargaTabla() {
         modelo = (DefaultTableModel) JtableClientes.getModel();
         try {
-            datosClientes = query.buscarClientes();
+            datosClientes = queryBusca.buscarClientes();
             limpiarTabla();
             for (String[] datosCliente : datosClientes) {
                 modelo.addRow(new Object[]{datosCliente[0], datosCliente[1], datosCliente[2], datosCliente[3]});

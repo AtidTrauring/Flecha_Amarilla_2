@@ -1,18 +1,26 @@
 package ventanas.Consultas;
 
-import crud.CConsultas;
+import crud.CActualizaciones;
+import crud.CBusquedas;
+import crud.CCargaCombos;
+import crud.CEliminaciones;
+import crud.CInserciones;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
-public class JfPasajeroConsulta extends javax.swing.JFrame {
+public final class JfPasajeroConsulta extends javax.swing.JFrame {
 
     //**************   ATRIBUTOS  *******************/
     private DefaultTableModel modelo;
     private TableRowSorter tr;
-    private final CConsultas query = new CConsultas();
+    private final CInserciones queryInserta = new CInserciones();
+    private final CBusquedas queryBusca = new CBusquedas();
+    private final CEliminaciones queryElimina = new CEliminaciones();
+    private final CActualizaciones queryActualiza = new CActualizaciones();
+    private final CCargaCombos queryCarga = new CCargaCombos();
     private ArrayList<String[]> datosPasajeros = new ArrayList<>();
 
     public JfPasajeroConsulta() {
@@ -32,7 +40,7 @@ public class JfPasajeroConsulta extends javax.swing.JFrame {
     public void cargaTabla() {
         modelo = (DefaultTableModel) JtablePasajeros.getModel();
         try {
-            datosPasajeros = query.buscarPasajeros();
+            datosPasajeros = queryBusca.buscarPasajeros();
             limpiarTabla();
             for (String[] datosPasajero : datosPasajeros) {
                 /* Añadimos datos al modelo de la tabla Hacemos la seleccion con respecto al tipo de pasajero que sea /*

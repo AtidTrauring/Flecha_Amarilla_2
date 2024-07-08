@@ -1,6 +1,10 @@
 package ventanas.Consultas;
 
-import crud.CConsultas;
+import crud.CActualizaciones;
+import crud.CBusquedas;
+import crud.CCargaCombos;
+import crud.CEliminaciones;
+import crud.CInserciones;
 import crud.CMensajes;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -16,7 +20,11 @@ public final class JfViajesConsulta extends javax.swing.JFrame {
     private DefaultTableModel modelo;
     private DefaultComboBoxModel listas;
     private TableRowSorter tr;
-    private final CConsultas query = new CConsultas();
+    private final CInserciones queryInserta = new CInserciones();
+    private final CBusquedas queryBusca = new CBusquedas();
+    private final CEliminaciones queryElimina = new CEliminaciones();
+    private final CActualizaciones queryActualiza = new CActualizaciones();
+    private final CCargaCombos queryCarga = new CCargaCombos();
     private ArrayList<String[]> datosViaje = new ArrayList<>();
     private ArrayList<String> datosListas = new ArrayList<>();
 
@@ -43,7 +51,7 @@ public final class JfViajesConsulta extends javax.swing.JFrame {
     public void cargarTabla() {
         modelo = (DefaultTableModel) JtableViajes.getModel();
         try {
-            datosViaje = query.buscaViaje();
+            datosViaje = queryBusca.buscaViaje();
             limpiarTabla();
             for (String[] datosVia : datosViaje) {
                 modelo.addRow(new Object[]{datosVia[0], datosVia[1], datosVia[2], datosVia[3], datosVia[4], datosVia[5], datosVia[6]});
@@ -59,42 +67,42 @@ public final class JfViajesConsulta extends javax.swing.JFrame {
         try {
             switch (metodoCarga) {
                 case 1:
-                    datosListas = query.cargaComboMarca();
+                    datosListas = queryCarga.cargaComboMarca();
                     for (int i = 1; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
                     datosListas.clear();
                     break;
                 case 2:
-                    datosListas = query.cargaComboModelo();
+                    datosListas = queryCarga.cargaComboModelo();
                     for (int i = 1; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
                     datosListas.clear();
                     break;
                 case 3:
-                    datosListas = query.cargaComboPlaca();
+                    datosListas = queryCarga.cargaComboPlaca();
                     for (int i = 1; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
                     datosListas.clear();
                     break;
                 case 4:
-                    ArrayList<String[]> Meses = query.cargaComboMeses();
+                    ArrayList<String[]> Meses = queryCarga.cargaComboMeses();
                     for (String[] Mes : Meses) {
                         listas.addElement(Mes[1]);
                     }
                     Meses.clear();
                     break;
                 case 5:
-                    datosListas = query.cargaComboOrigenes();
+                    datosListas = queryCarga.cargaComboOrigenes();
                     for (int i = 1; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
                     datosListas.clear();
                     break;
                 case 6:
-                    datosListas = query.cargaComboDestinos();
+                    datosListas = queryCarga.cargaComboDestinos();
                     for (int i = 1; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
@@ -385,7 +393,7 @@ public final class JfViajesConsulta extends javax.swing.JFrame {
     private void JcmbxMesesItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxMesesItemStateChanged
         if (JcmbxMeses.getSelectedIndex() != 0) {
             if (JcmbxDias.getItemCount() == 1) {
-                
+
                 cargaComboBox(JcmbxDias, 7);
             } else if (JcmbxDias.getItemCount() > 1) {
                 while (JcmbxDias.getItemCount() > 1) {

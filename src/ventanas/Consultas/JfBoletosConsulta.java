@@ -1,6 +1,10 @@
 package ventanas.Consultas;
 
-import crud.CConsultas;
+import crud.CActualizaciones;
+import crud.CBusquedas;
+import crud.CCargaCombos;
+import crud.CEliminaciones;
+import crud.CInserciones;
 import crud.CMensajes;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -16,7 +20,11 @@ public final class JfBoletosConsulta extends javax.swing.JFrame {
     private DefaultTableModel modelo;
     private DefaultComboBoxModel listas;
     private TableRowSorter tr;
-    private final CConsultas query = new CConsultas();
+    private final CInserciones queryInserta = new CInserciones();
+    private final CBusquedas queryBusca = new CBusquedas();
+    private final CEliminaciones queryElimina = new CEliminaciones();
+    private final CActualizaciones queryActualiza = new CActualizaciones();
+    private final CCargaCombos queryCarga = new CCargaCombos();
     private ArrayList<String[]> datosBoletos = new ArrayList<>();
     private ArrayList<String> datosListas = new ArrayList<>();
 
@@ -42,7 +50,7 @@ public final class JfBoletosConsulta extends javax.swing.JFrame {
     public void cargarTabla() {
         modelo = (DefaultTableModel) JtableBoletos.getModel();
         try {
-            datosBoletos = query.buscaBoletos();
+            datosBoletos = queryBusca.buscaBoletos();
             limpiarTabla();
             for (String[] datosBoleto : datosBoletos) {
                 switch (datosBoleto[6]) {
@@ -66,14 +74,14 @@ public final class JfBoletosConsulta extends javax.swing.JFrame {
         try {
             switch (metodoCarga) {
                 case 1:
-                    datosListas = query.cargaComboOrigenes();
+                    datosListas = queryCarga.cargaComboOrigenes();
                     for (int i = 1; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
                     datosListas.clear();
                     break;
                 case 2:
-                    datosListas = query.cargaComboDestinos();
+                    datosListas = queryCarga.cargaComboDestinos();
                     for (int i = 1; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
@@ -90,21 +98,21 @@ public final class JfBoletosConsulta extends javax.swing.JFrame {
                     break;
 
                 case 4:
-                    ArrayList<String[]> Meses = query.cargaComboMeses();
+                    ArrayList<String[]> Meses = queryCarga.cargaComboMeses();
                     for (String[] Mes : Meses) {
                         listas.addElement(Mes[1]);
                     }
                     Meses.clear();
                     break;
                 case 5:
-                    ArrayList<String[]> Anios = query.cargaComboAnios();
+                    ArrayList<String[]> Anios = queryCarga.cargaComboAnios();
                     for (String[] Anio : Anios) {
                         listas.addElement(Anio[1]);
                     }
                     Anios.clear();
                     break;
                 case 6:
-                    datosListas = query.cargaComboPrecio();
+                    datosListas = queryCarga.cargaComboPrecio();
                     for (int i = 1; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }

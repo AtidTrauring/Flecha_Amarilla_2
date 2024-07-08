@@ -1,6 +1,10 @@
 package ventanas.Consultas;
 
-import crud.CConsultas;
+import crud.CActualizaciones;
+import crud.CBusquedas;
+import crud.CCargaCombos;
+import crud.CEliminaciones;
+import crud.CInserciones;
 import crud.CMensajes;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -16,7 +20,11 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
     private DefaultTableModel modelo;
     private DefaultComboBoxModel listas;
     private TableRowSorter tr;
-    private final CConsultas query = new CConsultas();
+    private final CInserciones queryInserta = new CInserciones();
+    private final CBusquedas queryBusca = new CBusquedas();
+    private final CEliminaciones queryElimina = new CEliminaciones();
+    private final CActualizaciones queryActualiza = new CActualizaciones();
+    private final CCargaCombos queryCarga = new CCargaCombos();
     private ArrayList<String[]> datosReembolso = new ArrayList<>();
 
     public JfReembolsoConsulta() {
@@ -40,14 +48,14 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
         try {
             switch (metodoCarga) {
                 case 1:
-                    ArrayList<String[]> Meses = query.cargaComboMeses();
+                    ArrayList<String[]> Meses = queryCarga.cargaComboMeses();
                     for (String[] Mes : Meses) {
                         listas.addElement(Mes[1]);
                     }
                     Meses.clear();
                     break;
                 case 2:
-                    ArrayList<String[]> Anios = query.cargaComboAnios();
+                    ArrayList<String[]> Anios = queryCarga.cargaComboAnios();
                     for (String[] Anio : Anios) {
                         listas.addElement(Anio[1]);
                     }
@@ -72,7 +80,7 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
     public void cargarTabla() {
         modelo = (DefaultTableModel) JtableReembolsos.getModel();
         try {
-            datosReembolso = query.buscarReembolso();
+            datosReembolso = queryBusca.buscarReembolso();
             limpiarTabla();
             for (String[] datosRee : datosReembolso) {
                 modelo.addRow(new Object[]{datosRee[0], datosRee[1], datosRee[2], datosRee[3], datosRee[4], datosRee[5], datosRee[6]});

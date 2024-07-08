@@ -1,6 +1,11 @@
 package ventanas.Consultas;
-import crud.CConsultas;
+
+import crud.CActualizaciones;
+import crud.CBusquedas;
+import crud.CEliminaciones;
+import crud.CInserciones;
 import crud.CMensajes;
+import crud.CCargaCombos;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
@@ -9,7 +14,7 @@ import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
-public class JfAutobusConsulta extends javax.swing.JFrame {
+public final class JfAutobusConsulta extends javax.swing.JFrame {
 
     //**************   ATRIBUTOS  *******************/
     // Variable para manipular el modelo de la tabla
@@ -18,8 +23,12 @@ public class JfAutobusConsulta extends javax.swing.JFrame {
     private DefaultComboBoxModel listas;
     // Variable para poder agregar filtros
     private TableRowSorter tr;
-    // Instancia de la clase que permite hacer las consultas "Transacciones"
-    private final CConsultas query = new CConsultas();
+    // Instancias de la clases que permite hacer las consultas "Transacciones"
+    private final CInserciones queryInserta = new CInserciones();
+    private final CBusquedas queryBusca = new CBusquedas();
+    private final CEliminaciones queryElimina = new CEliminaciones();
+    private final CActualizaciones queryActualiza = new CActualizaciones();
+    private final CCargaCombos queryCarga = new CCargaCombos();
     // Creacion de lista, para la obtencion de valores de la tabla
     private ArrayList<String[]> datosAutobuses = new ArrayList<>();
     // Creacion de lista, para la obtencion de valores de las listas
@@ -55,7 +64,7 @@ public class JfAutobusConsulta extends javax.swing.JFrame {
         modelo = (DefaultTableModel) JtableAutobuses.getModel();
         try {
             // Leer los datos
-            datosAutobuses = query.buscaAutobuses();
+            datosAutobuses = queryBusca.buscaAutobuses();
             // Limpiamos la tabla
             limpiarTabla();
             // Asignamos los valores obtenidos en la tabla
@@ -76,7 +85,7 @@ public class JfAutobusConsulta extends javax.swing.JFrame {
             switch (metodoCarga) {
                 case 1:
                     // Obtenemos los valores de la tabla
-                    datosListas = query.cargaComboMarca();
+                    datosListas = queryCarga.cargaComboMarca();
                     // listas.addElement("Seleccione una opcion");
                     // Asiganamos los valores obtenidos al JComboBox
                     for (int i = 1; i < datosListas.size(); i++) {
@@ -87,14 +96,14 @@ public class JfAutobusConsulta extends javax.swing.JFrame {
                     datosListas.clear();
                     break;
                 case 2:
-                    datosListas = query.cargaComboModelo();
+                    datosListas = queryCarga.cargaComboModelo();
                     for (int i = 1; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
                     datosListas.clear();
                     break;
                 case 3:
-                    datosListas = query.cargaComboCapacidad();
+                    datosListas = queryCarga.cargaComboCapacidad();
                     for (int i = 1; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }

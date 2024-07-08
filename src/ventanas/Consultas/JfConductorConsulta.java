@@ -1,6 +1,10 @@
 package ventanas.Consultas;
 
-import crud.CConsultas;
+import crud.CActualizaciones;
+import crud.CBusquedas;
+import crud.CCargaCombos;
+import crud.CEliminaciones;
+import crud.CInserciones;
 import crud.CMensajes;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -15,7 +19,11 @@ public final class JfConductorConsulta extends javax.swing.JFrame {
     //**************   ATRIBUTOS  *******************/
     private DefaultTableModel modelo;
     private TableRowSorter tr;
-    private final CConsultas query = new CConsultas();
+    private final CInserciones queryInserta = new CInserciones();
+    private final CBusquedas queryBusca = new CBusquedas();
+    private final CEliminaciones queryElimina = new CEliminaciones();
+    private final CActualizaciones queryActualiza = new CActualizaciones();
+    private final CCargaCombos queryCarga = new CCargaCombos();
     private ArrayList<String[]> datosConductores = new ArrayList<>();
     private int idActualizar;
     private int idEliminar;
@@ -56,7 +64,7 @@ public final class JfConductorConsulta extends javax.swing.JFrame {
         modelo = (DefaultTableModel) JtableConductores.getModel();
         try {
             // Realiza una consulta para obtener los datos completos de los conductores.
-            datosConductores = query.buscarConductoresCompletos();
+            datosConductores = queryBusca.buscarConductoresCompletos();
             // Limpia las filas actuales de la tabla.
             limpiarTabla();
             // Recorre los datos de los conductores obtenidos de la consulta.
@@ -152,11 +160,11 @@ public final class JfConductorConsulta extends javax.swing.JFrame {
         String apMaterno = (String) JtableConductores.getValueAt(JtableConductores.getSelectedRow(), 2);
         String telefono = (String) JtableConductores.getValueAt(JtableConductores.getSelectedRow(), 3);
         try {
-            String idConductor = query.buscarConductor(id);
+            String idConductor = queryBusca.buscarConductor(id);
             if (idConductor != null || idConductor.isEmpty()) {
-                if (query.actualizarPersona(nombre, apPaterno, apMaterno, id)) {
+                if (queryActualiza.actualizarPersona(nombre, apPaterno, apMaterno, id)) {
                     CMensajes.msg("Se actualizo la informacion del conductor", "Actualizar");
-                    if (query.actualizarTelefono(telefono, id)) {
+                    if (queryActualiza.actualizarTelefono(telefono, id)) {
                         CMensajes.msg("Se actualizo el telefonos del conductor", "Actualizar");
                     } else {
                         CMensajes.msg_error("Ocurrio un error al actualizar el telefono", "Actualizar");
@@ -179,22 +187,22 @@ public final class JfConductorConsulta extends javax.swing.JFrame {
 
     public void eliminar(int id) {
         try {
-            String idConductor = query.buscarConductor(id);
+            String idConductor = queryBusca.buscarConductor(id);
             if (idConductor != null || idConductor.isEmpty()) {
                 // Eliminando
-                if (query.eliminaTelefono(id)) {
+                if (queryElimina.eliminaTelefono(id)) {
                     // Eliminando telefonos de la tabla telefono_persona
                     CMensajes.msg("Se elimino el telefono correspondiente", "Eliminar");
                     // Eliminando relacion de autobus con conductor
-                    if (query.eliminaAutbousConductor(Integer.parseInt(idConductor))) {
+                    if (queryElimina.eliminaAutbousConductor(Integer.parseInt(idConductor))) {
                         CMensajes.msg("Se eliminaron las relaciones del conductor \ncon los autobuses correspondientes", "Eliminar");
                         // Eliminando relacion de ruta con Conductor
-                        if (query.eliminaRutaConductor(Integer.parseInt(idConductor))) {
+                        if (queryElimina.eliminaRutaConductor(Integer.parseInt(idConductor))) {
                             CMensajes.msg("Se eliminaron las relaciones del conductor \ncon los viajes correspondientes", "Eliminar");
                             // Eliminando relacion de la tabla Conductor
-                            if (query.eliminaConductor(id)) {
+                            if (queryElimina.eliminaConductor(id)) {
                                 // Eliminando la persona en la tabla persona
-                                if (query.eliminaPersona(id)) {
+                                if (queryElimina.eliminaPersona(id)) {
                                     CMensajes.msg("Se elimino al conductor seleccionado", "Eliminar");
                                 } else {
                                     CMensajes.msg_error("Ocurrio un error al eliminar a la persona", "Eliminando");

@@ -1,12 +1,23 @@
 package ventanas.Consultas;
 
-import crud.CConsultas;
+import crud.CActualizaciones;
+import crud.CBusquedas;
+import crud.CCargaCombos;
+import crud.CEliminaciones;
+import crud.CInserciones;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import javax.swing.table.DefaultTableModel;
 
-public class JfUsuarioConsulta extends javax.swing.JFrame {
+public final class JfUsuarioConsulta extends javax.swing.JFrame {
+
+    private DefaultTableModel modelo;
+    private final CInserciones queryInserta = new CInserciones();
+    private final CBusquedas queryBusca = new CBusquedas();
+    private final CEliminaciones queryElimina = new CEliminaciones();
+    private final CActualizaciones queryActualiza = new CActualizaciones();
+    private final CCargaCombos queryCarga = new CCargaCombos();
+    ArrayList<String[]> datosPasajeros = new ArrayList<>();
 
     public JfUsuarioConsulta() {
         initComponents();
@@ -14,6 +25,35 @@ public class JfUsuarioConsulta extends javax.swing.JFrame {
         JtblPasajeros.getTableHeader().setReorderingAllowed(false);
         cargaTabla();
 
+    }
+
+    private void limpiarTabla() {
+        modelo = (DefaultTableModel) JtblPasajeros.getModel();
+        for (int i = (JtblPasajeros.getRowCount() - 1); i >= 0; i--) {
+            modelo.removeRow(i);
+        }
+    }
+
+    public void cargaTabla() {
+        // Obtener el modelo de la tabla de datos
+        modelo = (DefaultTableModel) JtblPasajeros.getModel();
+        // Agregamos las columnas necesarias a mostrar.
+        modelo.addColumn("Nombre(s)");
+        modelo.addColumn("Apellido Paterno");
+        modelo.addColumn("Apellido Materno");
+        try {
+            // Leer los datos
+            datosPasajeros = queryBusca.buscaUsuarios();
+            // Limpiar la tabla
+            limpiarTabla();
+            // Asignar los datos en la tabla
+            for (String[] datosPasajero : datosPasajeros) {
+                /* Añadimos datos al modelo de la tabla */
+                modelo.addRow(new Object[]{datosPasajero[0], datosPasajero[1], datosPasajero[2]});
+            }
+
+        } catch (SQLException e) {
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -70,40 +110,6 @@ public class JfUsuarioConsulta extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private DefaultTableModel modelo;
-    CConsultas query = new CConsultas();
-    ArrayList<String[]> datosPasajeros = new ArrayList<>();
-
-    private void limpiarTabla() {
-        modelo = (DefaultTableModel) JtblPasajeros.getModel();
-        for (int i = (JtblPasajeros.getRowCount() - 1); i >= 0; i--) {
-            modelo.removeRow(i);
-        }
-    }
-
-    public void cargaTabla() {
-        // Obtener el modelo de la tabla de datos
-        modelo = (DefaultTableModel) JtblPasajeros.getModel();
-        // Agregamos las columnas necesarias a mostrar.
-        modelo.addColumn("Nombre(s)");
-        modelo.addColumn("Apellido Paterno");
-        modelo.addColumn("Apellido Materno");
-        try {
-            // Leer los datos
-            datosPasajeros = query.buscaUsuarios();
-            // Limpiar la tabla
-            limpiarTabla();
-            // Asignar los datos en la tabla
-            for (String[] datosPasajero : datosPasajeros) {
-                /* Añadimos datos al modelo de la tabla */
-                modelo.addRow(new Object[]{datosPasajero[0], datosPasajero[1], datosPasajero[2]});
-            }
-
-        } catch (SQLException e) {
-        }
-    }
-
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
