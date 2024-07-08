@@ -10,7 +10,7 @@ import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
-public class JfConductorConsulta extends javax.swing.JFrame {
+public final class JfConductorConsulta extends javax.swing.JFrame {
 
     //**************   ATRIBUTOS  *******************/
     private DefaultTableModel modelo;
@@ -19,97 +19,144 @@ public class JfConductorConsulta extends javax.swing.JFrame {
     private ArrayList<String[]> datosConductores = new ArrayList<>();
     private int idActualizar;
     private int idEliminar;
-    private int filaSeleccionada;
     private String[] valoresFila;
 
     public JfConductorConsulta() {
         initComponents();
         JtableConductores.getTableHeader().setReorderingAllowed(false);
         cargarTabla();
-
     }
 
     //**************** METODOS ******************/
     private void limpiarTabla() {
+        // Obtiene el modelo de la tabla
         modelo = (DefaultTableModel) JtableConductores.getModel();
-        for (int i = (JtableConductores.getRowCount() - 1); i >= 0; i--) {
-            modelo.removeRow(i);
+        // Establece el numero de filas del modelo a 0
+        modelo.setRowCount(0);
+    }
+
+    private void limpiarBuscadores() {
+        // Limpia los cuadro de texto
+        JtxtNombres.setText(null);
+        JtxtApPaterno.setText(null);
+        JtxtApMaterno.setText(null);
+        JtxtTelefono.setText(null);
+    }
+
+    public void limpiarFiltro() {
+        // Si el objeto 'tr' tiene algun filtro
+        if (tr != null) {
+            // Elimina el filtro 
+            tr.setRowFilter(null);
         }
     }
 
     public void cargarTabla() {
+        // Obtiene el modelo de la tabla 
         modelo = (DefaultTableModel) JtableConductores.getModel();
         try {
+            // Realiza una consulta para obtener los datos completos de los conductores.
             datosConductores = query.buscarConductoresCompletos();
+            // Limpia las filas actuales de la tabla.
             limpiarTabla();
+            // Recorre los datos de los conductores obtenidos de la consulta.
             for (String[] datosConductor : datosConductores) {
+                // Añade una nueva fila al modelo de la tabla con los datos del conductor, omitiendo el ID
                 modelo.addRow(new Object[]{datosConductor[1], datosConductor[2], datosConductor[3], datosConductor[4]});
             }
 
+            // Crea un TableRowSorter para permitir la ordenación de las filas de la tabla.
+            tr = new TableRowSorter<>(modelo);
+
+            // Establece el TableRowSorter en la tabla 'JtableConductores'.
+            JtableConductores.setRowSorter(tr);
         } catch (SQLException e) {
-            CMensajes.msg_error("No se pudo cargar la informacion en la tabla", "Cargando Tabla");
+            // Muestra un mensaje de error si no se pudieron cargar los conductores en la tabla.
+            CMensajes.msg_error("No se pudo cargar la información en la tabla", "Cargando Tabla");
         }
-        modelo = null;
     }
 
     public void aplicaFiltros() {
+        // Obtiene el modelo de la tabla 
         modelo = (DefaultTableModel) JtableConductores.getModel();
+
+        // Crea un TableRowSorter para permitir la ordenación y filtrado de las filas de la tabla.
         tr = new TableRowSorter<>(modelo);
+
+        // Establece el TableRowSorter en la tabla 
         JtableConductores.setRowSorter(tr);
-        ArrayList<RowFilter<String, Integer>> filtros = new ArrayList<>();
+
+        // Crea una lista para almacenar los filtros de filas.
+        ArrayList<RowFilter<Object, Object>> filtros = new ArrayList<>();
+
+        // Si los campos obtenidos no estan vacios aplica el filtro dependiento de lo que tenga por texto
         if (!JtxtNombres.getText().trim().isEmpty()) {
-            filtros.add(RowFilter.regexFilter(JtxtNombres.getText().trim(), 0));
+            filtros.add(RowFilter.regexFilter("^" + JtxtNombres.getText().trim() + "$", 0));
         }
         if (!JtxtApPaterno.getText().trim().isEmpty()) {
-            filtros.add(RowFilter.regexFilter(JtxtApPaterno.getText().trim(), 1));
+            filtros.add(RowFilter.regexFilter("^" + JtxtApPaterno.getText().trim() + "$", 1));
         }
         if (!JtxtApMaterno.getText().trim().isEmpty()) {
-            filtros.add(RowFilter.regexFilter(JtxtApMaterno.getText().trim(), 2));
+            filtros.add(RowFilter.regexFilter("^" + JtxtApMaterno.getText().trim() + "$", 2));
         }
         if (!JtxtTelefono.getText().trim().isEmpty()) {
-            filtros.add(RowFilter.regexFilter(JtxtTelefono.getText().trim(), 3));
+            filtros.add(RowFilter.regexFilter("^" + JtxtTelefono.getText().trim() + "$", 3));
         }
-        RowFilter<String, Integer> rf = RowFilter.andFilter(filtros);
+
+        // Crea un filtro compuesto que combina todos los filtros individuales usando una operación AND.
+        RowFilter<Object, Object> rf = RowFilter.andFilter(filtros);
+
+        // Establece el filtro de filas en el TableRowSorter.
         tr.setRowFilter(rf);
     }
 
     private String[] obtenerValoresFilaTabla() {
+        // Crea un array de strings para almacenar los valores de la fila seleccionada.
         String[] valores = new String[4];
-        DefaultTableModel modelTabla = (DefaultTableModel) JtableConductores.getModel();
-        if (modelTabla.getRowCount() != 0) {
-            if (JtableConductores.getSelectedRow() != -1) {
-                valores[0] = (String) modelTabla.getValueAt(JtableConductores.getSelectedRow(), 0);
-                valores[1] = (String) modelTabla.getValueAt(JtableConductores.getSelectedRow(), 1);
-                valores[2] = (String) modelTabla.getValueAt(JtableConductores.getSelectedRow(), 2);
-                valores[3] = (String) modelTabla.getValueAt(JtableConductores.getSelectedRow(), 3);
-                return valores;
+
+        // Obtiene el índice de la fila seleccionada en la tabla 'JtableConductores'.
+        int filaSeleccionada = JtableConductores.getSelectedRow();
+
+        // Verifica si hay una fila seleccionada.
+        if (filaSeleccionada != -1) {
+            // Recorre las columnas de la fila seleccionada y almacena los valores en el array.
+            for (int i = 0; i < JtableConductores.getColumnCount(); i++) {
+                valores[i] = (String) JtableConductores.getValueAt(filaSeleccionada, i);
             }
         } else {
-            CMensajes.msg_error("No hay valores para obtener", "Obteniendo datos fila");
+            // Muestra un mensaje de error si no hay ninguna fila seleccionada.
+            CMensajes.msg_error("No hay fila seleccionada", "Obteniendo datos fila");
+            return null;
         }
+
+        // Devuelve el array con los valores de la fila seleccionada.
         return valores;
     }
 
     public int buscarId(String nombre, String apPat, String apMat, String telefono) {
-        int Id = -1;
+        // Recorre la lista de datos de los conductores.
         for (String[] conductor : datosConductores) {
+            // Comprueba si los valores de los parámetros coinciden con los datos del conductor actual.
             if (conductor[1].equals(nombre) && conductor[2].equals(apPat) && conductor[3].equals(apMat) && conductor[4].equals(telefono)) {
+                // Si coinciden, devuelve el ID del conductor convertido a entero.
                 return Integer.parseInt(conductor[0]);
-            } else {
-                Id = 0;
             }
         }
-        return Id;
+        // Si no se encuentra ninguna coincidencia, devuelve -1.
+        return -1;
     }
 
-    public void actualizar(int id, String[] valoresActualizar) {
-        ArrayList<String[]> ids = new ArrayList<>();
+    public void actualizar(int id) {
+        String nombre = (String) JtableConductores.getValueAt(JtableConductores.getSelectedRow(), 0);
+        String apPaterno = (String) JtableConductores.getValueAt(JtableConductores.getSelectedRow(), 1);
+        String apMaterno = (String) JtableConductores.getValueAt(JtableConductores.getSelectedRow(), 2);
+        String telefono = (String) JtableConductores.getValueAt(JtableConductores.getSelectedRow(), 3);
         try {
-            ids = query.buscarConductor(id);
-            if (ids != null || ids.isEmpty()) {
-                if (query.actualizarPersona(valoresActualizar[0], valoresActualizar[1], valoresActualizar[2], id)) {
+            String idConductor = query.buscarConductor(id);
+            if (idConductor != null || idConductor.isEmpty()) {
+                if (query.actualizarPersona(nombre, apPaterno, apMaterno, id)) {
                     CMensajes.msg("Se actualizo la informacion del conductor", "Actualizar");
-                    if (query.actualizarTelefono(valoresActualizar[3], id)) {
+                    if (query.actualizarTelefono(telefono, id)) {
                         CMensajes.msg("Se actualizo el telefonos del conductor", "Actualizar");
                     } else {
                         CMensajes.msg_error("Ocurrio un error al actualizar el telefono", "Actualizar");
@@ -123,28 +170,26 @@ public class JfConductorConsulta extends javax.swing.JFrame {
             }
         } catch (SQLException e) {
         } finally {
-            datosConductores.clear();
-            limpiarTabla();
+//            datosConductores.clear();
+            limpiarBuscadores();
+            limpiarFiltro();
             cargarTabla();
         }
     }
 
     public void eliminar(int id) {
-        ArrayList<String[]> identificadores = new ArrayList<>();
         try {
-            identificadores = query.buscarConductor(id);
-            String[] ids = new String[2];
-            ids = identificadores.get(0);
-            if (identificadores != null || identificadores.isEmpty()) {
+            String idConductor = query.buscarConductor(id);
+            if (idConductor != null || idConductor.isEmpty()) {
                 // Eliminando
                 if (query.eliminaTelefono(id)) {
                     // Eliminando telefonos de la tabla telefono_persona
                     CMensajes.msg("Se elimino el telefono correspondiente", "Eliminar");
                     // Eliminando relacion de autobus con conductor
-                    if (query.eliminaAutbousConductor(Integer.parseInt(ids[0]))) {
+                    if (query.eliminaAutbousConductor(Integer.parseInt(idConductor))) {
                         CMensajes.msg("Se eliminaron las relaciones del conductor \ncon los autobuses correspondientes", "Eliminar");
                         // Eliminando relacion de ruta con Conductor
-                        if (query.eliminaRutaConductor(Integer.parseInt(ids[0]))) {
+                        if (query.eliminaRutaConductor(Integer.parseInt(idConductor))) {
                             CMensajes.msg("Se eliminaron las relaciones del conductor \ncon los viajes correspondientes", "Eliminar");
                             // Eliminando relacion de la tabla Conductor
                             if (query.eliminaConductor(id)) {
@@ -170,6 +215,11 @@ public class JfConductorConsulta extends javax.swing.JFrame {
                 CMensajes.msg_error("Usuario no encontrado", "Eliminar-Buscar");
             }
         } catch (SQLException e) {
+        } finally {
+//            datosConductores.clear();
+            limpiarBuscadores();
+            limpiarFiltro();
+            cargarTabla();
         }
     }
 
@@ -322,39 +372,78 @@ public class JfConductorConsulta extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void JtxtNombresKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JtxtNombresKeyReleased
+        // Aplicamos los filtros
         aplicaFiltros();
     }//GEN-LAST:event_JtxtNombresKeyReleased
 
     private void JtxtApPaternoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JtxtApPaternoKeyReleased
+        // Aplicamos los filtros
         aplicaFiltros();
     }//GEN-LAST:event_JtxtApPaternoKeyReleased
 
     private void JtxtApMaternoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JtxtApMaternoKeyReleased
+        // Aplicamos los filtros
         aplicaFiltros();
     }//GEN-LAST:event_JtxtApMaternoKeyReleased
 
     private void JtxtTelefonoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JtxtTelefonoKeyReleased
+        // Aplicamos los filtros
         aplicaFiltros();
     }//GEN-LAST:event_JtxtTelefonoKeyReleased
 
     private void JbtnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnActualizarActionPerformed
-        valoresFila = obtenerValoresFilaTabla();
-        actualizar(idActualizar, valoresFila);
+        // Si el usuario selecciona una fila...
+        if (JtableConductores.getSelectedRow() != -1) {
+            actualizar(idActualizar);
+            // Si no esta seleccionada una fila
+        } else {
+            // Se solicita que seleccione un registro
+            CMensajes.msg_error("Seleccione un registro", "Eliminar");
+        }
     }//GEN-LAST:event_JbtnActualizarActionPerformed
 
     private void JbtnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnEliminarActionPerformed
-        if (JOptionPane.showConfirmDialog(null, "¿Desea eliminar el registro seleccionado?", "Confimacion", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-            valoresFila = obtenerValoresFilaTabla();
-            idEliminar = buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3]);
-            eliminar(idEliminar);
+        // Si el usuario selecciona una fila...
+        if (JtableConductores.getSelectedRow() != -1) {
+            // Preguntamos si quiere eliminar el regitro seleccionado
+            // Si el usuario confirma.
+            if (JOptionPane.showConfirmDialog(null, "¿Desea eliminar el registro seleccionado?", "Confimacion", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                // Obtenemos los valores de la fila seleccionada en el arreglo valoresFila
+                valoresFila = obtenerValoresFilaTabla();
+                // Se busca el ID en el arreglo que almacena los valores de la tabla.
+                // Si se encuentra el ID.
+                if (buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3]) != -1) {
+                    // Se asigna el ID encontrado a la variable idEliminar.
+                    idEliminar = buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3]);
+                    // Eliminamos el registro
+                    eliminar(idEliminar);
+                }
+                // Si cancela o indica que no quiere eliminar el registro
+            } else {
+                // Se muestra un mensaje cancelando la accion
+                CMensajes.msg("Accion cancelada", "Eliminacion");
+            }
+            // Sino esta seleccionada una fila
         } else {
-            CMensajes.msg("Accion cancelada", "Eliminacion");
+            // Se solicita que seleccione un registro
+            CMensajes.msg_error("Seleccione un registro", "Eliminar");
+
         }
     }//GEN-LAST:event_JbtnEliminarActionPerformed
 
     private void JtableConductoresMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JtableConductoresMouseClicked
+        // Se obtienen los valores de la fila seleccionada en la tabla.
         valoresFila = obtenerValoresFilaTabla();
-        idActualizar = buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3]);
+        // Si se obtienen valores.
+        if (valoresFila != null) {
+            // Se busca el ID en el arreglo que almacena los valores de la tabla.
+            // Si se encuentra el ID .
+            if (buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3]) != -1) {
+                // Se asigna el ID encontrado a la variable idActualizar.
+                idActualizar = buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3]);
+            }
+        }
+
     }//GEN-LAST:event_JtableConductoresMouseClicked
 
     public static void main(String args[]) {

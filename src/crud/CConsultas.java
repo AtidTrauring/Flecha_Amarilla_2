@@ -557,9 +557,9 @@ public class CConsultas {
         return buscarCon4(consulta);
     }
 
-    public ArrayList<String[]> buscarConductor(int id) throws SQLException {
-        consulta = "SELECT conductor.Id_conductor, conductor.Id_persona FROM flecha_amarilla.conductor WHERE conductor.Id_persona = " + id;
-        return buscarCon2(consulta);
+    public String buscarConductor(int id) throws SQLException {
+        ArrayList<String> idConductor = buscarCon1("SELECT conductor.Id_conductor FROM flecha_amarilla.conductor WHERE conductor.Id_persona = " + id);
+        return idConductor.get(0);
     }
 
     public ArrayList<String[]> buscarConductoresCompletos() throws SQLException {
@@ -773,6 +773,11 @@ public class CConsultas {
 
     /**
      * ****************************INSERCIONES********************************
+     * @param idTelefono
+     * @param telefono
+     * @param idPersona
+     * @return 
+     * @throws java.sql.SQLException
      */
     public boolean insertaTelefonos(int idTelefono, String telefono, int idPersona) throws SQLException {
         consulta = "INSERT INTO flecha_amarilla.telefono_persona (`Id_telefonoPersona`, `telefono`, `Id_persona`) VALUES (" + idTelefono + ",'" + telefono + "'," + idPersona + ")";
@@ -801,6 +806,12 @@ public class CConsultas {
 
     /**
      * ***************************ACTUALIZACIONES*****************************
+     * @param nombre
+     * @param ApPat
+     * @param id
+     * @param ApMat
+     * @return 
+     * @throws java.sql.SQLException
      */
     public boolean actualizarPersona(String nombre, String ApPat, String ApMat, int id) throws SQLException {
         consulta = "UPDATE flecha_amarilla.persona SET `nombre`='" + nombre + "',`ApPat`='" + ApPat + "',`ApMat`='" + ApMat + "' WHERE persona.Id_persona = " + id;
@@ -814,6 +825,9 @@ public class CConsultas {
 
     /**
      * ***************************ELIMINACIONES*******************************
+     * @param id
+     * @return 
+     * @throws java.sql.SQLException
      */
     public boolean eliminaTelefono(int id) throws SQLException {
         consulta = "DELETE FROM flecha_amarilla.telefono_persona WHERE telefono_persona.Id_persona = " + id;
