@@ -156,7 +156,7 @@ public class JfRegistroConductores extends javax.swing.JFrame {
     public void enviarDatos() {
         int id, idTel;
         if (validaCampos()) {
-            telefonos = devuelveTelefonos();
+           // telefonos = devuelveTelefonos();
             if (telefonos != null) {
                 if (sinTelefono == false) {
                     asignaValores();
@@ -229,6 +229,11 @@ public class JfRegistroConductores extends javax.swing.JFrame {
         JPnlLienzo.add(JsApellidoMaterno, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 190, 170, 10));
 
         JcmbxTelefonos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Numeros de Telefono", "1 Telefono", "2 Telefonos", "3 Telefonos", "4 Telefonos", "5 Telefonos" }));
+        JcmbxTelefonos.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                JcmbxTelefonosItemStateChanged(evt);
+            }
+        });
         JcmbxTelefonos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 JcmbxTelefonosActionPerformed(evt);
@@ -266,12 +271,23 @@ public class JfRegistroConductores extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void JbtnEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnEnviarActionPerformed
-        enviarDatos();
+      
+        
+        if (!telefonos.isEmpty()) {
+              enviarDatos();
+        }else{
+         CMensajes.msg_advertencia("Debe ingresar al menos un teléfono", "Registro Usuario");
+        }
     }//GEN-LAST:event_JbtnEnviarActionPerformed
 
     private void JcmbxTelefonosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JcmbxTelefonosActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_JcmbxTelefonosActionPerformed
+
+    private void JcmbxTelefonosItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxTelefonosItemStateChanged
+        // TODO add your handling code here:
+         telefonos = devuelveTelefonos();
+    }//GEN-LAST:event_JcmbxTelefonosItemStateChanged
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
