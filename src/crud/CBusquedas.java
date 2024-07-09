@@ -225,6 +225,20 @@ public class CBusquedas {
         return Integer.parseInt(cnslt.buscarValor(consulta));
     }
     
+    public int obtenIdFecha(int dia, String mes, int anio) throws SQLException {
+        consulta = "SELECT\n"
+                + "fecha.Id_fecha\n"
+                + "FROM\n"
+                + "fecha\n"
+                + "INNER JOIN anio ON anio.Id_anio = fecha.Id_anio\n"
+                + "INNER JOIN mes ON mes.Id_mes = fecha.Id_mes\n"
+                + "WHERE\n"
+                + "fecha.dia ="+ dia+" AND\n"
+                + "mes.mes = '"+mes+"' AND\n"
+                + "anio.anio = "+2024+";";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+
      public int obtenIdtTerminal(String terminal) throws SQLException {
         consulta ="SELECT\n" +
 "terminal.Id_terminal\n" +
