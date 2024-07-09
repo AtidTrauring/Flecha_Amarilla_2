@@ -31,4 +31,28 @@ public class CInserciones {
         consulta = "INSERT INTO flecha_amarilla.conductor (`Id_conductor`, `Id_persona`) VALUES ('" + idConductor + "','" + idPersona + "')";
         return cnslt.inserta(consulta);
     }
+    
+     public boolean insertaRuta(int idRuta, String nombre, String duración, String horaSalida,String horaLegada,float precio,String distancia,int idOrigen,int idDestino) throws SQLException {
+        consulta = "INSERT INTO `ruta`(`Id_ruta`, `nombre`, `duracion_ruta`, `hora_salida`, `hora_llegada`, `precio`, `distancia`, `Id_origen`, `Id_destino`)"
+                + " VALUES ("+idRuta+",'"+nombre+"','"+duración+"','"+horaSalida+"','"+horaLegada+"',"+precio+",'"+distancia+"','"+idOrigen+"','"+idDestino+"')";
+        return cnslt.inserta(consulta);
+    }
+     
+     public boolean insertaParada(int idParada, int idRuta, int idTerminal) throws SQLException {
+        consulta ="INSERT INTO `rutaterminal`(`Id_RutTer`, `Id_ruta`, `Id_terminal`) "+
+                "VALUES ('"+idParada+"','"+idRuta+"','"+idTerminal+"')";
+        return cnslt.inserta(consulta);
+    }
+     
+      public boolean insertaAutobusConductor(int Id_AutCon,int Id_conductor, int Id_autobus) throws SQLException {
+        consulta ="INSERT INTO `autobusconductor`(`Id_AutCon`, `Id_conductor`, `Id_autobus`) "+
+                "VALUES ('"+Id_AutCon+"','"+Id_conductor+"','"+Id_autobus+"')";
+        return cnslt.inserta(consulta);
+    }
+      
+        public boolean insertaRutaConductor(int Id_RutCon, int Id_ruta, int Id_conductor) throws SQLException {
+        consulta ="INSERT INTO `rutaconductor`(`Id_RutCon`, `Id_ruta`, `Id_conductor`)"+
+                " VALUES ('"+Id_RutCon+"','"+Id_ruta+"','"+Id_conductor+"');";
+        return cnslt.inserta(consulta);
+    }
 }
