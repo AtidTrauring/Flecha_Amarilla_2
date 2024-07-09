@@ -56,8 +56,8 @@ public class CEliminaciones {
         consulta = "DELETE FROM flecha_amarilla.boletocliente WHERE boletocliente.Id_cliente = " + idCliente;
         return cnslt.elimina(consulta);
     }
-    public boolean eliminaClienteBoleto(int idBoleto) throws SQLException {
-        consulta = "DELETE FROM flecha_amarilla.boletocliente WHERE boletocliente.Id_BolClie= " + idBoleto;
+    public boolean eliminaClienteBoleto(int id) throws SQLException {
+        consulta = "DELETE FROM flecha_amarilla.boletocliente WHERE boletocliente.Id_BolClie = " + id;
         return cnslt.elimina(consulta);
     }
     public boolean eliminaBoleto(int id) throws SQLException {

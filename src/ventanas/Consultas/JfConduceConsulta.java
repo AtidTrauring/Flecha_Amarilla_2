@@ -94,8 +94,7 @@ public final class JfConduceConsulta extends javax.swing.JFrame {
                     datosListas.clear();
                     break;
             }
-             tr = new TableRowSorter<>(modelo);
-            JtableConducen.setRowSorter(tr);
+             
         } catch (SQLException e) {
         }
     }
@@ -142,25 +141,38 @@ public final class JfConduceConsulta extends javax.swing.JFrame {
         }
         return valores;
     }
-      public int buscarId(String nombre, String apPat, String apMat, String placa, String marca, String modelo) {
+
+    public int buscarId(String nombre, String apPat, String apMat, String placa, String marca, String modelo) {
         for (String[] conduce : datosConduce) {
-            if (conduce[1].equals(nombre) && conduce[2].equals(apPat) && conduce[3].equals(apMat) && conduce[4].equals(placa)&& conduce[5].equals(marca) 
-                    && conduce[6].equals(modelo)) {
+            if (conduce[1].equals(nombre) && conduce[2].equals(apPat) && conduce[3].equals(apMat) && conduce[4].equals(placa)&&
+                    conduce[5].equals(marca) && conduce[6].equals(modelo)) {
                 return Integer.parseInt(conduce[0]);
             }
         }
         return -1;
     }
-          
-       public void eliminar(int id) {
+
+    public void actualizar(int id) {
+        String nombre = (String) JtableConducen.getValueAt(JtableConducen.getSelectedRow(), 0);
+        String apPaterno = (String) JtableConducen.getValueAt(JtableConducen.getSelectedRow(), 1);
+        String apMaterno = (String) JtableConducen.getValueAt(JtableConducen.getSelectedRow(), 2);
+        String correo = (String) JtableConducen.getValueAt(JtableConducen.getSelectedRow(), 3);
         try {
-            String idConduce = queryBusca.buscaConduce(id);
-            if (idConduce != null || idConduce.isEmpty()) {
-                if (queryElimina.eliminaAutbousConductor(id)) {
-                    CMensajes.msg("Se elimino la relacion conduce", "Eliminar");
+            String idCliente = queryBusca.buscarClientes(id);
+            if (idCliente != null || idCliente.isEmpty()) {
+                if (queryActualiza.actualizarPersona(nombre, apPaterno, apMaterno, id)) {
+                    CMensajes.msg("Se actualizo la informacion del cliente", "Actualizar");
+                    if (queryActualiza.actualizarCorreo(correo, id)) {
+                        CMensajes.msg("Se actualizo el correo del cliente", "Actualizar");
+                    } else {
+                        CMensajes.msg_error("Ocurrio un error al actualizar el correo", "Actualizar");
+                    }
+                } else {
+                    CMensajes.msg_error("Ocurrio un error al actualizar", "Actualizar");
                 }
+
             } else {
-                CMensajes.msg_error("Parada no encontrada ", "Eliminar-Buscar");
+                CMensajes.msg_error("Usuario no encontrado", "Actualizar-Buscar");
             }
         } catch (SQLException e) {
         } finally {

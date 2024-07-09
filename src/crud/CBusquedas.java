@@ -123,7 +123,6 @@ public class CBusquedas {
                 + "JOIN asiento ON boleto.Id_asiento = asiento.Id_asiento JOIN ruta ON boleto.Id_ruta = ruta.Id_ruta JOIN origen ON ruta.Id_origen = origen.Id_origen JOIN destino ON ruta.Id_destino = destino.Id_destino "
                 + "JOIN terminal AS terminal_origen ON origen.Id_terminal = terminal_origen.Id_terminal JOIN terminal AS terminal_destino ON destino.Id_terminal = terminal_destino.Id_terminal JOIN fecha ON boleto.Id_fecha = fecha.Id_fecha "
                 + "JOIN mes ON fecha.Id_mes = mes.Id_mes JOIN anio ON fecha.Id_anio = anio.Id_anio;";
-//        return cnslt.buscarCon8(consulta);
         return cnslt.buscarValores(consulta, 9);
     }
 

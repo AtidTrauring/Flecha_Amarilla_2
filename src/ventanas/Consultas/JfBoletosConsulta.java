@@ -31,7 +31,7 @@ public final class JfBoletosConsulta extends javax.swing.JFrame {
     private int idActualizar;
     private String[] valoresFila;
     private int idEliminar;
-    
+
     public JfBoletosConsulta() {
         initComponents();
         JtableBoletos.getTableHeader().setReorderingAllowed(false);
@@ -267,42 +267,42 @@ public final class JfBoletosConsulta extends javax.swing.JFrame {
     }
 
     private String[] obtenerValoresFilaTabla() {
-    String[] valores = new String[8]; 
-    int filaSeleccionada = JtableBoletos.getSelectedRow();
-    if (filaSeleccionada != -1) {
-        for (int i = 0; i < JtableBoletos.getColumnCount(); i++) {
-            valores[i] = (String) JtableBoletos.getValueAt(filaSeleccionada, i);
+        String[] valores = new String[8];
+        int filaSeleccionada = JtableBoletos.getSelectedRow();
+        if (filaSeleccionada != -1) {
+            for (int i = 0; i < JtableBoletos.getColumnCount(); i++) {
+                valores[i] = (String) JtableBoletos.getValueAt(filaSeleccionada, i);
+            }
+        } else {
+            CMensajes.msg_error("No hay fila seleccionada", "Obteniendo datos fila");
+            return null;
         }
-    } else {
-        CMensajes.msg_error("No hay fila seleccionada", "Obteniendo datos fila");
-        return null;
+        return valores;
     }
-    return valores;
-}
 
     public int buscarId(String asiento, String origen, String destino, String dia, String mes, String anio, String tipo, String precio) {
-    for (String[] boletos : datosBoletos) {
-        if (boletos[1].equals(asiento) && boletos[2].equals(origen) && boletos[3].equals(destino) && boletos[4].equals(dia) && boletos[5].equals(mes)
-                && boletos[6].equals(anio) && boletos[7].equals(tipo) && boletos[8].equals(precio)) {
-            return Integer.parseInt(boletos[0]);
+        for (String[] boletos : datosBoletos) {
+            if (boletos[1].equals(asiento) && boletos[2].equals(origen) && boletos[3].equals(destino) && boletos[4].equals(dia) && boletos[5].equals(mes)
+                    && boletos[6].equals(anio) && boletos[7].equals(tipo) && boletos[8].equals(precio)) {
+                return Integer.parseInt(boletos[0]);
+            }
         }
+        return -1;
     }
-    return -1;
-}
 
     public void eliminar(int id) {
         try {
             String idBoleto = queryBusca.buscarBoletos(id);
             if (idBoleto != null || idBoleto.isEmpty()) {
-                if (queryElimina.eliminaBoleto(id)) {
-                    CMensajes.msg("Se elimino el telefono correspondiente", "Eliminar");
-                    if (queryElimina.eliminaClienteBoleto(Integer.parseInt(idBoleto))) {
-                        CMensajes.msg("Se eliminaron las relaciones del cliente \ncon los boletos correspondientes", "Eliminar");
+                if (queryElimina.eliminaClienteBoleto(Integer.parseInt(idBoleto))) {
+                    CMensajes.msg("Se eliminaron las relaciones del cliente \ncon los boletos correspondientes", "Eliminar");
+                    if (queryElimina.eliminaBoleto(id)) {
+                        CMensajes.msg("Se elimino el telefono correspondiente", "Eliminar");
                     } else {
-                        CMensajes.msg_error("Ocurrio un error al eliminar \nlas compras asociadas al cliente", "Eliminar");
+                        CMensajes.msg_error("Ocurrio un error al eliminar el Boleto", "Eliminar");
                     }
                 } else {
-                    CMensajes.msg_error("Ocurrio un error al eliminar el Boleto", "Eliminar");
+                    CMensajes.msg_error("Ocurrio un error al eliminar \nlas compras asociadas al cliente", "Eliminar");
                 }
             } else {
                 CMensajes.msg_error("Usuario no encontrado", "Eliminar-Buscar");
@@ -315,7 +315,6 @@ public final class JfBoletosConsulta extends javax.swing.JFrame {
             cargarTabla();
         }
     }
-
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -571,11 +570,11 @@ public final class JfBoletosConsulta extends javax.swing.JFrame {
 
     private void JbtnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnEliminarActionPerformed
         // TODO add your handling code here:
-         if (JtableBoletos.getSelectedRow() != -1) {
+        if (JtableBoletos.getSelectedRow() != -1) {
             if (JOptionPane.showConfirmDialog(null, "¿Desea eliminar el registro seleccionado?", "Confimacion", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                 valoresFila = obtenerValoresFilaTabla();
-                if (buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3],valoresFila[4], valoresFila[5], valoresFila[6], valoresFila[7]) != -1) {
-                    idEliminar = buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3],valoresFila[4], valoresFila[5], valoresFila[6], valoresFila[7]);
+                if (buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3], valoresFila[4], valoresFila[5], valoresFila[6], valoresFila[7]) != -1) {
+                    idEliminar = buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3], valoresFila[4], valoresFila[5], valoresFila[6], valoresFila[7]);
                     eliminar(idEliminar);
                 }
             } else {
@@ -589,11 +588,11 @@ public final class JfBoletosConsulta extends javax.swing.JFrame {
 
     private void JtableBoletosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JtableBoletosMouseClicked
         // TODO add your handling code here:
-         valoresFila = obtenerValoresFilaTabla();
+        valoresFila = obtenerValoresFilaTabla();
         if (valoresFila != null) {
-            if (buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3],valoresFila[4], valoresFila[5], valoresFila[6], valoresFila[7]) != -1) {
+            if (buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3], valoresFila[4], valoresFila[5], valoresFila[6], valoresFila[7]) != -1) {
                 // Se asigna el ID encontrado a la variable idActualizar.
-                idActualizar = buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3],valoresFila[4], valoresFila[5], valoresFila[6], valoresFila[7]);
+                idActualizar = buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3], valoresFila[4], valoresFila[5], valoresFila[6], valoresFila[7]);
             }
         }
     }//GEN-LAST:event_JtableBoletosMouseClicked
