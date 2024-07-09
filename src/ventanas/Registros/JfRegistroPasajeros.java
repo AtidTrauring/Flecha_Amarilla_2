@@ -14,8 +14,8 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
 
     public JfRegistroPasajeros() {
         initComponents();
-        JcmbxTipoPasajeros.setVisible(false);
-        JcmbxTipoPasajeros.setEditable(false);
+       // JcmbxTipoPasajeros.setVisible(false);
+        //JcmbxTipoPasajeros.setEditable(false);
     }
 
     private CInserciones queryInserta = new CInserciones();
@@ -23,9 +23,10 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
     private CEliminaciones queryElimina = new CEliminaciones();
     private CActualizaciones queryActualiza = new CActualizaciones();
     private ArrayList<String> telefonos = new ArrayList<>();
-    private String nombres, apPaterno, apMaterno, correo, telefono;
+    private String nombres, apPaterno, apMaterno, telefono;
     private boolean sinTelefono = false;
-    private String regexNombres = "^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ]+(?: [a-zA-ZáéíóúÁÉÍÓÚüÜñÑ]+)?$", regexCorreo = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
+    private String regexNombres = "^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ]+(?: [a-zA-ZáéíóúÁÉÍÓÚüÜñÑ]+)?$";
+    
 
     public void asignaValores() {
         nombres = JtxtNombres.getText();
@@ -37,7 +38,6 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
         nombres = null;
         apPaterno = null;
         apMaterno = null;
-        correo = null;
         telefonos.clear();
         sinTelefono = false;
     }
@@ -70,10 +70,10 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
         return valida;
     }
 
-    public boolean validaCamposSinCorreo() {
-        return validaCampo(nombres, JtxtNombres, regexNombres, "Ingrese nombre(s)", "Valores invalidos para nombre(s)")
-                || validaCampo(apPaterno, JtxtApPaterno, regexNombres, "Ingrerse un apellido paterno.", "Valores invalidos para apellido paterno")
-                || validaCampo(apMaterno, JtxtApMaterno, regexNombres, "Ingrese un apellido materno.", "Valores invalidos para apellido materno");
+    public boolean validaCampos() {
+        return     validaCampo(nombres, JtxtNombres, regexNombres, "Ingrese nombre(s)", "Valores invalidos para nombre(s)")
+                && validaCampo(apPaterno, JtxtApPaterno, regexNombres, "Ingrerse un apellido paterno.", "Valores invalidos para apellido paterno")
+                && validaCampo(apMaterno, JtxtApMaterno, regexNombres, "Ingrese un apellido materno.", "Valores invalidos para apellido materno");
     }
 
     public boolean validaCamposConCorreo() {
@@ -206,8 +206,8 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
 
     public void enviarDatos() {
         int id, idTel;
-        if (validaCamposSinCorreo()) {
-            telefonos = devuelveTelefonos();
+        if (validaCampos()) {
+            //telefonos = devuelveTelefonos();
             if (telefonos != null) {
                 if (sinTelefono == false) {
                     asignaValores();
@@ -246,10 +246,9 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
         JsNombre = new javax.swing.JSeparator();
         JsApellidoPaterno = new javax.swing.JSeparator();
         JsApellidoMaterno = new javax.swing.JSeparator();
+        JbtnEnviar = new javax.swing.JButton();
         JcmbxTipoPasajeros = new javax.swing.JComboBox<>();
         JcmbxTelefonos = new javax.swing.JComboBox<>();
-        JbtnEnviar = new javax.swing.JButton();
-        JlblFondo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Pasajeros");
@@ -284,13 +283,6 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
         JPnlLienzo.add(JsApellidoPaterno, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, 170, 10));
         JPnlLienzo.add(JsApellidoMaterno, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, 170, 10));
 
-        JcmbxTipoPasajeros.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tipo de Pasajero", "Adulto", "Niño", "Estudiante", "Docente", "INAPAM" }));
-        JcmbxTipoPasajeros.setToolTipText("");
-        JPnlLienzo.add(JcmbxTipoPasajeros, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 180, 180, -1));
-
-        JcmbxTelefonos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Numeros de Telefono" }));
-        JPnlLienzo.add(JcmbxTelefonos, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 210, 180, -1));
-
         JbtnEnviar.setFont(new java.awt.Font("Arial Narrow", 1, 14)); // NOI18N
         JbtnEnviar.setForeground(new java.awt.Color(160, 17, 19));
         JbtnEnviar.setText("Enviar");
@@ -301,8 +293,21 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
         });
         JPnlLienzo.add(JbtnEnviar, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 220, 80, -1));
 
-        JlblFondo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/FondoUsuariosFondos.jpg"))); // NOI18N
-        JPnlLienzo.add(JlblFondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 0, -1, 250));
+        JcmbxTipoPasajeros.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tipo de pasajero", "Adulto", "Niño", "Docente", "Estudiante", "INAPAM" }));
+        JPnlLienzo.add(JcmbxTipoPasajeros, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 180, -1, -1));
+
+        JcmbxTelefonos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Numeros de Telefono", "1 Telefono", "2 Telefonos", "3 Telefonos", "4 Telefonos", "5 Telefonos" }));
+        JcmbxTelefonos.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                JcmbxTelefonosItemStateChanged(evt);
+            }
+        });
+        JcmbxTelefonos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JcmbxTelefonosActionPerformed(evt);
+            }
+        });
+        JPnlLienzo.add(JcmbxTelefonos, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 220, 170, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -320,16 +325,29 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void JbtnEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnEnviarActionPerformed
-        if (JcmbxTipoPasajeros.getSelectedIndex() != 0) {
+       if (JcmbxTipoPasajeros.getSelectedIndex() != 0) {
+        if (!telefonos.isEmpty()) { // Verifica si telefonos no está vacío
             enviarDatos();
         } else {
-            CMensajes.msg_advertencia("Seleccione un tipo de pasajero", "Registro Usuario");
+            CMensajes.msg_advertencia("Debe ingresar al menos un teléfono", "Registro Usuario");
         }
+    } else {
+        CMensajes.msg_advertencia("Seleccione un tipo de pasajero", "Registro Usuario");
+    }
     }//GEN-LAST:event_JbtnEnviarActionPerformed
 
     private void JtxtApMaternoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JtxtApMaternoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_JtxtApMaternoActionPerformed
+
+    private void JcmbxTelefonosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JcmbxTelefonosActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_JcmbxTelefonosActionPerformed
+
+    private void JcmbxTelefonosItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxTelefonosItemStateChanged
+        // TODO add your handling code here:
+        telefonos = devuelveTelefonos();
+    }//GEN-LAST:event_JcmbxTelefonosItemStateChanged
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -381,7 +399,6 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> JcmbxTipoPasajeros;
     private javax.swing.JLabel JlblApellidoMaterno;
     private javax.swing.JLabel JlblApellidoPaterno;
-    private javax.swing.JLabel JlblFondo;
     private javax.swing.JLabel JlblNombres;
     private javax.swing.JSeparator JsApellidoMaterno;
     private javax.swing.JSeparator JsApellidoPaterno;
