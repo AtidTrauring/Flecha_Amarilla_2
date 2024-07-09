@@ -208,4 +208,100 @@ public class CBusquedas {
         consulta = "SELECT MAX(Id_pasajero) FROM flecha_amarilla.pasajero;";
         return Integer.parseInt(cnslt.buscarValor(consulta));
     }
+    
+    
+    public int obtenIdFinalRuta() throws SQLException {
+        consulta = "SELECT MAX(Id_ruta) FROM flecha_amarilla.ruta;";
+         return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+    
+    public int obtenIdRuta(String ruta) throws SQLException {
+        consulta = "SELECT\n"
+                + "ruta.Id_ruta\n"
+                + "FROM\n"
+                + "ruta\n"
+                + "WHERE\n"
+                + "ruta.nombre = '" + ruta + "';";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+    
+     public int obtenIdtTerminal(String terminal) throws SQLException {
+        consulta ="SELECT\n" +
+"terminal.Id_terminal\n" +
+"FROM\n" +
+"terminal\n" +
+"WHERE\n" +
+"terminal.nombre = '"+terminal+"';";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+    
+    
+    
+    public int obtenIdFinalParada() throws SQLException {
+        consulta = "SELECT MAX(Id_RutTer) FROM flecha_amarilla.rutaterminal;";
+         return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+    
+    
+     public int obtenIdFinalAutobusConductor() throws SQLException {
+        consulta = "SELECT MAX(Id_AutCon) FROM flecha_amarilla.autobusconductor;";
+         return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+    
+     
+     
+       
+     public int obtenIdFinalRutaAutobus() throws SQLException {
+        consulta = "SELECT MAX(Id_RutAut) FROM flecha_amarilla.rutaautobus;";
+         return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+     
+      public int obtenIdFinalRutaConductor() throws SQLException {
+        consulta = "SELECT MAX(Id_RutCon) FROM flecha_amarilla.rutaconductor;";
+         return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+    
+      public int obtenIdOrigenSeleccionado(String origen) throws SQLException {
+        consulta = "SELECT\n"
+                + "origen.Id_origen\n"
+                + "FROM\n"
+                + "origen\n"
+                + "INNER JOIN terminal ON terminal.Id_terminal = origen.Id_terminal\n"
+                + "WHERE\n"
+                + "terminal.nombre ='"+origen+"'";
+         return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+      
+          public int obtenIdDestinoSeleccionado(String destino) throws SQLException {
+        consulta = "SELECT\n"
+                + "origen.Id_origen\n"
+                + "FROM\n"
+                + "origen\n"
+                + "INNER JOIN terminal ON terminal.Id_terminal = origen.Id_terminal\n"
+                + "WHERE\n"
+                + "terminal.nombre ='"+destino+"'";
+             return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+     public int obtenIdBuscaConductor(String conductor) throws SQLException {
+        consulta = "SELECT\n"
+                + "conductor.Id_conductor\n"
+                + "FROM\n"
+                + "persona\n"
+                + "INNER JOIN conductor ON persona.Id_persona = conductor.Id_persona\n"
+                + "WHERE\n"
+                + "persona.nombre = '" + conductor + "';";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+               
+             public int obtenIdBuscaAutobus(String numAutobus) throws SQLException {
+        consulta = "SELECT\n"
+                + "autobus.Id_autobus\n"
+                + "FROM\n"
+                + "autobus\n"
+                + "WHERE\n"
+                + "autobus.num_economico = '"+numAutobus+"';";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+             
+             
 }
