@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
@@ -17,7 +18,8 @@ import javax.swing.table.TableRowSorter;
 public final class JfViajesConsulta extends javax.swing.JFrame {
 
     //**************   ATRIBUTOS  *******************/
-    private DefaultTableModel modelo;
+   
+        private DefaultTableModel modelo;
     private DefaultComboBoxModel listas;
     private TableRowSorter tr;
     private final CInserciones queryInserta = new CInserciones();
@@ -27,6 +29,9 @@ public final class JfViajesConsulta extends javax.swing.JFrame {
     private final CCargaCombos queryCarga = new CCargaCombos();
     private ArrayList<String[]> datosViaje = new ArrayList<>();
     private ArrayList<String> datosListas = new ArrayList<>();
+    private int idActualizar;
+    private int idEliminar;
+    private String[] valoresFila;
 
     public JfViajesConsulta() {
         initComponents();
@@ -43,24 +48,40 @@ public final class JfViajesConsulta extends javax.swing.JFrame {
     //**************** METODOS ******************/
     private void limpiarTabla() {
         modelo = (DefaultTableModel) JtableViajes.getModel();
-        for (int i = (JtableViajes.getRowCount() - 1); i >= 0; i--) {
-            modelo.removeRow(i);
+        modelo.setRowCount(0);
+    }
+
+        private void limpiarBuscadores() {
+        JcmbxMarca.setSelectedIndex(0);
+        JcmbxModelo.setSelectedIndex(0);
+        JcmbxPlaca.setSelectedIndex(0);
+        JcmbxDias.setSelectedIndex(0);
+        JcmbxMeses.setSelectedIndex(0);
+        JcmbxOrigenes.setSelectedIndex(0);
+        JcmbxDestinos.setSelectedIndex(0);
+    }
+        
+    public void limpiarFiltro() {
+        if (tr != null) {
+            tr.setRowFilter(null);
         }
     }
 
     public void cargarTabla() {
         modelo = (DefaultTableModel) JtableViajes.getModel();
         try {
-            datosViaje = queryBusca.buscaViaje();
+            datosViaje = queryBusca.buscaViajeCompleta();
             limpiarTabla();
             for (String[] datosVia : datosViaje) {
-                modelo.addRow(new Object[]{datosVia[0], datosVia[1], datosVia[2], datosVia[3], datosVia[4], datosVia[5], datosVia[6]});
+                modelo.addRow(new Object[]{datosVia[1], datosVia[2], datosVia[3], datosVia[4], datosVia[5], datosVia[6], datosVia[7]});
             }
-
+            tr = new TableRowSorter<>(modelo);
+            JtableViajes.setRowSorter(tr);
         } catch (SQLException e) {
             CMensajes.msg_error("No se pudo cargar la informacion en la tabla", "Cargando Tabla");
         }
     }
+
 
     public void cargaComboBox(JComboBox combo, int metodoCarga) {
         listas = (DefaultComboBoxModel) combo.getModel();
@@ -68,21 +89,21 @@ public final class JfViajesConsulta extends javax.swing.JFrame {
             switch (metodoCarga) {
                 case 1:
                     datosListas = queryCarga.cargaComboMarca();
-                    for (int i = 1; i < datosListas.size(); i++) {
+                    for (int i = 0; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
                     datosListas.clear();
                     break;
                 case 2:
                     datosListas = queryCarga.cargaComboModelo();
-                    for (int i = 1; i < datosListas.size(); i++) {
+                    for (int i = 0; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
                     datosListas.clear();
                     break;
                 case 3:
                     datosListas = queryCarga.cargaComboPlaca();
-                    for (int i = 1; i < datosListas.size(); i++) {
+                    for (int i = 0; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
                     datosListas.clear();
@@ -96,14 +117,14 @@ public final class JfViajesConsulta extends javax.swing.JFrame {
                     break;
                 case 5:
                     datosListas = queryCarga.cargaComboOrigenes();
-                    for (int i = 1; i < datosListas.size(); i++) {
+                    for (int i = 0; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
                     datosListas.clear();
                     break;
                 case 6:
                     datosListas = queryCarga.cargaComboDestinos();
-                    for (int i = 1; i < datosListas.size(); i++) {
+                    for (int i = 0; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
                     datosListas.clear();
@@ -162,7 +183,7 @@ public final class JfViajesConsulta extends javax.swing.JFrame {
         modelo = (DefaultTableModel) JtableViajes.getModel();
         tr = new TableRowSorter<>(modelo);
         JtableViajes.setRowSorter(tr);
-        ArrayList<RowFilter<String, Integer>> filtros = new ArrayList<>();
+        ArrayList<RowFilter<Object, Object>> filtros = new ArrayList<>();
         if (JcmbxOrigenes.getSelectedIndex() != 0) {
             filtros.add(RowFilter.regexFilter(JcmbxOrigenes.getSelectedItem().toString(), 0));
         }
@@ -185,10 +206,52 @@ public final class JfViajesConsulta extends javax.swing.JFrame {
             filtros.add(RowFilter.regexFilter(JcmbxMeses.getSelectedItem().toString(), 6));
         }
 
-        RowFilter<String, Integer> rf = RowFilter.andFilter(filtros);
+        RowFilter<Object, Object> rf = RowFilter.andFilter(filtros);
         tr.setRowFilter(rf);
     }
 
+    private String[] obtenerValoresFilaTabla() {
+        String[] valores = new String[7];
+        int filaSeleccionada = JtableViajes.getSelectedRow();
+        if (filaSeleccionada != -1) {
+            for (int i = 0; i < JtableViajes.getColumnCount(); i++) {
+                valores[i] = (String) JtableViajes.getValueAt(filaSeleccionada, i);
+            }
+        } else {
+            CMensajes.msg_error("No hay fila seleccionada", "Obteniendo datos fila");
+            return null;
+        }
+        return valores;
+    }
+
+    public int buscarId(String origen, String destino, String placa, String modelo, String marca, String dia, String mes) {
+        for (String[] viajes : datosViaje) {
+            if (viajes[1].equals(origen) && viajes[2].equals(destino) && viajes[3].equals(placa) && viajes[4].equals(modelo) && viajes[5].equals(marca)
+                    && viajes[6].equals(dia) && viajes[7].equals(mes)) {
+                return Integer.parseInt(viajes[0]);
+            }
+        }
+        return -1;
+    }
+
+        public void eliminar(int id) {
+        try {
+            String idViaje = queryBusca.buscarViaje(id);
+            if (idViaje != null || idViaje.isEmpty()) {
+                if (queryElimina.eliminaRutaAutobus(id)) {
+                    CMensajes.msg("Se elimino el viaje", "Eliminar");
+                }
+            } else {
+                CMensajes.msg_error("viaje no encontrado ", "Eliminar-Buscar");
+            }
+        } catch (SQLException e) {
+        } finally {
+//            datosConductores.clear();
+            limpiarBuscadores();
+            limpiarFiltro();
+            cargarTabla();
+        }
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -210,6 +273,8 @@ public final class JfViajesConsulta extends javax.swing.JFrame {
         JlblMes1 = new javax.swing.JLabel();
         JcmbxPlaca = new javax.swing.JComboBox<>();
         JcmbxDias = new javax.swing.JComboBox<>();
+        JbtnActualizar = new javax.swing.JButton();
+        JbtnEliminar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Viajes");
@@ -225,6 +290,11 @@ public final class JfViajesConsulta extends javax.swing.JFrame {
                 "Origen", "Destino", "Placa", "Modelo", "Marca", "Dia", "Mes"
             }
         ));
+        JtableViajes.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                JtableViajesMouseClicked(evt);
+            }
+        });
         JSPTablaViajes.setViewportView(JtableViajes);
 
         JlblDia.setText("Dia");
@@ -290,6 +360,24 @@ public final class JfViajesConsulta extends javax.swing.JFrame {
             }
         });
 
+        JbtnActualizar.setBackground(new java.awt.Color(160, 16, 70));
+        JbtnActualizar.setForeground(new java.awt.Color(255, 255, 255));
+        JbtnActualizar.setText("Actualizar");
+        JbtnActualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JbtnActualizarActionPerformed(evt);
+            }
+        });
+
+        JbtnEliminar.setBackground(new java.awt.Color(160, 16, 70));
+        JbtnEliminar.setForeground(new java.awt.Color(255, 255, 255));
+        JbtnEliminar.setText("Eliminar");
+        JbtnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JbtnEliminarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout JpnlLienzoLayout = new javax.swing.GroupLayout(JpnlLienzo);
         JpnlLienzo.setLayout(JpnlLienzoLayout);
         JpnlLienzoLayout.setHorizontalGroup(
@@ -297,28 +385,38 @@ public final class JfViajesConsulta extends javax.swing.JFrame {
             .addGroup(JpnlLienzoLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(JpnlLienzoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(JSPTablaViajes)
                     .addGroup(JpnlLienzoLayout.createSequentialGroup()
-                        .addGroup(JpnlLienzoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(JlblDia)
-                            .addComponent(JlblMes)
-                            .addComponent(JcmbxMeses, 0, 160, Short.MAX_VALUE)
-                            .addComponent(JcmbxDias, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(JpnlLienzoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(JSPTablaViajes)
+                            .addGroup(JpnlLienzoLayout.createSequentialGroup()
+                                .addGroup(JpnlLienzoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(JlblDia)
+                                    .addComponent(JlblMes)
+                                    .addComponent(JcmbxMeses, 0, 160, Short.MAX_VALUE)
+                                    .addComponent(JcmbxDias, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(18, 18, 18)
+                                .addGroup(JpnlLienzoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(JlblMarca)
+                                    .addComponent(JcmbxMarca, 0, 160, Short.MAX_VALUE)
+                                    .addComponent(JlblModelo)
+                                    .addComponent(JcmbxModelo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(18, 18, 18)
+                                .addGroup(JpnlLienzoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(JcmbxOrigenes, 0, 160, Short.MAX_VALUE)
+                                    .addComponent(JlblOrigen)
+                                    .addComponent(JlblDestino)
+                                    .addComponent(JcmbxDestinos, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addContainerGap())
+                    .addGroup(JpnlLienzoLayout.createSequentialGroup()
+                        .addComponent(JlblMes1)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(JpnlLienzoLayout.createSequentialGroup()
+                        .addComponent(JcmbxPlaca, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(JbtnEliminar)
                         .addGap(18, 18, 18)
-                        .addGroup(JpnlLienzoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(JlblMarca)
-                            .addComponent(JcmbxMarca, 0, 160, Short.MAX_VALUE)
-                            .addComponent(JlblModelo)
-                            .addComponent(JcmbxModelo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(18, 18, 18)
-                        .addGroup(JpnlLienzoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(JcmbxOrigenes, 0, 160, Short.MAX_VALUE)
-                            .addComponent(JlblOrigen)
-                            .addComponent(JlblDestino)
-                            .addComponent(JcmbxDestinos, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addComponent(JlblMes1)
-                    .addComponent(JcmbxPlaca, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                        .addComponent(JbtnActualizar)
+                        .addGap(103, 103, 103))))
         );
         JpnlLienzoLayout.setVerticalGroup(
             JpnlLienzoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -346,7 +444,10 @@ public final class JfViajesConsulta extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(JlblMes1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(JcmbxPlaca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(JpnlLienzoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(JcmbxPlaca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(JbtnActualizar, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(JbtnEliminar))
                 .addGap(18, 18, 18)
                 .addComponent(JSPTablaViajes, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -409,6 +510,47 @@ public final class JfViajesConsulta extends javax.swing.JFrame {
         aplicaFiltros();
     }//GEN-LAST:event_JcmbxMesesItemStateChanged
 
+    private void JbtnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnActualizarActionPerformed
+        // TODO add your handling code here:
+        //        if (JtableViajes.getSelectedRow() != -1) {
+            //            actualizar(idActualizar);
+            //        } else {
+            //            CMensajes.msg_error("Seleccione un registro", "Actualizar");
+            //        }
+    }//GEN-LAST:event_JbtnActualizarActionPerformed
+
+    private void JbtnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnEliminarActionPerformed
+        // TODO add your handling code here:
+        if (JtableViajes.getSelectedRow() != -1) {
+            int respuesta = JOptionPane.showConfirmDialog(null, "¿Desea eliminar el viaje seleccionada?","Confirmación", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE  );
+            if (respuesta == JOptionPane.YES_OPTION) {
+                valoresFila = obtenerValoresFilaTabla();
+                int idEncontrado = buscarId(valoresFila[0], valoresFila[1],valoresFila[2], valoresFila[3],valoresFila[4], valoresFila[5],valoresFila[6]);
+                if (idEncontrado != -1) {
+                    idEliminar = idEncontrado;
+                    eliminar(idEliminar);
+                } else {
+                    CMensajes.msg_error("Viaje no encontrado", "Eliminar-Buscar");
+                }
+            } else {
+                CMensajes.msg("Acción cancelada", "Eliminación");
+            }
+        } else {
+            CMensajes.msg_error("Seleccione un registro", "Eliminar");
+        }
+    }//GEN-LAST:event_JbtnEliminarActionPerformed
+
+    private void JtableViajesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JtableViajesMouseClicked
+        // TODO add your handling code here:
+            valoresFila = obtenerValoresFilaTabla();
+        if (valoresFila != null) {
+            if (buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3],valoresFila[4], valoresFila[5], valoresFila[6]) != -1) {
+                // Se asigna el ID encontrado a la variable idActualizar.
+                idActualizar = buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3],valoresFila[4], valoresFila[5], valoresFila[6]);
+            }
+        }
+    }//GEN-LAST:event_JtableViajesMouseClicked
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -443,6 +585,8 @@ public final class JfViajesConsulta extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane JSPTablaViajes;
+    private javax.swing.JButton JbtnActualizar;
+    private javax.swing.JButton JbtnEliminar;
     private javax.swing.JComboBox<String> JcmbxDestinos;
     private javax.swing.JComboBox<String> JcmbxDias;
     private javax.swing.JComboBox<String> JcmbxMarca;

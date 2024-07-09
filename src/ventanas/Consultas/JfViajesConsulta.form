@@ -48,33 +48,47 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="JSPTablaViajes" alignment="0" max="32767" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
-                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="JlblDia" min="-2" max="-2" attributes="0"/>
-                              <Component id="JlblMes" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="JcmbxMeses" alignment="0" pref="160" max="32767" attributes="0"/>
-                              <Component id="JcmbxDias" max="32767" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="JSPTablaViajes" alignment="0" max="32767" attributes="0"/>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                      <Component id="JlblDia" min="-2" max="-2" attributes="0"/>
+                                      <Component id="JlblMes" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="JcmbxMeses" alignment="0" pref="160" max="32767" attributes="0"/>
+                                      <Component id="JcmbxDias" max="32767" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                      <Component id="JlblMarca" min="-2" max="-2" attributes="0"/>
+                                      <Component id="JcmbxMarca" pref="160" max="32767" attributes="0"/>
+                                      <Component id="JlblModelo" min="-2" max="-2" attributes="0"/>
+                                      <Component id="JcmbxModelo" alignment="0" max="32767" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                      <Component id="JcmbxOrigenes" pref="160" max="32767" attributes="0"/>
+                                      <Component id="JlblOrigen" min="-2" max="-2" attributes="0"/>
+                                      <Component id="JlblDestino" min="-2" max="-2" attributes="0"/>
+                                      <Component id="JcmbxDestinos" alignment="0" max="32767" attributes="0"/>
+                                  </Group>
+                              </Group>
                           </Group>
-                          <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="JlblMarca" min="-2" max="-2" attributes="0"/>
-                              <Component id="JcmbxMarca" pref="160" max="32767" attributes="0"/>
-                              <Component id="JlblModelo" min="-2" max="-2" attributes="0"/>
-                              <Component id="JcmbxModelo" alignment="0" max="32767" attributes="0"/>
-                          </Group>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="JcmbxOrigenes" pref="160" max="32767" attributes="0"/>
-                              <Component id="JlblOrigen" min="-2" max="-2" attributes="0"/>
-                              <Component id="JlblDestino" min="-2" max="-2" attributes="0"/>
-                              <Component id="JcmbxDestinos" alignment="0" max="32767" attributes="0"/>
-                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
                       </Group>
-                      <Component id="JlblMes1" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="JcmbxPlaca" alignment="0" min="-2" pref="160" max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="JlblMes1" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="JcmbxPlaca" min="-2" pref="160" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
+                          <Component id="JbtnEliminar" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="JbtnActualizar" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="103" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -108,7 +122,11 @@
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="JlblMes1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
-                  <Component id="JcmbxPlaca" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="JcmbxPlaca" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="JbtnActualizar" alignment="3" min="-2" pref="22" max="-2" attributes="0"/>
+                      <Component id="JbtnEliminar" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="JSPTablaViajes" min="-2" pref="105" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
@@ -180,6 +198,9 @@
                   <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="JtableViajesMouseClicked"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
@@ -322,6 +343,34 @@
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
           </AuxValues>
+        </Component>
+        <Component class="javax.swing.JButton" name="JbtnActualizar">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="46" green="10" red="a0" type="rgb"/>
+            </Property>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Actualizar"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JbtnActualizarActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="JbtnEliminar">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="46" green="10" red="a0" type="rgb"/>
+            </Property>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Eliminar"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JbtnEliminarActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>

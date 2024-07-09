@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
@@ -18,7 +19,7 @@ import javax.swing.table.TableRowSorter;
 public final class JfTerminalesConsulta extends javax.swing.JFrame {
 
     //**************   ATRIBUTOS  *******************/
-    private DefaultTableModel modelo;
+       private DefaultTableModel modelo;
     private DefaultComboBoxModel listas;
     private TableRowSorter tr;
     private final CInserciones queryInserta = new CInserciones();
@@ -28,6 +29,9 @@ public final class JfTerminalesConsulta extends javax.swing.JFrame {
     private final CCargaCombos queryCarga = new CCargaCombos();
     private ArrayList<String[]> datosTerminales = new ArrayList<>();
     private ArrayList<String> datosListas = new ArrayList<>();
+    private int idActualizar;
+    private String[] valoresFila;
+    private int idEliminar;
 
     public JfTerminalesConsulta() throws SQLException {
         initComponents();
@@ -40,20 +44,33 @@ public final class JfTerminalesConsulta extends javax.swing.JFrame {
     //**************** METODOS ******************/
     private void limpiarTabla() {
         modelo = (DefaultTableModel) JtableTerminales.getModel();
-        for (int i = (JtableTerminales.getRowCount() - 1); i >= 0; i--) {
-            modelo.removeRow(i);
-        }
+        modelo.setRowCount(0);
     }
 
+    private void limpiarBuscadores() {
+        // Limpia los cuadro de texto
+        JtxtNombreTerminal.setText(null);
+        JcmbxEstados.setSelectedIndex(0);
+        JcmbxCiudades.setSelectedIndex(0);
+    }
+
+    public void limpiarFiltro() {
+        if (tr != null) {
+            tr.setRowFilter(null);
+        }
+    }
+    
     public void cargarTabla() {
         modelo = (DefaultTableModel) JtableTerminales.getModel();
         try {
-            datosTerminales = queryBusca.buscaTerminales();
+            datosTerminales = queryBusca.buscaTerminalesCompletas();
             limpiarTabla();
             for (String[] datosTerminal : datosTerminales) {
-                modelo.addRow(new Object[]{datosTerminal[0], datosTerminal[1], datosTerminal[2], datosTerminal[3], datosTerminal[4], datosTerminal[5],
-                    datosTerminal[6], datosTerminal[7]});
+                modelo.addRow(new Object[]{datosTerminal[1], datosTerminal[2], datosTerminal[3], datosTerminal[4], datosTerminal[5], datosTerminal[6],
+                    datosTerminal[7], datosTerminal[8]});
             }
+            tr = new TableRowSorter<>(modelo);
+            JtableTerminales.setRowSorter(tr);
         } catch (SQLException ex) {
             CMensajes.msg_error("No se pudo cargar la informacion en la tabla", "Cargando Tabla");
         }
@@ -64,14 +81,14 @@ public final class JfTerminalesConsulta extends javax.swing.JFrame {
         switch (metodoCarga) {
             case 1:
                 datosListas = queryCarga.cargaComboEstado();
-                for (int i = 1; i < datosListas.size(); i++) {
+                for (int i = 0; i < datosListas.size(); i++) {
                     listas.addElement(datosListas.get(i));
                 }
                 datosListas.clear();
                 break;
             case 2:
                 datosListas = queryCarga.cargaComboCiudad();
-                for (int i = 1; i < datosListas.size(); i++) {
+                for (int i = 0; i < datosListas.size(); i++) {
                     listas.addElement(datosListas.get(i));
                 }
                 datosListas.clear();
@@ -83,9 +100,9 @@ public final class JfTerminalesConsulta extends javax.swing.JFrame {
         modelo = (DefaultTableModel) JtableTerminales.getModel();
         tr = new TableRowSorter<>(modelo);
         JtableTerminales.setRowSorter(tr);
-        ArrayList<RowFilter<String, Integer>> filtros = new ArrayList<>();
+        ArrayList<RowFilter<Object, Object>> filtros = new ArrayList<>();
         if (!JtxtNombreTerminal.getText().trim().isEmpty()) {
-            filtros.add(RowFilter.regexFilter(JtxtNombreTerminal.getText().trim(), 0));
+            filtros.add(RowFilter.regexFilter("^" + JtxtNombreTerminal.getText().trim() + "$", 0));
         }
         if (JcmbxEstados.getSelectedIndex() != 0) {
             filtros.add(RowFilter.regexFilter(JcmbxEstados.getSelectedItem().toString(), 1));
@@ -93,10 +110,77 @@ public final class JfTerminalesConsulta extends javax.swing.JFrame {
         if (JcmbxCiudades.getSelectedIndex() != 0) {
             filtros.add(RowFilter.regexFilter(JcmbxCiudades.getSelectedItem().toString(), 2));
         }
-        RowFilter<String, Integer> rf = RowFilter.andFilter(filtros);
+        RowFilter<Object, Object> rf = RowFilter.andFilter(filtros);
         tr.setRowFilter(rf);
     }
+    
+      private String[] obtenerValoresFilaTabla() {
+        String[] valores = new String[8];
+        int filaSeleccionada = JtableTerminales.getSelectedRow();
+        if (filaSeleccionada != -1) {
+            for (int i = 0; i < JtableTerminales.getColumnCount(); i++) {
+                valores[i] = (String) JtableTerminales.getValueAt(filaSeleccionada, i);
+            }
+        } else {
+            CMensajes.msg_error("No hay fila seleccionada", "Obteniendo datos fila");
+            return null;
+        }
+        return valores;
+    }
 
+          public int buscarId(String nombre, String estado, String ciudad, String vialidad,String numero, String colonia, String CP, String telefono) {
+        for (String[] terminal : datosTerminales) {
+            if (terminal[1].equals(nombre) && terminal[2].equals(estado) && terminal[3].equals(ciudad) && terminal[4].equals(vialidad)&& terminal[5].equals(numero) 
+                    && terminal[6].equals(colonia) && terminal[7].equals(CP) && terminal[8].equals(telefono)) {
+                return Integer.parseInt(terminal[0]);
+            }
+        }
+        return -1;
+    }
+          
+       public void eliminar(int id) {
+        try {
+            String idTerminal = queryBusca.buscarTerminales(id);
+            if (idTerminal!= null || idTerminal.isEmpty()) {
+                // Eliminando
+                if (queryElimina.eliminaTeriminalTelefono(id)) {
+                    CMensajes.msg("Se elimino el telefono correspondiente", "Eliminar");
+                    if (queryElimina.eliminaDestinoTerminal(id)) {
+                        CMensajes.msg("Se eliminaron las relaciones del destino \ncon las terminales", "Eliminar");
+                        // Eliminando relacion de ruta con Conductor
+                        if (queryElimina.eliminaOrigenTerminal(id)) {
+                            CMensajes.msg("Se eliminaron las relaciones del origen \ncon las terminales", "Eliminar");
+                            // Eliminando relacion de la tabla Conductor
+                            if (queryElimina.eliminaTerminalRuta(Integer.parseInt(idTerminal))) {
+                                 CMensajes.msg("Se elimino la terminal de la ruta", "Eliminar");
+                                if (queryElimina.eliminaTerminal(id)) {
+                                    CMensajes.msg("Se elimino la terminal", "Eliminar");
+                                } else {
+                                    CMensajes.msg_error("Ocurrio un error al eliminar la terminal", "Eliminando");
+                                }
+                            } else {
+                                CMensajes.msg_error("Ocurrio un error al eliminar \nLas rutas asociadas a la terminal", "Eliminar");
+                            }
+                        } else {
+                            CMensajes.msg_error("Ocurrio un error al eliminar \nlos origenes asociados a la terminal", "Eliminar");
+                        }
+                    } else {
+                        CMensajes.msg_error("Ocurrio un error al eliminar \nlos destinos asociadas a la terminal", "Eliminar");
+                    }
+                } else {
+                    CMensajes.msg_error("Ocurrio un error al eliminar el telefono asociado a la terminal", "Eliminar");
+                }
+            } else {
+                CMensajes.msg_error("Usuario no encontrado", "Eliminar-Buscar");
+            }
+        } catch (SQLException e) {
+        } finally {
+//            datosConductores.clear();
+            limpiarBuscadores();
+            limpiarFiltro();
+            cargarTabla();
+        }
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -111,7 +195,6 @@ public final class JfTerminalesConsulta extends javax.swing.JFrame {
         JlblNombreTerminal = new javax.swing.JLabel();
         JtxtNombreTerminal = new javax.swing.JTextField();
         JbtnActualizar = new javax.swing.JButton();
-        JbtnBuscar = new javax.swing.JButton();
         JbtnEliminar = new javax.swing.JButton();
         JspNombreTerminal = new javax.swing.JSeparator();
 
@@ -130,6 +213,11 @@ public final class JfTerminalesConsulta extends javax.swing.JFrame {
                 "Nombre", "Estado", "Ciudad", "Vialidad", "Numero", "Colonia", "Codigo  Postal", "Telefono"
             }
         ));
+        JtableTerminales.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                JtableTerminalesMouseClicked(evt);
+            }
+        });
         JSPTablaTerminales.setViewportView(JtableTerminales);
 
         JpnlLienzo.add(JSPTablaTerminales, new org.netbeans.lib.awtextra.AbsoluteConstraints(294, 6, 700, 288));
@@ -172,14 +260,14 @@ public final class JfTerminalesConsulta extends javax.swing.JFrame {
         JbtnActualizar.setText("Actualizar");
         JpnlLienzo.add(JbtnActualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(205, 28, 84, -1));
 
-        JbtnBuscar.setBackground(new java.awt.Color(160, 16, 70));
-        JbtnBuscar.setForeground(new java.awt.Color(255, 255, 255));
-        JbtnBuscar.setText("Buscar");
-        JpnlLienzo.add(JbtnBuscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(205, 56, 84, -1));
-
         JbtnEliminar.setBackground(new java.awt.Color(160, 16, 70));
         JbtnEliminar.setForeground(new java.awt.Color(255, 255, 255));
         JbtnEliminar.setText("Eliminar");
+        JbtnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JbtnEliminarActionPerformed(evt);
+            }
+        });
         JpnlLienzo.add(JbtnEliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(205, 84, 84, -1));
         JpnlLienzo.add(JspNombreTerminal, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 150, 181, 10));
 
@@ -208,6 +296,35 @@ public final class JfTerminalesConsulta extends javax.swing.JFrame {
     private void JtxtNombreTerminalKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JtxtNombreTerminalKeyReleased
         aplicaFiltros();
     }//GEN-LAST:event_JtxtNombreTerminalKeyReleased
+
+    private void JbtnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnEliminarActionPerformed
+        // TODO add your handling code here:
+          if (JtableTerminales.getSelectedRow() != -1) {
+            if (JOptionPane.showConfirmDialog(null, "¿Desea eliminar el registro seleccionado?", "Confimacion", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                valoresFila = obtenerValoresFilaTabla();
+                if (buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3],valoresFila[4], valoresFila[5], valoresFila[6], valoresFila[7]) != -1) {
+                    idEliminar = buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3],valoresFila[4], valoresFila[5], valoresFila[6], valoresFila[7]);
+                    eliminar(idEliminar);
+                }
+            } else {
+                CMensajes.msg("Accion cancelada", "Eliminacion");
+            }
+        } else {
+            CMensajes.msg_error("Seleccione un registro", "Eliminar");
+
+        }
+    }//GEN-LAST:event_JbtnEliminarActionPerformed
+
+    private void JtableTerminalesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JtableTerminalesMouseClicked
+        // TODO add your handling code here:
+        valoresFila = obtenerValoresFilaTabla();
+        if (valoresFila != null) {
+            if (buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3],valoresFila[4], valoresFila[5], valoresFila[6], valoresFila[7]) != -1) {
+                // Se asigna el ID encontrado a la variable idActualizar.
+                idActualizar = buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3],valoresFila[4], valoresFila[5], valoresFila[6], valoresFila[7]);
+            }
+        }
+    }//GEN-LAST:event_JtableTerminalesMouseClicked
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -249,7 +366,6 @@ public final class JfTerminalesConsulta extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane JSPTablaTerminales;
     private javax.swing.JButton JbtnActualizar;
-    private javax.swing.JButton JbtnBuscar;
     private javax.swing.JButton JbtnEliminar;
     private javax.swing.JComboBox<String> JcmbxCiudades;
     private javax.swing.JComboBox<String> JcmbxEstados;

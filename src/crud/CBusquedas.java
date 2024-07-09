@@ -24,27 +24,11 @@ public class CBusquedas {
         return cnslt.buscarValores(consulta, 8);
     }
 
-    public ArrayList<String[]> buscaViaje() throws SQLException {
-        consulta = "SELECT t_origen.nombre AS origen,\n"
-                + "       t_destino.nombre AS destino,\n"
-                + "       a.placa,\n"
-                + "       m.nombre AS modelo,\n"
-                + "       ma.nombre AS marca,\n"
-                + "       f.dia,\n"
-                + "       me.mes\n"
-                + "FROM ruta r\n"
-                + "JOIN terminal t_origen ON r.Id_origen = t_origen.Id_terminal\n"
-                + "JOIN terminal t_destino ON r.Id_destino = t_destino.Id_terminal\n"
-                + "JOIN rutaAutobus ra ON r.Id_ruta = ra.Id_ruta\n"
-                + "JOIN autobus a ON ra.Id_autobus = a.Id_autobus\n"
-                + "JOIN modelo m ON a.Id_modelo = m.Id_modelo\n"
-                + "JOIN marca ma ON m.Id_marca = ma.Id_marca \n"
-                + "JOIN fecha f ON ra.Id_fecha = f.Id_fecha\n"
-                + "JOIN mes me ON f.Id_mes = me.Id_mes;";
-//        return cnslt.buscarCon7(consulta);
-        return cnslt.buscarValores(consulta, 7);
+    public String buscarViaje(int id) throws SQLException {
+        String idViaje = cnslt.buscarValor("SELECT rutaautobus.Id_RutAut FROM flecha_amarilla.rutaautobus WHERE rutaautobus.Id_RutAut = " + id);
+        return idViaje;
     }
-
+    
     public String buscaConduce(int id) throws SQLException {
         String idConduce = cnslt.buscarValor("SELECT autobusconductor.Id_AutCon FROM flecha_amarilla.autobusconductor WHERE autobusconductor.Id_AutCon = " + id);
         return idConduce;

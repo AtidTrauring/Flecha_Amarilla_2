@@ -41,9 +41,23 @@ public final class JfRutasConsulta extends javax.swing.JFrame {
 
     //**************** METODOS ******************/  
     private void limpiarTabla() {
-        modelo = (DefaultTableModel) JtableRutas.getModel();
-        for (int i = (JtableRutas.getRowCount() - 1); i >= 0; i--) {
-            modelo.removeRow(i);
+         modelo = (DefaultTableModel) JtableRutas.getModel();
+        modelo.setRowCount(0);
+    }
+    
+    private void limpiarBuscadores() {
+        // Limpia los cuadro de texto
+        JtxtNombreTerminal.setText(null);
+        JcmbxOrigenes.setSelectedIndex(0);
+        JcmbxDestinos.setSelectedIndex(0);
+        JcmbxDistancias.setSelectedIndex(0);
+        JcmbxDuraciones.setSelectedIndex(0);
+        JcmbxPrecios.setSelectedIndex(0);
+    }
+
+    public void limpiarFiltro() {
+        if (tr != null) {
+            tr.setRowFilter(null);
         }
     }
 
@@ -67,35 +81,35 @@ public final class JfRutasConsulta extends javax.swing.JFrame {
             switch (metodoCarga) {
                 case 1:
                     datosListas = queryCarga.cargaComboOrigenes();
-                    for (int i = 1; i < datosListas.size(); i++) {
+                    for (int i = 0; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
                     datosListas.clear();
                     break;
                 case 2:
                     datosListas = queryCarga.cargaComboDestinos();
-                    for (int i = 1; i < datosListas.size(); i++) {
+                    for (int i = 0; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
                     datosListas.clear();
                     break;
                 case 3:
                     datosListas = queryCarga.cargaComboDistacia();
-                    for (int i = 1; i < datosListas.size(); i++) {
+                    for (int i = 0; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
                     datosListas.clear();
                     break;
                 case 4:
                     datosListas = queryCarga.cargaComboDuracion();
-                    for (int i = 1; i < datosListas.size(); i++) {
+                    for (int i = 0; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
                     datosListas.clear();
                     break;
                 case 5:
                     datosListas = queryCarga.cargaComboPrecioRuta();
-                    for (int i = 1; i < datosListas.size(); i++) {
+                    for (int i = 0; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
                     datosListas.clear();
@@ -111,7 +125,7 @@ public final class JfRutasConsulta extends javax.swing.JFrame {
         modelo = (DefaultTableModel) JtableRutas.getModel();
         tr = new TableRowSorter<>(modelo);
         JtableRutas.setRowSorter(tr);
-        ArrayList<RowFilter<String, Integer>> filtros = new ArrayList<>();
+        ArrayList<RowFilter<Object, Object>> filtros = new ArrayList<>();
         if (!JtxtNombreTerminal.getText().trim().isEmpty()) {
             filtros.add(RowFilter.regexFilter(JtxtNombreTerminal.getText().trim(), 0));
         }
@@ -130,10 +144,9 @@ public final class JfRutasConsulta extends javax.swing.JFrame {
         if (JcmbxPrecios.getSelectedIndex() != 0) {
             filtros.add(RowFilter.regexFilter(JcmbxPrecios.getSelectedItem().toString(), 7));
         }
-        RowFilter<String, Integer> rf = RowFilter.andFilter(filtros);
+        RowFilter<Object, Object> rf = RowFilter.andFilter(filtros);
         tr.setRowFilter(rf);
     }
-
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
