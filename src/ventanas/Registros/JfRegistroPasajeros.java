@@ -1,45 +1,52 @@
 package ventanas.Registros;
 
-import crud.CActualizaciones;
-import crud.CBusquedas;
-import crud.CEliminaciones;
 import crud.CInserciones;
 import crud.CMensajes;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 public class JfRegistroPasajeros extends javax.swing.JFrame {
 
-    public JfRegistroPasajeros() {
-        initComponents();
-       // JcmbxTipoPasajeros.setVisible(false);
-        //JcmbxTipoPasajeros.setEditable(false);
-    }
-
-    private CInserciones queryInserta = new CInserciones();
-    private CBusquedas queryBusca = new CBusquedas();
-    private CEliminaciones queryElimina = new CEliminaciones();
-    private CActualizaciones queryActualiza = new CActualizaciones();
-    private ArrayList<String> telefonos = new ArrayList<>();
-    private String nombres, apPaterno, apMaterno, telefono;
+    private final CInserciones queryInserta = new CInserciones();
+    private String[] telefonos;
+    public ArrayList<String[]> pasajerosInfo = new ArrayList<>();
+    private String nombres, apPaterno, apMaterno;
+    private String[] datosPasajero;
     private boolean sinTelefono = false;
     private String regexNombres = "^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ]+(?: [a-zA-ZáéíóúÁÉÍÓÚüÜñÑ]+)?$";
-    
+    public int numPasajeros;
+    private int contador = 1;
 
-    public void asignaValores() {
+    public JfRegistroPasajeros() {
+        initComponents();
+    }
+
+    public int asignaPasajeros(int numeroBoletos) {
+        return numPasajeros = numeroBoletos;
+    }
+
+    public String[] asignaValores() {
         nombres = JtxtNombres.getText();
         apPaterno = JtxtApPaterno.getText();
         apMaterno = JtxtApMaterno.getText();
+        return new String[]{nombres, apPaterno, apMaterno, asignaTipoPasajero()};
     }
 
     public void limpiaValores() {
         nombres = null;
         apPaterno = null;
         apMaterno = null;
-        telefonos.clear();
+        telefonos = null;
         sinTelefono = false;
+    }
+
+    public void limpiarCampos() {
+        JtxtNombres.setText(null);
+        JtxtApPaterno.setText(null);
+        JtxtApMaterno.setText(null);
+        JcmbxTelefonos.setSelectedIndex(0);
+        JcmbxTipoPasajeros.setSelectedIndex(0);
     }
 
     public String devuelveCadena(JTextField campo, String regex) {
@@ -71,12 +78,6 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
     }
 
     public boolean validaCampos() {
-        return     validaCampo(nombres, JtxtNombres, regexNombres, "Ingrese nombre(s)", "Valores invalidos para nombre(s)")
-                && validaCampo(apPaterno, JtxtApPaterno, regexNombres, "Ingrerse un apellido paterno.", "Valores invalidos para apellido paterno")
-                && validaCampo(apMaterno, JtxtApMaterno, regexNombres, "Ingrese un apellido materno.", "Valores invalidos para apellido materno");
-    }
-
-    public boolean validaCamposConCorreo() {
         return validaCampo(nombres, JtxtNombres, regexNombres, "Ingrese nombre(s)", "Valores invalidos para nombre(s)")
                 || validaCampo(apPaterno, JtxtApPaterno, regexNombres, "Ingrerse un apellido paterno.", "Valores invalidos para apellido paterno")
                 || validaCampo(apMaterno, JtxtApMaterno, regexNombres, "Ingrese un apellido materno.", "Valores invalidos para apellido materno");
@@ -101,85 +102,56 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
         return telefono;
     }
 
-    public ArrayList<String> devuelveTelefonos() {
+    public String[] devuelveTelefonos() {
+        String[] telefono = null;
         if (JcmbxTelefonos.getSelectedIndex() == 0) {
             CMensajes.msg("Selecciona una cantidad de telefonos", "Registro de usuarios");
             sinTelefono = true;
+            return null;
         } else {
+            telefono = new String[JcmbxTelefonos.getSelectedIndex()];
             sinTelefono = false;
             for (int i = 1; i <= JcmbxTelefonos.getSelectedIndex(); i++) {
                 switch (i) {
                     case 1:
-                        telefono = obtieneTelefono("Ingrese el primer número de telefono: ");
-                        if (telefono == null) {
-                            i = JcmbxTelefonos.getSelectedIndex();
-                            telefonos.clear();
-                        } else {
-                            telefonos.add(telefono);
+                        telefono[i - 1] = obtieneTelefono("Ingrese el número de telefono: ");
+                        if (telefono[i - 1] == null) {
+                            i = 10;
+                            telefono = null;
                         }
                         break;
                     case 2:
-                        telefono = obtieneTelefono("Ingrese el segundo número de telefono: ");
-                        if (telefono == null) {
-                            i = JcmbxTelefonos.getSelectedIndex();
-                            telefonos.clear();
-                        } else {
-                            telefonos.add(telefono);
+                        telefono[i - 1] = obtieneTelefono("Ingrese el segundo número de telefono: ");
+                        if (telefono[i - 1] == null) {
+                            i = 10;
+                            telefono = null;
                         }
                         break;
                     case 3:
-                        telefono = obtieneTelefono("Ingrese el tercer número de telefono: ");
-                        if (telefono == null) {
-                            i = JcmbxTelefonos.getSelectedIndex();
-                            telefonos.clear();
-                        } else {
-                            telefonos.add(telefono);
+                        telefono[i - 1] = obtieneTelefono("Ingrese el tercer número de telefono: ");
+                        if (telefono[i - 1] == null) {
+                            i = 10;
+                            telefono = null;
                         }
                         break;
                     case 4:
-                        telefono = obtieneTelefono("Ingrese el cuarto número de telefono: ");
-                        if (telefono == null) {
-                            i = JcmbxTelefonos.getSelectedIndex();
-                            telefonos.clear();
-                        } else {
-                            telefonos.add(telefono);
+                        telefono[i - 1] = obtieneTelefono("Ingrese el cuarto número de telefono: ");
+                        if (telefono[i - 1] == null) {
+                            i = 10;
+                            telefono = null;
                         }
                         break;
                     case 5:
-                        telefono = obtieneTelefono("Ingrese el quinto número de telefono: ");
-                        if (telefono == null) {
-                            i = JcmbxTelefonos.getSelectedIndex();
-                            telefonos.clear();
-                        } else {
-                            telefonos.add(telefono);
+                        telefono[i - 1] = obtieneTelefono("Ingrese el quinto número de telefono: ");
+                        if (telefono[i - 1] == null) {
+                            i = 10;
+                            telefono = null;
                         }
                         break;
                 }
             }
         }
-        return telefonos;
-    }
-
-    public int asignaDescuento() {
-        int descuento = 0;
-        switch ((String) JcmbxTipoPasajeros.getSelectedItem()) {
-            case "Adulto":
-                descuento = 0;
-                break;
-            case "Niño":
-                descuento = 20;
-                break;
-            case "Docente":
-                descuento = 25;
-                break;
-            case "Estudiante":
-                descuento = 35;
-                break;
-            case "INAPAM":
-                descuento = 30;
-                break;
-        }
-        return descuento;
+        return telefono;
     }
 
     public String asignaTipoPasajero() {
@@ -204,32 +176,20 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
         return tipoPasajero;
     }
 
-    public void enviarDatos() {
-        int id, idTel;
+    public String[] almcenaDatos() {
+        String[] datosUnidos = null;
         if (validaCampos()) {
-            //telefonos = devuelveTelefonos();
+            telefonos = devuelveTelefonos();
             if (telefonos != null) {
                 if (sinTelefono == false) {
-                    asignaValores();
-                    try {
-                        id = queryBusca.obtenIdFinalPersona();
-                        System.out.println("Nombre" + nombres + "\nApellido P" + apPaterno + "\nApellido M" + apMaterno);
-                        queryInserta.insertaPersona((id + 1), nombres, apPaterno, apMaterno);
-                        idTel = queryBusca.obtenIdFinalTelefono();
-                        for (int i = 0; i < telefonos.size(); i++) {
-                            idTel++;
-                            queryInserta.insertaTelefonos(idTel, telefonos.get(i), queryBusca.obtenIdFinalPersona());
-                        }
-                        queryInserta.insertaPasajeros((queryBusca.obtenIdFinalPasajero() + 1), asignaTipoPasajero(), asignaDescuento(), queryBusca.obtenIdFinalPersona());
-                        CMensajes.msg("Usuario Registrado", "Registro Usuarios");
-                    } catch (SQLException ex) {
-                    } finally {
-                        limpiaValores();
-                    }
-                    this.dispose();
+                    String[] datosObtenidos = asignaValores();
+                    datosUnidos = new String[datosObtenidos.length + telefonos.length];
+                    System.arraycopy(datosObtenidos, 0, datosUnidos, 0, datosObtenidos.length);
+                    System.arraycopy(telefonos, 0, datosUnidos, datosObtenidos.length, telefonos.length);
                 }
             }
         }
+        return datosUnidos;
     }
 
     @SuppressWarnings("unchecked")
@@ -249,6 +209,7 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
         JbtnEnviar = new javax.swing.JButton();
         JcmbxTipoPasajeros = new javax.swing.JComboBox<>();
         JcmbxTelefonos = new javax.swing.JComboBox<>();
+        JlblFondo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Pasajeros");
@@ -273,11 +234,6 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
         JPnlLienzo.add(JtxtApPaterno, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 100, 172, -1));
 
         JtxtApMaterno.setBorder(null);
-        JtxtApMaterno.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                JtxtApMaternoActionPerformed(evt);
-            }
-        });
         JPnlLienzo.add(JtxtApMaterno, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 150, 172, -1));
         JPnlLienzo.add(JsNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, 170, 10));
         JPnlLienzo.add(JsApellidoPaterno, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, 170, 10));
@@ -291,23 +247,16 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
                 JbtnEnviarActionPerformed(evt);
             }
         });
-        JPnlLienzo.add(JbtnEnviar, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 220, 80, -1));
+        JPnlLienzo.add(JbtnEnviar, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 220, 80, -1));
 
         JcmbxTipoPasajeros.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tipo de pasajero", "Adulto", "Niño", "Docente", "Estudiante", "INAPAM" }));
-        JPnlLienzo.add(JcmbxTipoPasajeros, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 180, -1, -1));
+        JPnlLienzo.add(JcmbxTipoPasajeros, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 180, 170, -1));
 
         JcmbxTelefonos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Numeros de Telefono", "1 Telefono", "2 Telefonos", "3 Telefonos", "4 Telefonos", "5 Telefonos" }));
-        JcmbxTelefonos.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                JcmbxTelefonosItemStateChanged(evt);
-            }
-        });
-        JcmbxTelefonos.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                JcmbxTelefonosActionPerformed(evt);
-            }
-        });
-        JPnlLienzo.add(JcmbxTelefonos, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 220, 170, -1));
+        JPnlLienzo.add(JcmbxTelefonos, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 210, 170, -1));
+
+        JlblFondo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/FondoUsuariosFondos.jpg"))); // NOI18N
+        JPnlLienzo.add(JlblFondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 0, 220, 250));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -325,29 +274,20 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void JbtnEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnEnviarActionPerformed
-       if (JcmbxTipoPasajeros.getSelectedIndex() != 0) {
-        if (!telefonos.isEmpty()) { // Verifica si telefonos no está vacío
-            enviarDatos();
+        if (JcmbxTipoPasajeros.getSelectedIndex() != 0) {
+            if (contador <= numPasajeros) {
+                pasajerosInfo.add(almcenaDatos());
+                CMensajes.msg("Registre al siguiente pasajero", "Registro pasajero");
+                contador++;
+                limpiarCampos();
+                if (contador > numPasajeros) {
+                    // Pasa los datos
+                }
+            }
         } else {
-            CMensajes.msg_advertencia("Debe ingresar al menos un teléfono", "Registro Usuario");
+            CMensajes.msg_advertencia("Seleccione un tipo de pasajero", "Registro Usuario");
         }
-    } else {
-        CMensajes.msg_advertencia("Seleccione un tipo de pasajero", "Registro Usuario");
-    }
     }//GEN-LAST:event_JbtnEnviarActionPerformed
-
-    private void JtxtApMaternoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JtxtApMaternoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_JtxtApMaternoActionPerformed
-
-    private void JcmbxTelefonosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JcmbxTelefonosActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_JcmbxTelefonosActionPerformed
-
-    private void JcmbxTelefonosItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxTelefonosItemStateChanged
-        // TODO add your handling code here:
-        telefonos = devuelveTelefonos();
-    }//GEN-LAST:event_JcmbxTelefonosItemStateChanged
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -381,8 +321,6 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
         }
         //</editor-fold>
         //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -399,6 +337,7 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> JcmbxTipoPasajeros;
     private javax.swing.JLabel JlblApellidoMaterno;
     private javax.swing.JLabel JlblApellidoPaterno;
+    private javax.swing.JLabel JlblFondo;
     private javax.swing.JLabel JlblNombres;
     private javax.swing.JSeparator JsApellidoMaterno;
     private javax.swing.JSeparator JsApellidoPaterno;

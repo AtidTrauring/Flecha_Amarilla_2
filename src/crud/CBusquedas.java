@@ -208,13 +208,101 @@ public class CBusquedas {
         consulta = "SELECT MAX(Id_pasajero) FROM flecha_amarilla.pasajero;";
         return Integer.parseInt(cnslt.buscarValor(consulta));
     }
-    
-    
+
+    public ArrayList<String[]> consulta8() throws SQLException {
+        consulta = "SELECT CONCAT(p.nombre, ' ', p.ApPat, ' ', p.ApMat) AS Nombre_Pasajero,"
+                + " CONCAT(pCon.nombre, ' ', pCon.ApPat, ' ', pCon.ApMat) AS Nombre_Conductor,"
+                + " ruta.nombre AS Nombre_Ruta, CONCAT(fecha.dia,' ', mes.mes,' ',anio.anio)"
+                + " AS Fecha FROM boleto b, pasajero pa, persona p, ruta, rutaAutobus ra,"
+                + " autobusConductor ac, conductor co, persona pCon, fecha, mes, anio"
+                + " WHERE b.Id_pasajero = pa.Id_pasajero AND pa.Id_persona = p.Id_persona"
+                + " AND b.Id_ruta = ruta.Id_ruta AND ruta.Id_ruta = ra.Id_ruta AND ra.Id_autobus"
+                + " = ac.Id_autobus AND ac.Id_conductor = co.Id_conductor AND co.Id_persona"
+                + " = pCon.Id_persona AND b.Id_fecha = fecha.Id_fecha AND fecha.Id_mes = mes.Id_mes"
+                + " AND fecha.Id_anio = anio.Id_anio AND fecha.dia = 16 AND mes.mes = 'Junio' AND"
+                + " anio.anio = 2024;";
+        return cnslt.buscarValores(consulta, 4);
+    }
+
+    public ArrayList<String[]> consulta12() throws SQLException {
+        consulta = "SELECT DISTINCT CONCAT( p.nombre, ' ', p.ApPat, ' ', p.ApMat ) AS Nombre_Chofer,"
+                + " r.nombre AS Nombre_Ruta, cor.nombre AS Ciudad_Origen, cde.nombre AS Ciudad_Destino,"
+                + " ter.nombre AS Terminal_Parada, CONCAT( per.nombre, ' ', per.ApPat, ' ', per.ApMat )"
+                + " AS Nombre_cliente FROM ruta r, rutaConductor rc, conductor c, persona p, origen o,"
+                + " destino d, terminal tor, direccion dor, ciudad cor, terminal tde, direccion dde,"
+                + " ciudad cde, rutaTerminal rt, terminal ter, direccion dir_parada, boleto b, pasajero pas,"
+                + " persona per WHERE r.Id_ruta = rc.Id_ruta AND rc.Id_conductor = c.Id_conductor AND"
+                + " c.Id_persona = p.Id_persona AND r.Id_origen = o.Id_origen AND r.Id_destino = d.Id_destino"
+                + " AND o.Id_terminal = tor.Id_terminal AND tor.Id_direccion = dor.Id_direccion AND"
+                + " dor.Id_ciudad = cor.Id_ciudad AND d.Id_terminal = tde.Id_terminal AND tde.Id_direccion"
+                + " = dde.Id_direccion AND dde.Id_ciudad = cde.Id_ciudad AND r.Id_ruta = rt.Id_ruta AND"
+                + " rt.Id_terminal = ter.Id_terminal AND ter.Id_direccion = dir_parada.Id_direccion AND"
+                + " r.Id_ruta = b.Id_ruta AND b.Id_pasajero = pas.Id_pasajero AND pas.Id_persona"
+                + " = per.Id_persona AND cor.nombre = 'Ciudad de México' AND cde.nombre = 'Cancún';";
+        return cnslt.buscarValores(consulta, 6);
+    }
+
+    public ArrayList<String[]> consulta13() throws SQLException {
+        consulta = "SELECT co.nombre AS Ciudad_Origen, cd.nombre AS Ciudad_Destino FROM ruta r JOIN"
+                + " origen o ON r.Id_origen = o.Id_origen JOIN destino d ON r.Id_destino = d.Id_destino JOIN"
+                + " terminal torigen ON o.Id_terminal = torigen.Id_terminal JOIN direccion dorigen ON"
+                + " torigen.Id_direccion = dorigen.Id_direccion JOIN ciudad co ON dorigen.Id_ciudad = co.Id_ciudad JOIN"
+                + " terminal tdestino ON d.Id_terminal = tdestino.Id_terminal JOIN direccion ddestino ON"
+                + " tdestino.Id_direccion = ddestino.Id_direccion JOIN ciudad cd ON ddestino.Id_ciudad = cd.Id_ciudad JOIN"
+                + " rutaConductor rc ON r.Id_ruta = rc.Id_ruta GROUP BY r.Id_ruta, co.nombre, cd.nombre"
+                + " HAVING COUNT(DISTINCT rc.Id_conductor) = 3;";
+        return cnslt.buscarValores(consulta, 2);
+    }
+
+    public ArrayList<String[]> consulta14() throws SQLException {
+        consulta = "SELECT asiento.asiento AS 'Nombre Asiento', marca.nombre AS 'Marca', modelo.nombre AS 'Modelo' FROM"
+                + " autobus JOIN rutaAutobus ON autobus.Id_autobus = rutaAutobus.Id_autobus JOIN"
+                + " ruta ON rutaAutobus.Id_ruta = ruta.Id_ruta JOIN asiento ON"
+                + " autobus.Id_autobus = asiento.Id_autobus LEFT JOIN boleto ON"
+                + " asiento.Id_asiento = boleto.Id_asiento JOIN fecha ON"
+                + " rutaAutobus.Id_fecha = fecha.Id_fecha JOIN origen ON"
+                + " ruta.Id_origen = origen.Id_origen JOIN destino ON"
+                + " ruta.Id_destino = destino.Id_destino JOIN ciudad AS"
+                + " ciudad_origen ON origen.Id_terminal = ciudad_origen.Id_ciudad JOIN"
+                + " ciudad AS ciudad_destino ON destino.Id_terminal = ciudad_destino.Id_ciudad JOIN"
+                + " mes ON fecha.Id_mes = mes.Id_mes JOIN anio ON fecha.Id_anio = anio.Id_anio JOIN"
+                + " modelo ON autobus.Id_modelo = modelo.Id_modelo JOIN marca ON"
+                + " modelo.Id_marca = marca.Id_marca WHERE ciudad_origen.nombre = 'Ciudad de Mexico' AND"
+                + " ciudad_destino.nombre = 'Morelia' AND fecha.dia = 20 AND mes.mes = 'Junio' AND"
+                + " anio.anio = 2024 AND boleto.Id_boleto IS NULL;";
+        return cnslt.buscarValores(consulta, 3);
+    }
+
+    public ArrayList<String> buscaAsientos(String destino, String origen, String mes, String dia, String anio) throws SQLException {
+        consulta = "SELECT asiento.asiento AS 'Nombre Asiento'\n"
+                + "FROM autobus\n"
+                + "JOIN rutaAutobus ON autobus.Id_autobus = rutaAutobus.Id_autobus\n"
+                + "JOIN ruta ON rutaAutobus.Id_ruta = ruta.Id_ruta\n"
+                + "JOIN asiento ON autobus.Id_autobus = asiento.Id_autobus\n"
+                + "LEFT JOIN boleto ON asiento.Id_asiento = boleto.Id_asiento\n"
+                + "JOIN fecha ON rutaAutobus.Id_fecha = fecha.Id_fecha\n"
+                + "JOIN origen ON ruta.Id_origen = origen.Id_origen\n"
+                + "JOIN destino ON ruta.Id_destino = destino.Id_destino\n"
+                + "JOIN ciudad AS ciudad_origen ON origen.Id_terminal = ciudad_origen.Id_ciudad\n"
+                + "JOIN ciudad AS ciudad_destino ON destino.Id_terminal = ciudad_destino.Id_ciudad\n"
+                + "JOIN mes ON fecha.Id_mes = mes.Id_mes\n"
+                + "JOIN anio ON fecha.Id_anio = anio.Id_anio\n"
+                + "JOIN modelo ON autobus.Id_modelo = modelo.Id_modelo\n"
+                + "JOIN marca ON modelo.Id_marca = marca.Id_marca\n"
+                + "WHERE ciudad_origen.nombre = '" + origen + "'\n"
+                + "  AND ciudad_destino.nombre = '" + destino + "'\n"
+                + "  AND fecha.dia = " + dia + "\n"
+                + "  AND mes.mes = '" + mes + "'\n"
+                + "  AND anio.anio = " + anio + "\n"
+                + "  AND boleto.Id_boleto IS NULL;";
+        return cnslt.buscarValoresCombos(consulta);
+    }
+
     public int obtenIdFinalRuta() throws SQLException {
         consulta = "SELECT MAX(Id_ruta) FROM flecha_amarilla.ruta;";
-         return Integer.parseInt(cnslt.buscarValor(consulta));
+        return Integer.parseInt(cnslt.buscarValor(consulta));
     }
-    
+
     public int obtenIdRuta(String ruta) throws SQLException {
         consulta = "SELECT\n"
                 + "ruta.Id_ruta\n"
@@ -224,7 +312,7 @@ public class CBusquedas {
                 + "ruta.nombre = '" + ruta + "';";
         return Integer.parseInt(cnslt.buscarValor(consulta));
     }
-    
+
     public int obtenIdFecha(int dia, String mes, int anio) throws SQLException {
         consulta = "SELECT\n"
                 + "fecha.Id_fecha\n"
@@ -233,70 +321,65 @@ public class CBusquedas {
                 + "INNER JOIN anio ON anio.Id_anio = fecha.Id_anio\n"
                 + "INNER JOIN mes ON mes.Id_mes = fecha.Id_mes\n"
                 + "WHERE\n"
-                + "fecha.dia ="+ dia+" AND\n"
-                + "mes.mes = '"+mes+"' AND\n"
-                + "anio.anio = "+2024+";";
+                + "fecha.dia =" + dia + " AND\n"
+                + "mes.mes = '" + mes + "' AND\n"
+                + "anio.anio = " + 2024 + ";";
         return Integer.parseInt(cnslt.buscarValor(consulta));
     }
 
-     public int obtenIdtTerminal(String terminal) throws SQLException {
-        consulta ="SELECT\n" +
-"terminal.Id_terminal\n" +
-"FROM\n" +
-"terminal\n" +
-"WHERE\n" +
-"terminal.nombre = '"+terminal+"';";
+    public int obtenIdtTerminal(String terminal) throws SQLException {
+        consulta = "SELECT\n"
+                + "terminal.Id_terminal\n"
+                + "FROM\n"
+                + "terminal\n"
+                + "WHERE\n"
+                + "terminal.nombre = '" + terminal + "';";
         return Integer.parseInt(cnslt.buscarValor(consulta));
     }
-    
-    
-    
+
     public int obtenIdFinalParada() throws SQLException {
         consulta = "SELECT MAX(Id_RutTer) FROM flecha_amarilla.rutaterminal;";
-         return Integer.parseInt(cnslt.buscarValor(consulta));
+        return Integer.parseInt(cnslt.buscarValor(consulta));
     }
-    
-    
-     public int obtenIdFinalAutobusConductor() throws SQLException {
+
+    public int obtenIdFinalAutobusConductor() throws SQLException {
         consulta = "SELECT MAX(Id_AutCon) FROM flecha_amarilla.autobusconductor;";
-         return Integer.parseInt(cnslt.buscarValor(consulta));
+        return Integer.parseInt(cnslt.buscarValor(consulta));
     }
-    
-     
-     
-       
-     public int obtenIdFinalRutaAutobus() throws SQLException {
+
+    public int obtenIdFinalRutaAutobus() throws SQLException {
         consulta = "SELECT MAX(Id_RutAut) FROM flecha_amarilla.rutaautobus;";
-         return Integer.parseInt(cnslt.buscarValor(consulta));
+        return Integer.parseInt(cnslt.buscarValor(consulta));
     }
-     
-      public int obtenIdFinalRutaConductor() throws SQLException {
+
+    public int obtenIdFinalRutaConductor() throws SQLException {
         consulta = "SELECT MAX(Id_RutCon) FROM flecha_amarilla.rutaconductor;";
-         return Integer.parseInt(cnslt.buscarValor(consulta));
+        return Integer.parseInt(cnslt.buscarValor(consulta));
     }
-    
-      public int obtenIdOrigenSeleccionado(String origen) throws SQLException {
+
+    public int obtenIdOrigenSeleccionado(String origen) throws SQLException {
         consulta = "SELECT\n"
                 + "origen.Id_origen\n"
                 + "FROM\n"
                 + "origen\n"
                 + "INNER JOIN terminal ON terminal.Id_terminal = origen.Id_terminal\n"
                 + "WHERE\n"
-                + "terminal.nombre ='"+origen+"'";
-         return Integer.parseInt(cnslt.buscarValor(consulta));
+                + "terminal.nombre ='" + origen + "'";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
     }
-      
-          public int obtenIdDestinoSeleccionado(String destino) throws SQLException {
+
+    public int obtenIdDestinoSeleccionado(String destino) throws SQLException {
         consulta = "SELECT\n"
                 + "origen.Id_origen\n"
                 + "FROM\n"
                 + "origen\n"
                 + "INNER JOIN terminal ON terminal.Id_terminal = origen.Id_terminal\n"
                 + "WHERE\n"
-                + "terminal.nombre ='"+destino+"'";
-             return Integer.parseInt(cnslt.buscarValor(consulta));
+                + "terminal.nombre ='" + destino + "'";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
     }
-     public int obtenIdBuscaConductor(String conductor) throws SQLException {
+
+    public int obtenIdBuscaConductor(String conductor) throws SQLException {
         consulta = "SELECT\n"
                 + "conductor.Id_conductor\n"
                 + "FROM\n"
@@ -306,16 +389,15 @@ public class CBusquedas {
                 + "persona.nombre = '" + conductor + "';";
         return Integer.parseInt(cnslt.buscarValor(consulta));
     }
-               
-             public int obtenIdBuscaAutobus(String numAutobus) throws SQLException {
+
+    public int obtenIdBuscaAutobus(String numAutobus) throws SQLException {
         consulta = "SELECT\n"
                 + "autobus.Id_autobus\n"
                 + "FROM\n"
                 + "autobus\n"
                 + "WHERE\n"
-                + "autobus.num_economico = '"+numAutobus+"';";
+                + "autobus.num_economico = '" + numAutobus + "';";
         return Integer.parseInt(cnslt.buscarValor(consulta));
     }
-             
-             
+
 }

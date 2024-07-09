@@ -18,7 +18,7 @@ import ventanas.Consultas.JfTerminalesConsulta;
 import ventanas.Consultas.JfViajesConsulta;
 // Importacion de los Frames de Registro
 import ventanas.Registros.JfRegistroAutobuses;
-import ventanas.Registros.JfRegistroBoleto;
+import ventanas.Consultas.JfBoletoConsulta;
 import ventanas.Registros.JfRegistroConductores;
 import ventanas.Registros.JfRegistroParadas;
 import ventanas.Registros.JfRegistroRuta;
@@ -346,7 +346,7 @@ public class JfPrincipal extends javax.swing.JFrame {
 
     private void JmiComprarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JmiComprarActionPerformed
         // Instanciamos el JfRegistroBoleto *Importen el Frame*
-        JfRegistroBoleto rb = new JfRegistroBoleto();
+        JfBoletoConsulta rb = new JfBoletoConsulta();
         // 300,300
         creaFrame(rb, "Comprar", 315, 338);
     }//GEN-LAST:event_JmiComprarActionPerformed
