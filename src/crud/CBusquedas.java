@@ -9,23 +9,19 @@ public class CBusquedas {
     private String consulta;
 
     public ArrayList<String[]> buscarReembolso() throws SQLException {
-        consulta = "SELECT p.nombre,\n"
-                + "       p.ApPat,\n"
-                + "       p.ApMat,\n"
-                + "       r.cantidad AS cantidad_reembolso,\n"
-                + "       f.dia,\n"
-                + "       m.mes,\n"
-                + "       a.anio\n"
-                + "FROM reembolso r\n"
-                + "JOIN boleto b ON r.Id_boleto = b.Id_boleto\n"
-                + "JOIN pasajero pas ON b.Id_pasajero = pas.Id_pasajero\n"
-                + "JOIN persona p ON pas.Id_persona = p.Id_persona\n"
-                + "JOIN fecha f ON r.Id_fecha = f.Id_fecha\n"
-                + "JOIN mes m ON f.Id_mes = m.Id_mes\n"
-                + "JOIN anio a ON f.Id_anio = a.Id_anio;";
+        consulta = "SELECT p.nombre,  p.ApPat,  p.ApMat, r.cantidad AS cantidad_reembolso, f.dia, m.mes,  a.anio FROM reembolso r JOIN boleto b ON r.Id_boleto = b.Id_boleto JOIN pasajero pas ON b.Id_pasajero = pas.Id_pasajero "
+                + "JOIN persona p ON pas.Id_persona = p.Id_persona JOIN fecha f ON r.Id_fecha = f.Id_fecha JOIN mes m ON f.Id_mes = m.Id_mes JOIN anio a ON f.Id_anio = a.Id_anio;";
 //        return cnslt.buscarCon7(consulta);
         return cnslt.buscarValores(consulta, 7);
 
+    }
+
+    public ArrayList<String[]> buscaViajeCompleta() throws SQLException {
+        consulta = "SELECT ra.Id_RutAut, t_origen.nombre AS origen, t_destino.nombre AS destino, a.placa, m.nombre AS modelo, ma.nombre AS marca, f.dia, me.mes FROM ruta r " 
+    + "JOIN terminal t_origen ON r.Id_origen = t_origen.Id_terminal JOIN terminal t_destino ON r.Id_destino = t_destino.Id_terminal JOIN rutaAutobus ra ON r.Id_ruta = ra.Id_ruta " 
+    + "JOIN autobus a ON ra.Id_autobus = a.Id_autobus JOIN modelo m ON a.Id_modelo = m.Id_modelo JOIN marca ma ON m.Id_marca = ma.Id_marca JOIN fecha f ON ra.Id_fecha = f.Id_fecha JOIN mes me ON f.Id_mes = me.Id_mes;";
+//        return cnslt.buscarCon7(consulta);
+        return cnslt.buscarValores(consulta, 8);
     }
 
     public ArrayList<String[]> buscaViaje() throws SQLException {
@@ -49,23 +45,15 @@ public class CBusquedas {
         return cnslt.buscarValores(consulta, 7);
     }
 
-    public ArrayList<String[]> buscaConduce() throws SQLException {
-        consulta = "SELECT\n"
-                + "    persona.nombre,\n"
-                + "    persona.ApPat,\n"
-                + "    persona.ApMat,\n"
-                + "    autobus.placa,\n"
-                + "    marca.nombre AS nombre_marca,\n"
-                + "    modelo.nombre AS nombre_modelo\n"
-                + "FROM\n"
-                + "    autobus\n"
-                + "INNER JOIN autobusconductor ON autobus.Id_autobus = autobusconductor.Id_autobus\n"
-                + "INNER JOIN conductor ON autobusconductor.Id_conductor = conductor.Id_conductor\n"
-                + "INNER JOIN modelo ON autobus.Id_modelo = modelo.Id_modelo\n"
-                + "INNER JOIN marca ON modelo.Id_marca = marca.Id_marca\n"
-                + "INNER JOIN persona ON conductor.Id_persona = persona.Id_persona;";
-//        return cnslt.buscarCon6(consulta);
-        return cnslt.buscarValores(consulta, 6);
+    public String buscaConduce(int id) throws SQLException {
+        String idConduce = cnslt.buscarValor("SELECT autobusconductor.Id_AutCon FROM flecha_amarilla.autobusconductor WHERE autobusconductor.Id_AutCon = " + id);
+        return idConduce;
+    }
+    
+    public ArrayList<String[]> buscaConduceCompletos() throws SQLException {
+        consulta = "SELECT autobusconductor.Id_AutCon, persona.nombre, persona.ApPat, persona.ApMat, autobus.placa, marca.nombre AS nombre_marca, modelo.nombre AS nombre_modelo FROM flecha_amarilla.autobus INNER JOIN autobusconductor ON autobus.Id_autobus = autobusconductor.Id_autobus "
+                + " INNER JOIN conductor ON autobusconductor.Id_conductor = conductor.Id_conductor INNER JOIN modelo ON autobus.Id_modelo = modelo.Id_modelo INNER JOIN marca ON modelo.Id_marca = marca.Id_marca INNER JOIN persona ON conductor.Id_persona = persona.Id_persona ";
+        return cnslt.buscarValores(consulta, 7);
     }
 
     public ArrayList<String[]> buscarPrueba(int camposRecibidos) throws SQLException {
@@ -73,16 +61,25 @@ public class CBusquedas {
         return cnslt.buscarValores(consulta, camposRecibidos);
     }
 
-    public ArrayList<String[]> buscarClientes() throws SQLException {
-        consulta = "SELECT persona.nombre, persona.ApPat, persona.ApMat, cliente.correo  FROM cliente INNER JOIN persona ON persona.Id_persona = cliente.Id_persona;";
-//        return cnslt.buscarCon4(consulta);
-        return cnslt.buscarValores(consulta, 4);
-    }
-
-    public ArrayList<String[]> buscarPasajeros() throws SQLException {
-        consulta = "SELECT persona.nombre, persona.ApPat, persona.ApMat, pasajero.tipoPasajero, pasajero.descuento FROM pasajero INNER JOIN persona ON pasajero.Id_persona = persona.Id_persona";
+    public ArrayList<String[]> buscarClientesCompletos() throws SQLException {
+        consulta = "SELECT persona.Id_persona, persona.nombre, persona.ApPat, persona.ApMat, cliente.correo FROM cliente INNER JOIN persona ON cliente.Id_persona = persona.Id_persona";
 //        return cnslt.buscarCon5(consulta);
         return cnslt.buscarValores(consulta, 5);
+    }
+    
+    public String buscarClientes(int id) throws SQLException {
+        String idConductor = cnslt.buscarValor("SELECT cliente.Id_cliente FROM flecha_amarilla.cliente WHERE cliente.Id_persona = " + id);
+        return idConductor;
+    }
+
+    public String buscaPasajero(int id) throws SQLException {
+        String idPasajero = cnslt.buscarValor("SELECT pasajero.Id_pasajero FROM flecha_amarilla.pasajero WHERE pasajero.Id_pasajero = " + id);
+        return idPasajero;
+    }
+       
+    public ArrayList<String[]> buscarPasajerosCompletos() throws SQLException {
+        consulta = "SELECT pasajero.Id_pasajero, persona.nombre, persona.ApPat, persona.ApMat, pasajero.tipoPasajero, pasajero.descuento FROM  flecha_amarilla.pasajero INNER JOIN flecha_amarilla.persona ON pasajero.Id_persona = persona.Id_persona;";
+        return cnslt.buscarValores(consulta, 6);
     }
 
     public ArrayList<String[]> buscarConductores() throws SQLException {
@@ -118,36 +115,45 @@ public class CBusquedas {
         return cnslt.buscarValores(consulta, 4);
     }
 
-    public ArrayList<String[]> buscaParadas() throws SQLException {
-        consulta = " SELECT DISTINCT ruta.nombre,terminal.nombre FROM rutaterminal "
+
+    public ArrayList<String[]> buscaParadasCompletas() throws SQLException {
+        consulta = " SELECT rutaterminal.Id_RutTer, ruta.nombre, terminal.nombre FROM rutaterminal "
                 + " INNER JOIN ruta ON ruta.Id_ruta = rutaterminal.Id_ruta "
                 + " INNER JOIN terminal ON terminal.Id_terminal = rutaterminal.Id_terminal ";
 //        return cnslt.buscarCon2(consulta);
-        return cnslt.buscarValores(consulta, 2);
+        return cnslt.buscarValores(consulta, 3);
+    }
+    
+    public String buscarParadas(int id) throws SQLException {
+        String idParada = cnslt.buscarValor("SELECT rutaterminal.Id_RutTer FROM flecha_amarilla.rutaterminal WHERE rutaterminal.Id_RutTer = " + id);
+        return idParada;
+    }
+    
+    public String buscarBoletos(int id) throws SQLException {
+        String idBoleto = cnslt.buscarValor("SELECT boleto.Id_boleto FROM flecha_amarilla.boleto WHERE boleto.Id_boleto = " + id);
+        return idBoleto ;
+    }
+    
+    public ArrayList<String[]> buscaBoletosCompletos() throws SQLException {
+        consulta = "SELECT boleto.Id_boleto, asiento.asiento, terminal_origen.nombre AS Origen, terminal_destino.nombre AS Destino, fecha.dia, mes.mes, anio.anio, boleto.tipo_boleto, boleto.precioDescuento FROM boleto "
+                + "JOIN asiento ON boleto.Id_asiento = asiento.Id_asiento JOIN ruta ON boleto.Id_ruta = ruta.Id_ruta JOIN origen ON ruta.Id_origen = origen.Id_origen JOIN destino ON ruta.Id_destino = destino.Id_destino "
+                + "JOIN terminal AS terminal_origen ON origen.Id_terminal = terminal_origen.Id_terminal JOIN terminal AS terminal_destino ON destino.Id_terminal = terminal_destino.Id_terminal JOIN fecha ON boleto.Id_fecha = fecha.Id_fecha "
+                + "JOIN mes ON fecha.Id_mes = mes.Id_mes JOIN anio ON fecha.Id_anio = anio.Id_anio;";
+//        return cnslt.buscarCon8(consulta);
+        return cnslt.buscarValores(consulta, 9);
     }
 
-    public ArrayList<String[]> buscaBoletos() throws SQLException {
-        consulta = "SELECT DISTINCT\n"
-                + "    asiento.asiento,\n"
-                + "    terminal_origen.nombre AS Origen,\n"
-                + "    terminal_destino.nombre AS Destino,\n"
-                + "    fecha.dia,\n"
-                + "    mes.mes,\n"
-                + "    anio.anio,\n"
-                + "    boleto.tipo_boleto,\n"
-                + "    boleto.precioDescuento\n"
-                + "FROM boleto\n"
-                + "JOIN asiento ON boleto.Id_asiento = asiento.Id_asiento\n"
-                + "JOIN ruta ON boleto.Id_ruta = ruta.Id_ruta\n"
-                + "JOIN origen ON ruta.Id_origen = origen.Id_origen\n"
-                + "JOIN destino ON ruta.Id_destino = destino.Id_destino\n"
-                + "JOIN terminal AS terminal_origen ON origen.Id_terminal = terminal_origen.Id_terminal\n"
-                + "JOIN terminal AS terminal_destino ON destino.Id_terminal = terminal_destino.Id_terminal\n"
-                + "JOIN fecha ON boleto.Id_fecha = fecha.Id_fecha\n"
-                + "JOIN mes ON fecha.Id_mes = mes.Id_mes\n"
-                + "JOIN anio ON fecha.Id_anio = anio.Id_anio;";
+    public ArrayList<String[]> buscaTerminalesCompletas() throws SQLException {
+        consulta = "SELECT terminal.Id_terminal, terminal.nombre, estado.nombre, ciudad.nombre, direccion.nombre_calle, direccion.numero, colonia.colonia, codigo_postal.codigo_postal, telefonoterminal.telefono "
+                + "FROM terminal INNER JOIN direccion ON direccion.Id_direccion = terminal.Id_direccion INNER JOIN ciudad ON ciudad.Id_ciudad = direccion.Id_ciudad INNER JOIN estado ON estado.Id_estado = ciudad.Id_estado "
+                + "INNER JOIN colonia ON colonia.Id_colonia = direccion.Id_colonia INNER JOIN codigo_postal ON codigo_postal.Id_CP = direccion.Id_CP INNER JOIN telefonoterminal ON terminal.Id_terminal = telefonoterminal.Id_terminal ";
 //        return cnslt.buscarCon8(consulta);
-        return cnslt.buscarValores(consulta, 8);
+        return cnslt.buscarValores(consulta, 9);
+    }
+    
+     public String buscarTerminales(int id) throws SQLException {
+        String idTerminal= cnslt.buscarValor("SELECT terminal.Id_terminal FROM flecha_amarilla.terminal WHERE terminal.Id_terminal = " + id);
+        return idTerminal;
     }
 
     public ArrayList<String[]> buscaRutas() throws SQLException {
@@ -162,27 +168,6 @@ public class CBusquedas {
         return cnslt.buscarValores(consulta, 8);
     }
 
-    public ArrayList<String[]> buscaTerminales() throws SQLException {
-        consulta = "SELECT\n"
-                + "terminal.nombre,\n"
-                + "estado.nombre,\n"
-                + "ciudad.nombre,\n"
-                + "direccion.nombre_calle,\n"
-                + "direccion.numero,\n"
-                + "colonia.colonia,\n"
-                + "codigo_postal.codigo_postal,\n"
-                + "telefonoterminal.telefono\n"
-                + "FROM\n"
-                + "terminal\n"
-                + "INNER JOIN direccion ON direccion.Id_direccion = terminal.Id_direccion\n"
-                + "INNER JOIN ciudad ON ciudad.Id_ciudad = direccion.Id_ciudad\n"
-                + "INNER JOIN estado ON estado.Id_estado = ciudad.Id_estado\n"
-                + "INNER JOIN colonia ON colonia.Id_colonia = direccion.Id_colonia\n"
-                + "INNER JOIN codigo_postal ON codigo_postal.Id_CP = direccion.Id_CP\n"
-                + "INNER JOIN telefonoterminal ON terminal.Id_terminal = telefonoterminal.Id_terminal";
-//        return cnslt.buscarCon8(consulta);
-        return cnslt.buscarValores(consulta, 8);
-    }
 
     public int obtenIdFinalPersona() throws SQLException {
         consulta = "SELECT MAX(Id_persona) FROM flecha_amarilla.persona;";

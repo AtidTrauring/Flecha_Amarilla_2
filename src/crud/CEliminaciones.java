@@ -31,4 +31,74 @@ public class CEliminaciones {
         consulta = "DELETE FROM persona WHERE persona.Id_persona = " + id;
         return cnslt.elimina(consulta);
     }
+
+    public boolean eliminaRutaTerminal(int id) throws SQLException {
+        consulta = "DELETE FROM flecha_amarilla.rutaterminal WHERE rutaterminal.Id_RutTer= " + id;
+        return cnslt.elimina(consulta);
+    }
+    
+    public boolean eliminaRutaAutobus(int id) throws SQLException {
+        consulta = "DELETE FROM flecha_amarilla.rutaautobus WHERE rutaautobus.Id_RutAut= " + id;
+        return cnslt.elimina(consulta);
+    }
+    
+    public boolean eliminaConduce(int id) throws SQLException {
+        consulta = "DELETE FROM flecha_amarilla.autobusconductor WHERE autobusconductor.Id_AutCon= " + id;
+        return cnslt.elimina(consulta);
+    }
+    
+    public boolean eliminaCliente(int id) throws SQLException {
+        consulta = "DELETE FROM flecha_amarilla.cliente WHERE cliente.Id_persona = " + id;
+        return cnslt.elimina(consulta);
+    }
+
+    public boolean eliminaBoletoCliente(int idCliente) throws SQLException {
+        consulta = "DELETE FROM flecha_amarilla.boletocliente WHERE boletocliente.Id_cliente = " + idCliente;
+        return cnslt.elimina(consulta);
+    }
+    public boolean eliminaClienteBoleto(int idBoleto) throws SQLException {
+        consulta = "DELETE FROM flecha_amarilla.boletocliente WHERE boletocliente.Id_BolClie= " + idBoleto;
+        return cnslt.elimina(consulta);
+    }
+    public boolean eliminaBoleto(int id) throws SQLException {
+        consulta = "DELETE FROM flecha_amarilla.boleto WHERE Id_boleto = " + id;
+        return cnslt.elimina(consulta);
+    }
+    
+    public boolean eliminaPasajero(int id) throws SQLException {
+        consulta = "DELETE FROM flecha_amarilla.pasajero WHERE pasajero.Id_persona = " + id;
+        return cnslt.elimina(consulta);
+    }
+
+    public boolean eliminaTarjetaCliente(int idCliente) throws SQLException {
+        consulta = "DELETE FROM `tarjeta` WHERE tarjeta.Id_cliente = " + idCliente;
+        return cnslt.elimina(consulta);
+    }
+
+    public boolean eliminaTerminal(int id) throws SQLException {
+        consulta = "DELETE FROM flecha_amarilla.terminal WHERE terminal.Id_terminal = " + id;
+        return cnslt.elimina(consulta);
+    }
+    public boolean eliminaDestinoTerminal(int idTerminal) throws SQLException {
+        consulta = "DELETE FROM `destino` WHERE destino.Id_terminal = " + idTerminal;
+        return cnslt.elimina(consulta);
+    }
+    
+    public boolean eliminaOrigenTerminal(int id) throws SQLException {
+        consulta = "DELETE FROM `origen` WHERE origen.Id_terminal = " + id;
+        return cnslt.elimina(consulta);
+    }
+    
+    public boolean eliminaTerminalRuta(int idTerminal) throws SQLException {
+        consulta = "DELETE FROM `rutaterminal` WHERE rutaterminal.Id_terminal = " + idTerminal;
+        return cnslt.elimina(consulta);
+    }
+    public boolean eliminaTeriminalTelefono(int id) throws SQLException {
+        consulta = "DELETE FROM `telefonoterminal` WHERE telefonoterminal.Id_terminal = " + id;
+        return cnslt.elimina(consulta);
+    }
+    public boolean eliminaRuta(int id) throws SQLException {
+        consulta = "DELETE FROM flecha_amarilla.terminal WHERE terminal.Id_terminal = " + id;
+        return cnslt.elimina(consulta);
+    }
 }
