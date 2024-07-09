@@ -55,4 +55,10 @@ public class CInserciones {
                 " VALUES ('"+Id_RutCon+"','"+Id_ruta+"','"+Id_conductor+"');";
         return cnslt.inserta(consulta);
     }
+        
+          public boolean insertaRutaAutobus(int Id_RutAut, int Id_ruta, int Id_autobus, int Id_fecha) throws SQLException {
+        consulta ="INSERT INTO `rutaautobus`(`Id_RutAut`, `Id_ruta`, `Id_autobus`, `Id_fecha`) "+
+                "VALUES ('"+Id_RutAut+"','"+Id_ruta+"','"+Id_autobus+"','"+Id_fecha+"');";
+        return cnslt.inserta(consulta);
+    }
 }
