@@ -4,8 +4,10 @@ import crud.CBusquedas;
 import crud.CCargaCombos;
 import crud.CEliminaciones;
 import crud.CInserciones;
+import crud.CMensajes;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
@@ -15,13 +17,14 @@ public final class JfClientesConsulta extends javax.swing.JFrame {
     //**************   ATRIBUTOS  *******************/
     private DefaultTableModel modelo;
     private TableRowSorter tr;
-    private final CInserciones queryInserta = new CInserciones();
     private final CBusquedas queryBusca = new CBusquedas();
     private final CEliminaciones queryElimina = new CEliminaciones();
     private final CActualizaciones queryActualiza = new CActualizaciones();
-    private final CCargaCombos queryCarga = new CCargaCombos();
     private ArrayList<String[]> datosClientes = new ArrayList<>();
     private ArrayList<String> datosListas = new ArrayList<>();
+    private int idActualizar;
+    private String[] valoresFila;
+    private int idEliminar;
 
     public JfClientesConsulta() {
         initComponents();
@@ -32,44 +35,158 @@ public final class JfClientesConsulta extends javax.swing.JFrame {
 
     //**************** METODOS ******************/
     private void limpiarTabla() {
+
         modelo = (DefaultTableModel) JtableClientes.getModel();
-        for (int i = (JtableClientes.getRowCount() - 1); i >= 0; i--) {
-            modelo.removeRow(i);
+        modelo.setRowCount(0);
+    }
+
+    private void limpiarBuscadores() {
+        // Limpia los cuadro de texto
+        JtxtNombres.setText(null);
+        JtxtApPaterno.setText(null);
+        JtxtApMaterno.setText(null);
+        JtxtCorreo.setText(null);
+    }
+
+    public void limpiarFiltro() {
+        // Si el objeto 'tr' tiene algun filtro
+        if (tr != null) {
+            // Elimina el filtro 
+            tr.setRowFilter(null);
         }
     }
 
     public void cargaTabla() {
         modelo = (DefaultTableModel) JtableClientes.getModel();
         try {
-            datosClientes = queryBusca.buscarClientes();
+            datosClientes = queryBusca.buscarClientesCompletos();
             limpiarTabla();
             for (String[] datosCliente : datosClientes) {
-                modelo.addRow(new Object[]{datosCliente[0], datosCliente[1], datosCliente[2], datosCliente[3]});
+                modelo.addRow(new Object[]{datosCliente[1], datosCliente[2], datosCliente[3], datosCliente[4]});
             }
+            tr = new TableRowSorter<>(modelo);
+            JtableClientes.setRowSorter(tr);
         } catch (SQLException e) {
+            CMensajes.msg_error("No se pudo cargar la información en la tabla", "Cargando Tabla");
         }
     }
-    
+
     public void aplicaFiltros() {
         modelo = (DefaultTableModel) JtableClientes.getModel();
         tr = new TableRowSorter<>(modelo);
         JtableClientes.setRowSorter(tr);
-        ArrayList<RowFilter<String, Integer>> filtros = new ArrayList<>();
+
+        ArrayList<RowFilter<Object, Object>> filtros = new ArrayList<>();
         if (!JtxtNombres.getText().trim().isEmpty()) {
-            filtros.add(RowFilter.regexFilter(JtxtNombres.getText(), 0));
+            filtros.add(RowFilter.regexFilter("^" + JtxtNombres.getText().trim() + "$", 0));
         }
-        if (JtxtApPaterno.getText().trim().isEmpty()) {
-            filtros.add(RowFilter.regexFilter(JtxtApPaterno.getText(), 1));
+        if (!JtxtApPaterno.getText().trim().isEmpty()) {
+            filtros.add(RowFilter.regexFilter("^" + JtxtApPaterno.getText().trim() + "$", 1));
         }
-        if (JtxtApMaterno.getText().trim().isEmpty()) {
-            filtros.add(RowFilter.regexFilter(JtxtApMaterno.getText(), 2));
+        if (!JtxtApMaterno.getText().trim().isEmpty()) {
+            filtros.add(RowFilter.regexFilter("^" + JtxtApMaterno.getText().trim() + "$", 2));
         }
-        if (JtxtCorreo.getText().trim().isEmpty()) {
-            filtros.add(RowFilter.regexFilter(JtxtCorreo.getText(), 3));
+        if (!JtxtCorreo.getText().trim().isEmpty()) {
+            filtros.add(RowFilter.regexFilter("^" + JtxtCorreo.getText().trim() + "$", 3));
         }
 
-        RowFilter<String, Integer> rf = RowFilter.andFilter(filtros);
+        RowFilter<Object, Object> rf = RowFilter.andFilter(filtros);
         tr.setRowFilter(rf);
+    }
+
+    private String[] obtenerValoresFilaTabla() {
+        String[] valores = new String[4];
+        int filaSeleccionada = JtableClientes.getSelectedRow();
+        if (filaSeleccionada != -1) {
+            for (int i = 0; i < JtableClientes.getColumnCount(); i++) {
+                valores[i] = (String) JtableClientes.getValueAt(filaSeleccionada, i);
+            }
+        } else {
+            CMensajes.msg_error("No hay fila seleccionada", "Obteniendo datos fila");
+            return null;
+        }
+        return valores;
+    }
+
+    public int buscarId(String nombre, String apPat, String apMat, String correo) {
+        for (String[] cliente : datosClientes) {
+            if (cliente[1].equals(nombre) && cliente[2].equals(apPat) && cliente[3].equals(apMat) && cliente[4].equals(correo)) {
+                return Integer.parseInt(cliente[0]);
+            }
+        }
+        return -1;
+    }
+
+    public void actualizar(int id) {
+        String nombre = (String) JtableClientes.getValueAt(JtableClientes.getSelectedRow(), 0);
+        String apPaterno = (String) JtableClientes.getValueAt(JtableClientes.getSelectedRow(), 1);
+        String apMaterno = (String) JtableClientes.getValueAt(JtableClientes.getSelectedRow(), 2);
+        String correo = (String) JtableClientes.getValueAt(JtableClientes.getSelectedRow(), 3);
+        try {
+            String idCliente = queryBusca.buscarClientes(id);
+            if (idCliente != null || idCliente.isEmpty()) {
+                if (queryActualiza.actualizarPersona(nombre, apPaterno, apMaterno, id)) {
+                    CMensajes.msg("Se actualizo la informacion del cliente", "Actualizar");
+                    if (queryActualiza.actualizarCorreo(correo, id)) {
+                        CMensajes.msg("Se actualizo el correo del cliente", "Actualizar");
+                    } else {
+                        CMensajes.msg_error("Ocurrio un error al actualizar el correo", "Actualizar");
+                    }
+                } else {
+                    CMensajes.msg_error("Ocurrio un error al actualizar", "Actualizar");
+                }
+
+            } else {
+                CMensajes.msg_error("Usuario no encontrado", "Actualizar-Buscar");
+            }
+        } catch (SQLException e) {
+        } finally {
+//            datosConductores.clear();
+            limpiarBuscadores();
+            limpiarFiltro();
+            cargaTabla();
+        }
+    }
+
+    public void eliminar(int id) {
+        try {
+            String idCliente = queryBusca.buscarClientes(id);
+            if (idCliente != null || idCliente.isEmpty()) {
+                if (queryElimina.eliminaTelefono(id)) {
+                    CMensajes.msg("Se elimino el telefono correspondiente", "Eliminar");
+                if (queryElimina.eliminaBoletoCliente(Integer.parseInt(idCliente))) {
+                    CMensajes.msg("Se eliminaron las relaciones del cliente \ncon los boletos correspondientes", "Eliminar");
+                    if (queryElimina.eliminaTarjetaCliente(Integer.parseInt(idCliente))) {
+                        CMensajes.msg("Se elimino al cliente seleccionado", "Eliminar");
+                        if (queryElimina.eliminaCliente(id)) {
+                            CMensajes.msg("Se elimino el cliente", "Eliminar");
+                            if (queryElimina.eliminaPersona(id)) {
+                                CMensajes.msg("Se elimino al cliente seleccionado", "Eliminar");
+                            } else {
+                                CMensajes.msg_error("Ocurrio un error al eliminar a la persona", "Eliminando");
+                            }
+                        } else {
+                            CMensajes.msg_error("Ocurrio un error al eliminar al cliente", "Eliminando");
+                        }
+                    } else {
+                        CMensajes.msg_error("Ocurrio un error al eliminar \n el cliente en tarjeta", "Eliminar");
+                    }
+                } else {
+                    CMensajes.msg_error("Ocurrio un error al eliminar \nlas compras asociadas al cliente", "Eliminar");
+                }
+                } else {
+                    CMensajes.msg_error("Ocurrio un error al eliminar el telefono asociado del cliente", "Eliminar");
+                }
+            } else {
+                CMensajes.msg_error("Usuario no encontrado", "Eliminar-Buscar");
+            }
+        } catch (SQLException e) {
+        } finally {
+//            datosConductores.clear();
+            limpiarBuscadores();
+            limpiarFiltro();
+            cargaTabla();
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -91,7 +208,6 @@ public final class JfClientesConsulta extends javax.swing.JFrame {
         JlblCorreo = new javax.swing.JLabel();
         JtxtCorreo = new javax.swing.JTextField();
         JspCorreo = new javax.swing.JSeparator();
-        JbtnBuscar = new javax.swing.JButton();
         JbtnActualizar = new javax.swing.JButton();
         JbtnEliminar = new javax.swing.JButton();
 
@@ -112,6 +228,11 @@ public final class JfClientesConsulta extends javax.swing.JFrame {
         ));
         JtableClientes.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         JtableClientes.getTableHeader().setReorderingAllowed(false);
+        JtableClientes.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                JtableClientesMouseClicked(evt);
+            }
+        });
         JSPTablaClientes.setViewportView(JtableClientes);
 
         JpnlLienzo.add(JSPTablaClientes, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 110, 760, 320));
@@ -164,19 +285,24 @@ public final class JfClientesConsulta extends javax.swing.JFrame {
         JpnlLienzo.add(JtxtCorreo, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 80, 160, -1));
         JpnlLienzo.add(JspCorreo, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 100, 160, 10));
 
-        JbtnBuscar.setBackground(new java.awt.Color(160, 16, 70));
-        JbtnBuscar.setForeground(new java.awt.Color(255, 255, 255));
-        JbtnBuscar.setText("Buscar");
-        JpnlLienzo.add(JbtnBuscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 10, 82, -1));
-
         JbtnActualizar.setBackground(new java.awt.Color(160, 16, 70));
         JbtnActualizar.setForeground(new java.awt.Color(255, 255, 255));
         JbtnActualizar.setText("Actualizar");
+        JbtnActualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JbtnActualizarActionPerformed(evt);
+            }
+        });
         JpnlLienzo.add(JbtnActualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 40, -1, -1));
 
         JbtnEliminar.setBackground(new java.awt.Color(160, 16, 70));
         JbtnEliminar.setForeground(new java.awt.Color(255, 255, 255));
         JbtnEliminar.setText("Eliminar");
+        JbtnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JbtnEliminarActionPerformed(evt);
+            }
+        });
         JpnlLienzo.add(JbtnEliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 70, 82, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -208,6 +334,44 @@ public final class JfClientesConsulta extends javax.swing.JFrame {
     private void JtxtCorreoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JtxtCorreoKeyReleased
         aplicaFiltros();
     }//GEN-LAST:event_JtxtCorreoKeyReleased
+
+    private void JbtnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnActualizarActionPerformed
+        // TODO add your handling code here:
+        if (JtableClientes.getSelectedRow() != -1) {
+            actualizar(idActualizar);
+        } else {
+            CMensajes.msg_error("Seleccione un registro", "Actualizar");
+        }
+    }//GEN-LAST:event_JbtnActualizarActionPerformed
+
+    private void JbtnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnEliminarActionPerformed
+        // TODO add your handling code here:
+         if (JtableClientes.getSelectedRow() != -1) {
+            if (JOptionPane.showConfirmDialog(null, "¿Desea eliminar el registro seleccionado?", "Confimacion", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                valoresFila = obtenerValoresFilaTabla();
+                if (buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3]) != -1) {
+                    idEliminar = buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3]);
+                    eliminar(idEliminar);
+                }
+            } else {
+                CMensajes.msg("Accion cancelada", "Eliminacion");
+            }
+        } else {
+            CMensajes.msg_error("Seleccione un registro", "Eliminar");
+
+        }
+    }//GEN-LAST:event_JbtnEliminarActionPerformed
+
+    private void JtableClientesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JtableClientesMouseClicked
+        // TODO add your handling code here:
+        valoresFila = obtenerValoresFilaTabla();
+        if (valoresFila != null) {
+            if (buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3]) != -1) {
+                // Se asigna el ID encontrado a la variable idActualizar.
+                idActualizar = buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3]);
+            }
+        }
+    }//GEN-LAST:event_JtableClientesMouseClicked
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -247,7 +411,6 @@ public final class JfClientesConsulta extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane JSPTablaClientes;
     private javax.swing.JButton JbtnActualizar;
-    private javax.swing.JButton JbtnBuscar;
     private javax.swing.JButton JbtnEliminar;
     private javax.swing.JLabel JlblApMaterno;
     private javax.swing.JLabel JlblApPaterno;
