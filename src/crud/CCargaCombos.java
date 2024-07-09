@@ -42,7 +42,47 @@ public class CCargaCombos {
         consulta = "SELECT ruta.nombre from ruta";
         return cnslt.buscarValoresCombos(consulta);
     }
+    
+    public ArrayList<String> cargaComboConductores() throws SQLException {
+        consulta = "SELECT\n"
+                + "persona.nombre,\n"
+                + "persona.ApPat,\n"
+                + "persona.ApMat\n"
+                + "FROM\n"
+                + "persona\n"
+                + "INNER JOIN conductor ON persona.Id_persona = conductor.Id_persona";
+        return cnslt.buscarValoresCombos(consulta);
+    }
+    
+      public ArrayList<String> cargaComboFechas() throws SQLException {
+        consulta = "SELECT CONCAT(fecha.dia, '/', mes.mes, '/', anio.anio) AS fecha_concatenada\n"
+                + "FROM fecha\n"
+                + "INNER JOIN mes ON mes.Id_mes = fecha.Id_mes\n"
+                + "INNER JOIN anio ON anio.Id_anio = fecha.Id_anio;";
+        return cnslt.buscarValoresCombos(consulta);
+    }
+    
+     public ArrayList<String> cargaComboAutobus() throws SQLException {
+        consulta = "SELECT\n"
+                + "autobus.num_economico\n"
+                + "FROM\n"
+                + "autobus";
+        return cnslt.buscarValoresCombos(consulta);
+    }
 
+     
+    public ArrayList<String> cargaComboAutobuses() throws SQLException {
+        consulta = "SELECT\n"
+                + "persona.nombre,\n"
+                + "persona.ApPat,\n"
+                + "persona.ApMat\n"
+                + "FROM\n"
+                + "persona\n"
+                + "INNER JOIN conductor ON persona.Id_persona = conductor.Id_persona";
+        return cnslt.buscarValoresCombos(consulta);
+    }
+    
+    
     public ArrayList<String> cargaComboTerminales() throws SQLException {
         consulta = "SELECT terminal.nombre from terminal";
         return cnslt.buscarValoresCombos(consulta);
@@ -108,4 +148,6 @@ public class CCargaCombos {
         consulta = "SELECT estado.nombre FROM estado";
         return cnslt.buscarValoresCombos(consulta);
     }
+    
+    
 }
