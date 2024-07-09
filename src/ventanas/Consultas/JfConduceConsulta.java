@@ -16,7 +16,7 @@ import javax.swing.table.TableRowSorter;
 public final class JfConduceConsulta extends javax.swing.JFrame {
 
     //**************   ATRIBUTOS  *******************/
-    private DefaultTableModel modelo;
+   private DefaultTableModel modelo;
     private DefaultComboBoxModel listas;
     private TableRowSorter tr;
     private final CInserciones queryInserta = new CInserciones();
@@ -26,7 +26,10 @@ public final class JfConduceConsulta extends javax.swing.JFrame {
     private final CCargaCombos queryCarga = new CCargaCombos();
     private ArrayList<String[]> datosConduce = new ArrayList<>();
     private ArrayList<String> datosListas = new ArrayList<>();
-
+        private int idActualizar;
+    private int idEliminar;
+    private String[] valoresFila;
+    
     public JfConduceConsulta() {
         initComponents();
         JtableConducen.getTableHeader().setReorderingAllowed(false);
@@ -37,21 +40,37 @@ public final class JfConduceConsulta extends javax.swing.JFrame {
 
     //**************** METODOS ******************/
     private void limpiarTabla() {
-        modelo = (DefaultTableModel) JtableConducen.getModel();
-        for (int i = (JtableConducen.getRowCount() - 1); i >= 0; i--) {
-            modelo.removeRow(i);
-        }
+      modelo = (DefaultTableModel) JtableConducen.getModel();
+        modelo.setRowCount(0);
     }
 
-    public void cargarTabla() {
+    private void limpiarBuscadores() {
+        // Limpia los cuadro de texto
+        JtxtNombres.setText(null);
+        JtxtApPaterno.setText(null);
+        JtxtApMaterno.setText(null);
+        JtxtPlaca.setText(null);
+        JcmbxMarcas.setSelectedIndex(0);
+        JcmbxModelos.setSelectedIndex(0);
+    }
+
+    public void limpiarFiltro() {
+        if (tr != null) {
+            tr.setRowFilter(null);
+        }
+    }
+    
+   public void cargarTabla() {
         modelo = (DefaultTableModel) JtableConducen.getModel();
         try {
-            datosConduce = queryBusca.buscaConduce();
+            datosConduce = queryBusca.buscaConduceCompletos();
             limpiarTabla();
-            for (String[] datosCon : datosConduce) {
-                modelo.addRow(new Object[]{datosCon[0], datosCon[1], datosCon[2], datosCon[3], datosCon[4], datosCon[5]});
+            for (String[] datosConduc : datosConduce) {
+                modelo.addRow(new Object[]{datosConduc[1], datosConduc[2], datosConduc[3], datosConduc[4], datosConduc[5], datosConduc[6]});
             }
-        } catch (Exception e) {
+            tr = new TableRowSorter<>(modelo);
+            JtableConducen.setRowSorter(tr);
+        } catch (SQLException ex) {
             CMensajes.msg_error("No se pudo cargar la informacion en la tabla", "Cargando Tabla");
         }
     }
@@ -62,19 +81,21 @@ public final class JfConduceConsulta extends javax.swing.JFrame {
             switch (metodoCarga) {
                 case 1:
                     datosListas = queryCarga.cargaComboMarca();
-                    for (int i = 1; i < datosListas.size(); i++) {
+                    for (int i = 0; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
                     datosListas.clear();
                     break;
                 case 2:
                     datosListas = queryCarga.cargaComboModelo();
-                    for (int i = 1; i < datosListas.size(); i++) {
+                    for (int i = 0; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
                     datosListas.clear();
                     break;
             }
+             tr = new TableRowSorter<>(modelo);
+            JtableConducen.setRowSorter(tr);
         } catch (SQLException e) {
         }
     }
@@ -83,18 +104,19 @@ public final class JfConduceConsulta extends javax.swing.JFrame {
         modelo = (DefaultTableModel) JtableConducen.getModel();
         tr = new TableRowSorter<>(modelo);
         JtableConducen.setRowSorter(tr);
-        ArrayList<RowFilter<String, Integer>> filtros = new ArrayList<>();
+        ArrayList<RowFilter<Object, Object>> filtros = new ArrayList<>();
+       
         if (!JtxtNombres.getText().trim().isEmpty()) {
-            filtros.add(RowFilter.regexFilter(JtxtNombres.getText(), 0));
+            filtros.add(RowFilter.regexFilter("^" + JtxtNombres.getText().trim() + "$", 0));
         }
         if (!JtxtApPaterno.getText().trim().isEmpty()) {
-            filtros.add(RowFilter.regexFilter(JtxtApPaterno.getText(), 1));
+            filtros.add(RowFilter.regexFilter("^" + JtxtApPaterno.getText().trim() + "$", 1));
         }
         if (!JtxtApMaterno.getText().trim().isEmpty()) {
-            filtros.add(RowFilter.regexFilter(JtxtApMaterno.getText(), 2));
+            filtros.add(RowFilter.regexFilter("^" + JtxtApMaterno.getText().trim() + "$", 2));
         }
         if (!JtxtPlaca.getText().trim().isEmpty()) {
-            filtros.add(RowFilter.regexFilter(JtxtPlaca.getText(), 3));
+            filtros.add(RowFilter.regexFilter("^" + JtxtPlaca.getText().trim() + "$", 3));
         }
         if (JcmbxMarcas.getSelectedIndex() != 0) {
             filtros.add(RowFilter.regexFilter(JcmbxMarcas.getSelectedItem().toString(), 4));
@@ -103,8 +125,50 @@ public final class JfConduceConsulta extends javax.swing.JFrame {
             filtros.add(RowFilter.regexFilter(JcmbxModelos.getSelectedItem().toString(), 5));
         }
 
-        RowFilter<String, Integer> rf = RowFilter.andFilter(filtros);
+        RowFilter<Object, Object> rf = RowFilter.andFilter(filtros);
         tr.setRowFilter(rf);
+    }
+
+     private String[] obtenerValoresFilaTabla() {
+        String[] valores = new String[6];
+        int filaSeleccionada = JtableConducen.getSelectedRow();
+        if (filaSeleccionada != -1) {
+            for (int i = 0; i < JtableConducen.getColumnCount(); i++) {
+                valores[i] = (String) JtableConducen.getValueAt(filaSeleccionada, i);
+            }
+        } else {
+            CMensajes.msg_error("No hay fila seleccionada", "Obteniendo datos fila");
+            return null;
+        }
+        return valores;
+    }
+      public int buscarId(String nombre, String apPat, String apMat, String placa, String marca, String modelo) {
+        for (String[] conduce : datosConduce) {
+            if (conduce[1].equals(nombre) && conduce[2].equals(apPat) && conduce[3].equals(apMat) && conduce[4].equals(placa)&& conduce[5].equals(marca) 
+                    && conduce[6].equals(modelo)) {
+                return Integer.parseInt(conduce[0]);
+            }
+        }
+        return -1;
+    }
+          
+       public void eliminar(int id) {
+        try {
+            String idConduce = queryBusca.buscaConduce(id);
+            if (idConduce != null || idConduce.isEmpty()) {
+                if (queryElimina.eliminaAutbousConductor(id)) {
+                    CMensajes.msg("Se elimino la relacion conduce", "Eliminar");
+                }
+            } else {
+                CMensajes.msg_error("Parada no encontrada ", "Eliminar-Buscar");
+            }
+        } catch (SQLException e) {
+        } finally {
+//            datosConductores.clear();
+            limpiarBuscadores();
+            limpiarFiltro();
+            cargarTabla();
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -132,7 +196,6 @@ public final class JfConduceConsulta extends javax.swing.JFrame {
         JspPlaca = new javax.swing.JSeparator();
         JbtnActualizar = new javax.swing.JButton();
         JbtnEliminar = new javax.swing.JButton();
-        JbtnBuscar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Conductores asignados");
@@ -148,6 +211,11 @@ public final class JfConduceConsulta extends javax.swing.JFrame {
                 "Nombre(s)", "Apellido Paterno", "Apellido Materno", "Placa", "Marca", "Modelo"
             }
         ));
+        JtableConducen.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                JtableConducenMouseClicked(evt);
+            }
+        });
         JSPTablaConducen.setViewportView(JtableConducen);
 
         JlblNombres.setText("Nombre(s)");
@@ -207,14 +275,20 @@ public final class JfConduceConsulta extends javax.swing.JFrame {
         JbtnActualizar.setBackground(new java.awt.Color(160, 16, 70));
         JbtnActualizar.setForeground(new java.awt.Color(255, 255, 255));
         JbtnActualizar.setText("Actualizar");
+        JbtnActualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JbtnActualizarActionPerformed(evt);
+            }
+        });
 
         JbtnEliminar.setBackground(new java.awt.Color(160, 16, 70));
         JbtnEliminar.setForeground(new java.awt.Color(255, 255, 255));
         JbtnEliminar.setText("Eliminar");
-
-        JbtnBuscar.setBackground(new java.awt.Color(160, 16, 70));
-        JbtnBuscar.setForeground(new java.awt.Color(255, 255, 255));
-        JbtnBuscar.setText("Buscar");
+        JbtnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JbtnEliminarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout JpnlLienzoLayout = new javax.swing.GroupLayout(JpnlLienzo);
         JpnlLienzo.setLayout(JpnlLienzoLayout);
@@ -257,12 +331,11 @@ public final class JfConduceConsulta extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 99, Short.MAX_VALUE)
                         .addGroup(JpnlLienzoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(JbtnActualizar, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(JbtnEliminar, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(JbtnBuscar, javax.swing.GroupLayout.Alignment.TRAILING))))
+                            .addComponent(JbtnEliminar, javax.swing.GroupLayout.Alignment.TRAILING))))
                 .addContainerGap())
         );
 
-        JpnlLienzoLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {JbtnActualizar, JbtnBuscar, JbtnEliminar});
+        JpnlLienzoLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {JbtnActualizar, JbtnEliminar});
 
         JpnlLienzoLayout.setVerticalGroup(
             JpnlLienzoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -307,9 +380,7 @@ public final class JfConduceConsulta extends javax.swing.JFrame {
                             .addComponent(JlblApMaterno)
                             .addComponent(JbtnActualizar))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(JbtnEliminar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(JbtnBuscar)))
+                        .addComponent(JbtnEliminar)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                 .addComponent(JSPTablaConducen, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -353,6 +424,18 @@ public final class JfConduceConsulta extends javax.swing.JFrame {
         aplicaFiltros();
     }//GEN-LAST:event_JcmbxModelosItemStateChanged
 
+    private void JbtnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnActualizarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_JbtnActualizarActionPerformed
+
+    private void JbtnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnEliminarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_JbtnEliminarActionPerformed
+
+    private void JtableConducenMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JtableConducenMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_JtableConducenMouseClicked
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -389,7 +472,6 @@ public final class JfConduceConsulta extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane JSPTablaConducen;
     private javax.swing.JButton JbtnActualizar;
-    private javax.swing.JButton JbtnBuscar;
     private javax.swing.JButton JbtnEliminar;
     private javax.swing.JComboBox<String> JcmbxMarcas;
     private javax.swing.JComboBox<String> JcmbxModelos;

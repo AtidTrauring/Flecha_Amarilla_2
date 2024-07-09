@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
@@ -27,6 +28,9 @@ public final class JfParadasConsulta extends javax.swing.JFrame {
     private final CCargaCombos queryCarga = new CCargaCombos();
     private ArrayList<String[]> datosParadas = new ArrayList<>();
     private ArrayList<String> datosListas = new ArrayList<>();
+    private int idActualizar;
+    private int idEliminar;
+    private String[] valoresFila;
 
     public JfParadasConsulta() {
         initComponents();
@@ -39,19 +43,30 @@ public final class JfParadasConsulta extends javax.swing.JFrame {
     //**************** METODOS ******************/
     private void limpiarTabla() {
         modelo = (DefaultTableModel) JtableParadas.getModel();
-        for (int i = (JtableParadas.getRowCount() - 1); i >= 0; i--) {
-            modelo.removeRow(i);
+        modelo.setRowCount(0);
+    }
+
+    private void limpiarBuscadores() {
+        JcmbxRutas.setSelectedIndex(0);
+        JcmbxTerminales.setSelectedIndex(0);
+    }
+
+    public void limpiarFiltro() {
+        if (tr != null) {
+            tr.setRowFilter(null);
         }
     }
 
     public void cargarTabla() {
         modelo = (DefaultTableModel) JtableParadas.getModel();
         try {
-            datosParadas = queryBusca.buscaParadas();
+            datosParadas = queryBusca.buscaParadasCompletas();
             limpiarTabla();
             for (String[] datosParadas : datosParadas) {
-                modelo.addRow(new Object[]{datosParadas[0], datosParadas[1]});
+                modelo.addRow(new Object[]{datosParadas[1], datosParadas[2]});
             }
+            tr = new TableRowSorter<>(modelo);
+            JtableParadas.setRowSorter(tr);
         } catch (SQLException e) {
             CMensajes.msg_error("No se pudo cargar la informacion en la tabla", "Cargando Tabla");
         }
@@ -63,14 +78,14 @@ public final class JfParadasConsulta extends javax.swing.JFrame {
             switch (metodoCarga) {
                 case 1:
                     datosListas = queryCarga.cargaComboRutas();
-                    for (int i = 1; i < datosListas.size(); i++) {
+                    for (int i = 0; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
                     datosListas.clear();
                     break;
                 case 2:
                     datosListas = queryCarga.cargaComboTerminales();
-                    for (int i = 1; i < datosListas.size(); i++) {
+                    for (int i = 0; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
                     datosListas.clear();
@@ -84,15 +99,86 @@ public final class JfParadasConsulta extends javax.swing.JFrame {
         modelo = (DefaultTableModel) JtableParadas.getModel();
         tr = new TableRowSorter<>(modelo);
         JtableParadas.setRowSorter(tr);
-        ArrayList<RowFilter<String, Integer>> filtros = new ArrayList<>();
+        ArrayList<RowFilter<Object, Object>> filtros = new ArrayList<>();
         if (JcmbxRutas.getSelectedIndex() != 0) {
             filtros.add(RowFilter.regexFilter(JcmbxRutas.getSelectedItem().toString(), 0));
         }
         if (JcmbxTerminales.getSelectedIndex() != 0) {
             filtros.add(RowFilter.regexFilter(JcmbxTerminales.getSelectedItem().toString(), 1));
         }
-        RowFilter<String, Integer> rf = RowFilter.andFilter(filtros);
+        RowFilter<Object, Object> rf = RowFilter.andFilter(filtros);
         tr.setRowFilter(rf);
+    }
+
+    private String[] obtenerValoresFilaTabla() {
+        String[] valores = new String[2];
+        int filaSeleccionada = JtableParadas.getSelectedRow();
+        if (filaSeleccionada != -1) {
+            for (int i = 0; i < JtableParadas.getColumnCount(); i++) {
+                valores[i] = (String) JtableParadas.getValueAt(filaSeleccionada, i);
+            }
+        } else {
+            CMensajes.msg_error("No hay fila seleccionada", "Obteniendo datos fila");
+            return null;
+        }
+        return valores;
+    }
+
+    public int buscarId(String ruta, String terminal) {
+        for (String[] paradas : datosParadas) {
+            if (paradas[1].equals(ruta) && paradas[2].equals(terminal)) {
+                return Integer.parseInt(paradas[0]);
+            }
+        }
+        // Si no se encuentra ninguna coincidencia, devuelve -1.
+        return -1;
+    }
+
+    public void actualizar(int id) {
+        String ruta = (String) JtableParadas.getValueAt(JtableParadas.getSelectedRow(), 0);
+        String terminal = (String) JtableParadas.getValueAt(JtableParadas.getSelectedRow(), 1);
+        try {
+            String idParada = queryBusca.buscarParadas(id);
+            if (idParada != null || idParada.isEmpty()) {
+                if (queryActualiza.actualizarRuta(ruta, id)) {
+                    CMensajes.msg("Se actualizo la informacion de la ruta", "Actualizar");
+                    if (queryActualiza.actualizarTerminal(terminal, id)) {
+                        CMensajes.msg("Se actualizo la terminal", "Actualizar");
+                    } else {
+                        CMensajes.msg_error("Ocurrio un error al actualizar la terminal", "Actualizar");
+                    }
+                } else {
+                    CMensajes.msg_error("Ocurrio un error al actualizar la ruta", "Actualizar");
+                }
+
+            } else {
+                CMensajes.msg_error("Usuario no encontrado", "Actualizar-Buscar");
+            }
+        } catch (SQLException e) {
+        } finally {
+            limpiarBuscadores();
+            limpiarFiltro();
+            cargarTabla();
+        }
+    }
+
+    public void eliminar(int id) {
+        try {
+            String idParada = queryBusca.buscarParadas(id);
+            if (idParada != null || idParada.isEmpty()) {
+                if (queryElimina.eliminaRutaTerminal(id)) {
+                    CMensajes.msg("Se elimino la parada", "Eliminar");
+                }
+            } else {
+                CMensajes.msg_error("Parada no encontrada ", "Eliminar-Buscar");
+            }
+        } catch (SQLException e) {
+        } finally {
+//            datosConductores.clear();
+            limpiarBuscadores();
+            limpiarFiltro();
+            cargarTabla();
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -123,6 +209,11 @@ public final class JfParadasConsulta extends javax.swing.JFrame {
                 "Nombre Ruta", "Terminal (Parada)"
             }
         ));
+        JtableParadas.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                JtableParadasMouseClicked(evt);
+            }
+        });
         JSPTablaParadas.setViewportView(JtableParadas);
 
         JlblRuta.setText("Rutas");
@@ -132,10 +223,20 @@ public final class JfParadasConsulta extends javax.swing.JFrame {
         JbtnActualizar.setBackground(new java.awt.Color(160, 16, 70));
         JbtnActualizar.setForeground(new java.awt.Color(255, 255, 255));
         JbtnActualizar.setText("Actualizar");
+        JbtnActualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JbtnActualizarActionPerformed(evt);
+            }
+        });
 
         JbtnEliminar.setBackground(new java.awt.Color(160, 16, 70));
         JbtnEliminar.setForeground(new java.awt.Color(255, 255, 255));
         JbtnEliminar.setText("Eliminar");
+        JbtnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JbtnEliminarActionPerformed(evt);
+            }
+        });
 
         JcmbxRutas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione una opcion" }));
         JcmbxRutas.addActionListener(new java.awt.event.ActionListener() {
@@ -213,6 +314,48 @@ public final class JfParadasConsulta extends javax.swing.JFrame {
     private void JcmbxTerminalesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JcmbxTerminalesActionPerformed
         aplicaFiltros();
     }//GEN-LAST:event_JcmbxTerminalesActionPerformed
+
+    private void JbtnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnActualizarActionPerformed
+        // TODO add your handling code here:
+        if (JtableParadas.getSelectedRow() != -1) {
+            actualizar(idActualizar);
+        } else {
+            CMensajes.msg_error("Seleccione un registro", "Actualizar");
+        }
+    }//GEN-LAST:event_JbtnActualizarActionPerformed
+
+    private void JbtnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnEliminarActionPerformed
+        // TODO add your handling code here:
+        if (JtableParadas.getSelectedRow() != -1) {
+            int respuesta = JOptionPane.showConfirmDialog(null, "¿Desea eliminar la parada seleccionada?", "Confirmación", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            if (respuesta == JOptionPane.YES_OPTION) {
+                valoresFila = obtenerValoresFilaTabla();
+                int idEncontrado = buscarId(valoresFila[0], valoresFila[1]);
+                if (idEncontrado != -1) {
+                    idEliminar = idEncontrado;
+                    eliminar(idEliminar);
+                } else {
+                    CMensajes.msg_error("Parada no encontrada", "Eliminar-Buscar");
+                }
+            } else {
+                CMensajes.msg("Acción cancelada", "Eliminación");
+            }
+        } else {
+            CMensajes.msg_error("Seleccione un registro", "Eliminar");
+        }
+
+    }//GEN-LAST:event_JbtnEliminarActionPerformed
+
+    private void JtableParadasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JtableParadasMouseClicked
+        // TODO add your handling code here:
+                 valoresFila = obtenerValoresFilaTabla();
+        if (valoresFila != null) {
+            if (buscarId(valoresFila[0], valoresFila[1]) != -1) {
+                // Se asigna el ID encontrado a la variable idActualizar.
+                idActualizar = buscarId(valoresFila[0], valoresFila[1]);
+            }
+        }
+    }//GEN-LAST:event_JtableParadasMouseClicked
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
