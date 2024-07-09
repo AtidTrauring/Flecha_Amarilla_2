@@ -8,6 +8,7 @@ import javax.swing.JTextField;
 
 public class JfRegistroPasajeros extends javax.swing.JFrame {
 
+    //**************   ATRIBUTOS  *******************/
     private final CInserciones queryInserta = new CInserciones();
     private String[] telefonos;
     public ArrayList<String[]> pasajerosInfo = new ArrayList<>();
@@ -105,7 +106,7 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
     public String[] devuelveTelefonos() {
         String[] telefono = null;
         if (JcmbxTelefonos.getSelectedIndex() == 0) {
-            CMensajes.msg("Selecciona una cantidad de telefonos", "Registro de usuarios");
+            CMensajes.msg("Selecciona una cantidad de telefonos", "Registro de pasajeros");
             sinTelefono = true;
             return null;
         } else {
@@ -280,9 +281,8 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
                 CMensajes.msg("Registre al siguiente pasajero", "Registro pasajero");
                 contador++;
                 limpiarCampos();
-                if (contador > numPasajeros) {
-                    // Pasa los datos
-                }
+            } else {
+                CMensajes.msg("Se guardo la informacion\n de los " + numPasajeros + " pasajeros", "Registro pasajeros");
             }
         } else {
             CMensajes.msg_advertencia("Seleccione un tipo de pasajero", "Registro Usuario");
