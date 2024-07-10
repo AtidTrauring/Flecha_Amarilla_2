@@ -16,7 +16,7 @@ import javax.swing.table.TableRowSorter;
 public final class JfPasajeroConsulta extends javax.swing.JFrame {
 
     //**************   ATRIBUTOS  *******************/
- private DefaultTableModel modelo;
+    private DefaultTableModel modelo;
     private TableRowSorter tr;
     private final CInserciones queryInserta = new CInserciones();
     private final CBusquedas queryBusca = new CBusquedas();
@@ -24,10 +24,10 @@ public final class JfPasajeroConsulta extends javax.swing.JFrame {
     private final CActualizaciones queryActualiza = new CActualizaciones();
     private final CCargaCombos queryCarga = new CCargaCombos();
     private ArrayList<String[]> datosPasajeros = new ArrayList<>();
-     private int idActualizar;
+    private int idActualizar;
     private int idEliminar;
     private String[] valoresFila;
-    
+
     public JfPasajeroConsulta() {
         initComponents();
         JtablePasajeros.getTableHeader().setReorderingAllowed(false);
@@ -134,27 +134,49 @@ public final class JfPasajeroConsulta extends javax.swing.JFrame {
         }
         return -1;
     }
-    
+
     public void eliminar(int id) {
-    try {
-        String idPasajero = queryBusca.buscaPasajero(id);
-        if (idPasajero != null && !idPasajero.isEmpty()) {
-            if (queryElimina.eliminarPasajeroCompleto(id)) {
-                CMensajes.msg("Se eliminó el pasajero", "Eliminar");
+        try {
+            String idPasajero = queryBusca.buscaPasajero(id);
+            if (idPasajero != null && !idPasajero.isEmpty()) {
+                if (queryElimina.eliminarPasajeroCompleto(id)) {
+                    CMensajes.msg("Se eliminó el pasajero", "Eliminar");
+                } else {
+                    CMensajes.msg_error("Ocurrió un error al eliminar el pasajero", "Eliminar");
+                }
             } else {
-                CMensajes.msg_error("Ocurrió un error al eliminar el pasajero", "Eliminar");
+                CMensajes.msg_error("Pasajero no encontrado", "Eliminar-Buscar");
             }
-        } else {
-            CMensajes.msg_error("Pasajero no encontrado", "Eliminar-Buscar");
+        } catch (SQLException e) {
+            CMensajes.msg_error("Error al eliminar el pasajero: " + e.getMessage(), "Error");
+        } finally {
+            limpiarBuscadores();
+            limpiarFiltro();
+            cargarTabla();
         }
-    } catch (SQLException e) {
-        CMensajes.msg_error("Error al eliminar el pasajero: " + e.getMessage(), "Error");
-    } finally {
-        limpiarBuscadores();
-        limpiarFiltro();
-        cargarTabla();
     }
-}
+
+    public String regresaTipo(String tipoTabla) {
+        String tipoPasajero = "";
+        switch (tipoTabla) {
+            case "Niño":
+                tipoPasajero = "N";
+                break;
+            case "Adulto":
+                tipoPasajero = "A";
+                break;
+            case "Estudiante":
+                tipoPasajero = "E";
+                break;
+            case "Docente":
+                tipoPasajero = "D";
+                break;
+            case "INAPAM":
+                tipoPasajero = "AT";
+                break;
+        }
+        return tipoPasajero;
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -308,11 +330,13 @@ public final class JfPasajeroConsulta extends javax.swing.JFrame {
         if (JtablePasajeros.getSelectedRow() != -1) {
             if (JOptionPane.showConfirmDialog(null, "¿Desea eliminar el registro seleccionado?", "Confimacion", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                 valoresFila = obtenerValoresFilaTabla();
-                if (buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3],valoresFila[4]) != -1) {
+                System.out.println("El condcutor es " + buscarId(valoresFila[0], valoresFila[1], valoresFila[2], regresaTipo(valoresFila[3]), valoresFila[4]));
+                if (buscarId(valoresFila[0], valoresFila[1], valoresFila[2], regresaTipo(valoresFila[3]), valoresFila[4]) != -1) {
                     // Se asigna el ID encontrado a la variable idEliminar.
-                    idEliminar = buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3], valoresFila[4]);
+//                    idEliminar = buscarId(valoresFila[0], valoresFila[1], valoresFila[2], regresaTipo(valoresFila[3]), valoresFila[4]);
                     // Eliminamos el registro
-                    eliminar(idEliminar);
+//                    eliminar(idEliminar);
+                    System.out.println("Se elimino el registro");
                 }
             } else {
                 CMensajes.msg("Accion cancelada", "Eliminacion");
