@@ -19,6 +19,7 @@ import ventanas.Consultas.JfViajesConsulta;
 // Importacion de los Frames de Registro
 import ventanas.Registros.JfRegistroAutobuses;
 import ventanas.Consultas.JfBoletoConsulta;
+import ventanas.Consultas.JfConsultasComplejas;
 import ventanas.Registros.JfRegistroConductores;
 import ventanas.Registros.JfRegistroParadas;
 import ventanas.Registros.JfRegistroRuta;
@@ -82,6 +83,7 @@ public class JfPrincipal extends javax.swing.JFrame {
         JmnAutobuses = new javax.swing.JMenu();
         JmnAgregarAutobuses = new javax.swing.JMenuItem();
         JmiBuscarAutobuses = new javax.swing.JMenuItem();
+        JmnConsultasComplejas = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Menu Principal");
@@ -327,6 +329,19 @@ public class JfPrincipal extends javax.swing.JFrame {
 
         JmbListaDeOpciones.add(JmnAutobuses);
 
+        JmnConsultasComplejas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/Iconos/consulta.png"))); // NOI18N
+        JmnConsultasComplejas.setText("Consultas Complejas");
+        JmnConsultasComplejas.addMenuListener(new javax.swing.event.MenuListener() {
+            public void menuCanceled(javax.swing.event.MenuEvent evt) {
+            }
+            public void menuDeselected(javax.swing.event.MenuEvent evt) {
+            }
+            public void menuSelected(javax.swing.event.MenuEvent evt) {
+                JmnConsultasComplejasMenuSelected(evt);
+            }
+        });
+        JmbListaDeOpciones.add(JmnConsultasComplejas);
+
         setJMenuBar(JmbListaDeOpciones);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -479,6 +494,13 @@ public class JfPrincipal extends javax.swing.JFrame {
         creaFrame(ac, "Buscar autobuses", 709, 380);
     }//GEN-LAST:event_JmiBuscarAutobusesActionPerformed
 
+    private void JmnConsultasComplejasMenuSelected(javax.swing.event.MenuEvent evt) {//GEN-FIRST:event_JmnConsultasComplejasMenuSelected
+        // Instanciamos JfConsultasComplejas
+        JfConsultasComplejas cc = new JfConsultasComplejas();
+        // 724, 402
+        creaFrame(cc, "Consultas Compljeas", 764, 452);
+    }//GEN-LAST:event_JmnConsultasComplejasMenuSelected
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -539,6 +561,7 @@ public class JfPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenu JmnBuscar;
     private javax.swing.JMenu JmnBuscarViajes;
     private javax.swing.JMenu JmnConductores;
+    private javax.swing.JMenu JmnConsultasComplejas;
     private javax.swing.JMenu JmnRutas;
     private javax.swing.JMenu JmnTerminales;
     private javax.swing.JMenu JmnUsuarios;
