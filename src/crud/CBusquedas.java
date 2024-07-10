@@ -4,6 +4,55 @@ import java.util.ArrayList;
 import java.sql.SQLException;
 
 public class CBusquedas {
+    
+    
+      public int obtenIdBuscaAño(int año) throws SQLException {
+        consulta = "SELECT\n"
+                + "anio.Id_anio\n"
+                + "FROM\n"
+                + "anio\n"
+                + "WHERE\n"
+                + "anio.anio = " + año + ";";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+      
+      public int obtenIdBuscaNunEconomico(String numero) throws SQLException {
+        consulta = "SELECT\n"
+                + "autobus.Id_autobus\n"
+                + "FROM\n"
+                + "autobus\n"
+                + "WHERE\n"
+                + "autobus.num_economico = '"+numero+"';";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+       public int obtenIdBuscaMarca(String marca) throws SQLException {
+        consulta = "SELECT\n"
+                + "marca.Id_marca\n"
+                + "FROM\n"
+                + "marca\n"
+                + "WHERE\n"
+                + "marca.nombre = '"+marca+"';";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+         public int obtenIdBuscaModelo(String modelo) throws SQLException {
+        consulta = "SELECT\n"
+                + "modelo.Id_modelo\n"
+                + "FROM\n"
+                + "modelo\n"
+                + "WHERE\n"
+                + "modelo.nombre = '"+modelo+"';";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+         
+          public int obtenIdBuscaPlaca(String placa) throws SQLException {
+        consulta = "SELECT\n"
+                + "autobus.Id_autobus\n"
+                + "FROM\n"
+                + "autobus\n"
+                + "WHERE\n"
+                + "autobus.placa = '"+placa+"';";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
 
     private final CConsultas cnslt = new CConsultas();
     private String consulta;
@@ -386,5 +435,48 @@ public class CBusquedas {
                 + "autobus.num_economico = '" + numAutobus + "';";
         return Integer.parseInt(cnslt.buscarValor(consulta));
     }
+    public int obtenIdBuscaAnio(int anio) throws SQLException {
+        consulta = "SELECT\n"
+                + "anio.Id_anio\n"
+                + "FROM\n"
+                + "anio\n"
+                + "WHERE\n"
+                + "anio.anio = " + anio + ";";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+    public int obtenIdBuscaFecha(int dia, String mes, int año) throws SQLException {
+        consulta = "SELECT\n"
+                + "fecha.Id_fecha\n"
+                + "FROM\n"
+                + "anio\n"
+                + "INNER JOIN fecha ON anio.Id_anio = fecha.Id_anio\n"
+                + "INNER JOIN mes ON mes.Id_mes = fecha.Id_mes\n"
+                + "WHERE\n"
+                + "anio.anio = " + año + " AND\n"
+                + "mes.mes = '" + mes + "' AND\n"
+                + "fecha.dia = " + dia + ";";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+         
+    
+     public int obtenIdFinalAño() throws SQLException {
+        consulta = "SELECT MAX(Id_anio) FROM flecha_amarilla.anio;";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+     
+     public int obtenIdFinalMarca() throws SQLException {
+        consulta = "SELECT MAX(Id_marca) FROM flecha_amarilla.marca;";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+      public int obtenIdFinalModelo() throws SQLException {
+        consulta = "SELECT MAX(Id_modelo) FROM flecha_amarilla.modelo;";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+       public int obtenIdFinalAutobus() throws SQLException {
+        consulta = "SELECT MAX(Id_autobus) FROM flecha_amarilla.autobus;";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+       
+       
 
 }
