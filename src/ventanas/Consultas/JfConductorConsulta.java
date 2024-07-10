@@ -192,18 +192,15 @@ public final class JfConductorConsulta extends javax.swing.JFrame {
                 // Eliminando
                 if (queryElimina.eliminaTelefono(id)) {
                     // Eliminando telefonos de la tabla telefono_persona
-                    CMensajes.msg("Se elimino el telefono correspondiente", "Eliminar");
                     // Eliminando relacion de autobus con conductor
                     if (queryElimina.eliminaAutbousConductor(Integer.parseInt(idConductor))) {
-                        CMensajes.msg("Se eliminaron las relaciones del conductor \ncon los autobuses correspondientes", "Eliminar");
                         // Eliminando relacion de ruta con Conductor
                         if (queryElimina.eliminaRutaConductor(Integer.parseInt(idConductor))) {
-                            CMensajes.msg("Se eliminaron las relaciones del conductor \ncon los viajes correspondientes", "Eliminar");
                             // Eliminando relacion de la tabla Conductor
                             if (queryElimina.eliminaConductor(id)) {
                                 // Eliminando la persona en la tabla persona
                                 if (queryElimina.eliminaPersona(id)) {
-                                    CMensajes.msg("Se elimino al conductor seleccionado", "Eliminar");
+                                    CMensajes.msg("Se elimino al conductor seleccionado y su informacion relacionada", "Eliminar");
                                 } else {
                                     CMensajes.msg_error("Ocurrio un error al eliminar a la persona", "Eliminando");
                                 }

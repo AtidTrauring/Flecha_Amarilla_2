@@ -139,13 +139,17 @@ public class CBusquedas {
         return cnslt.buscarValores(consulta, 3);
     }
 
-    public ArrayList<String[]> buscaAutobuses() throws SQLException {
-        consulta = "SELECT marca.nombre, modelo.nombre, autobus.capacidad,"
+    public ArrayList<String[]> buscaAutobusesCompletos() throws SQLException {
+        consulta = "SELECT autobus.Id_autobus, marca.nombre, modelo.nombre, autobus.capacidad,"
                 + " CONCAT(fecha.dia, ' - ', mes.mes, ' - ', anio.anio) FROM autobus,"
                 + " fecha, mes, modelo, anio, marca WHERE autobus.Id_modelo = modelo.Id_modelo"
                 + " AND autobus.Id_fecha = fecha.Id_fecha AND fecha.Id_mes = mes.Id_mes "
                 + " AND fecha.Id_anio = anio.Id_anio AND modelo.Id_marca = marca.Id_marca";
-        return cnslt.buscarValores(consulta, 4);
+        return cnslt.buscarValores(consulta, 5);
+    }
+        public String buscarAutobus(int id) throws SQLException {
+        String idAutobus = cnslt.buscarValor("SELECT autobus.Id_autobus FROM flecha_amarilla.autobus WHERE autobus.Id_autobus = " + id);
+        return idAutobus;
     }
 
     public ArrayList<String[]> buscaAutobusesActivos() throws SQLException {

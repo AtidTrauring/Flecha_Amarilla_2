@@ -152,15 +152,11 @@ public final class JfClientesConsulta extends javax.swing.JFrame {
             String idCliente = queryBusca.buscarClientes(id);
             if (idCliente != null || idCliente.isEmpty()) {
                 if (queryElimina.eliminaTelefono(id)) {
-                    CMensajes.msg("Se elimino el telefono correspondiente", "Eliminar");
                 if (queryElimina.eliminaBoletoCliente(Integer.parseInt(idCliente))) {
-                    CMensajes.msg("Se eliminaron las relaciones del cliente \ncon los boletos correspondientes", "Eliminar");
                     if (queryElimina.eliminaTarjetaCliente(Integer.parseInt(idCliente))) {
-                        CMensajes.msg("Se elimino al cliente seleccionado", "Eliminar");
                         if (queryElimina.eliminaCliente(id)) {
-                            CMensajes.msg("Se elimino el cliente", "Eliminar");
                             if (queryElimina.eliminaPersona(id)) {
-                                CMensajes.msg("Se elimino al cliente seleccionado", "Eliminar");
+                                CMensajes.msg("Se elimino al cliente seleccionado ", "Eliminar");
                             } else {
                                 CMensajes.msg_error("Ocurrio un error al eliminar a la persona", "Eliminando");
                             }
