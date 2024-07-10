@@ -1,4 +1,5 @@
 package ventanas.Consultas;
+
 import crud.CActualizaciones;
 import crud.CBusquedas;
 import crud.CCargaCombos;
@@ -19,7 +20,7 @@ import javax.swing.table.TableRowSorter;
 public final class JfTerminalesConsulta extends javax.swing.JFrame {
 
     //**************   ATRIBUTOS  *******************/
-        private DefaultTableModel modelo;
+    private DefaultTableModel modelo;
     private DefaultComboBoxModel listas;
     private TableRowSorter tr;
     private final CInserciones queryInserta = new CInserciones();
@@ -59,7 +60,7 @@ public final class JfTerminalesConsulta extends javax.swing.JFrame {
             tr.setRowFilter(null);
         }
     }
-    
+
     public void cargarTabla() {
         modelo = (DefaultTableModel) JtableTerminales.getModel();
         try {
@@ -113,8 +114,8 @@ public final class JfTerminalesConsulta extends javax.swing.JFrame {
         RowFilter<Object, Object> rf = RowFilter.andFilter(filtros);
         tr.setRowFilter(rf);
     }
-    
-      private String[] obtenerValoresFilaTabla() {
+
+    private String[] obtenerValoresFilaTabla() {
         String[] valores = new String[8];
         int filaSeleccionada = JtableTerminales.getSelectedRow();
         if (filaSeleccionada != -1) {
@@ -128,39 +129,84 @@ public final class JfTerminalesConsulta extends javax.swing.JFrame {
         return valores;
     }
 
-          public int buscarId(String nombre, String estado, String ciudad, String vialidad,String numero, String colonia, String CP, String telefono) {
+    public int buscarId(String nombre, String estado, String ciudad, String vialidad, String numero, String colonia, String CP, String telefono) {
         for (String[] terminal : datosTerminales) {
-            if (terminal[1].equals(nombre) && terminal[2].equals(estado) && terminal[3].equals(ciudad) && terminal[4].equals(vialidad)&& terminal[5].equals(numero) 
+            if (terminal[1].equals(nombre) && terminal[2].equals(estado) && terminal[3].equals(ciudad) && terminal[4].equals(vialidad) && terminal[5].equals(numero)
                     && terminal[6].equals(colonia) && terminal[7].equals(CP) && terminal[8].equals(telefono)) {
                 return Integer.parseInt(terminal[0]);
             }
         }
         return -1;
     }
-          
-    public void eliminar(int id) {
-    try {
-        // Buscar la terminal por ID
-        String idTerminal = queryBusca.buscarTerminales(id);
 
-        if (idTerminal != null || !idTerminal.isEmpty()) {
-            // Llamar al método que elimina todas las dependencias y la terminal
-            if (queryElimina.eliminarTerminalCompleta(Integer.parseInt(idTerminal))) {
-                CMensajes.msg("Terminal eliminada correctamente", "Eliminar");
+    public void eliminar(int id) {
+        try {
+            // Buscar la terminal por ID
+            String idTerminal = queryBusca.buscarTerminales(id);
+
+            if (idTerminal != null || !idTerminal.isEmpty()) {
+                // Llamar al método que elimina todas las dependencias y la terminal
+                if (queryElimina.eliminarTerminalTelefono(id)) {
+                    if (queryElimina.eliminarTerminalReembolso(id)) {
+                        if (queryElimina.eliminarBoletoClientePorTerminal(id)) {
+                            if (queryElimina.eliminarTerminalBoleto(id)) {
+                                if (queryElimina.eliminarRutaConductorPorTerminal(id)) {
+                                    if (queryElimina.eliminarRutaAutobusPorTerminal(id)) {
+                                        if (queryElimina.eliminarRutaTerminalPorTerminal(id)) {
+                                            if (queryElimina.eliminarRutaTerminalRPorTerminal(id)) {
+                                                if (queryElimina.eliminarTerminalRuta(id)) {
+                                                    if (queryElimina.eliminarTerminalDestino(id)) {
+                                                        if (queryElimina.eliminarTerminalOrigen(id)) {
+                                                            if (queryElimina.eliminarTerminal(id)) {
+                                                                CMensajes.msg("Terminal eliminada y su informacion asociada", "Eliminar");
+                                                            } else {
+                                                                CMensajes.msg_error("Ocurrió un error al eliminar la terminal", "Eliminar");
+                                                            }
+                                                        } else {
+                                                            CMensajes.msg_error("Ocurrió un error al eliminar el origen", "Eliminar");
+                                                        }
+                                                    } else {
+                                                        CMensajes.msg_error("Ocurrió un error al eliminar el destino", "Eliminar");
+                                                    }
+                                                } else {
+                                                    CMensajes.msg_error("Ocurrió un error al eliminarla ruta", "Eliminar");
+                                                }
+                                            } else {
+                                                CMensajes.msg_error("Ocurrió un error al eliminar la Ruta-terminalC", "Eliminar");
+                                            }
+                                        } else {
+                                            CMensajes.msg_error("Ocurrió un error al eliminar el Ruta-Terminal", "Eliminar");
+                                        }
+                                    } else {
+                                        CMensajes.msg_error("Ocurrió un error al eliminar Ruta-autobus", "Eliminar");
+                                    }
+                                } else {
+                                    CMensajes.msg_error("Ocurrió un error al eliminar la Ruta-Conductor", "Eliminar");
+                                }
+                            } else {
+                                CMensajes.msg_error("Ocurrió un error al eliminar el boleto", "Eliminar");
+                            }
+                        } else {
+                            CMensajes.msg_error("Ocurrió un error al eliminar Cliente-Boleto", "Eliminar");
+                        }
+                    } else {
+                        CMensajes.msg_error("Ocurrió un error al eliminar el reembolso", "Eliminar");
+                    }
+                } else {
+                    CMensajes.msg_error("Ocurrió un error al eliminar el telefono de la terminal", "Eliminar");
+                }
             } else {
-                CMensajes.msg_error("Ocurrió un error al eliminar la terminal", "Eliminar");
+                CMensajes.msg_error("Terminal no encontrada", "Eliminar");
             }
-        } else {
-            CMensajes.msg_error("Terminal no encontrada", "Eliminar");
+        } catch (SQLException e) {
+            CMensajes.msg_error("Error de SQL: " + e.getMessage(), "Eliminar");
+        } finally {
+            limpiarBuscadores();
+            limpiarFiltro();
+            cargarTabla();
         }
-    } catch (SQLException e) {
-        CMensajes.msg_error("Error de SQL: " + e.getMessage(), "Eliminar");
-    } finally {
-        limpiarBuscadores();
-        limpiarFiltro();
-        cargarTabla();
     }
-}
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -279,11 +325,11 @@ public final class JfTerminalesConsulta extends javax.swing.JFrame {
 
     private void JbtnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnEliminarActionPerformed
         // TODO add your handling code here:
-          if (JtableTerminales.getSelectedRow() != -1) {
+        if (JtableTerminales.getSelectedRow() != -1) {
             if (JOptionPane.showConfirmDialog(null, "¿Desea eliminar el registro seleccionado?", "Confimacion", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                 valoresFila = obtenerValoresFilaTabla();
-                if (buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3],valoresFila[4], valoresFila[5], valoresFila[6], valoresFila[7]) != -1) {
-                    idEliminar = buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3],valoresFila[4], valoresFila[5], valoresFila[6], valoresFila[7]);
+                if (buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3], valoresFila[4], valoresFila[5], valoresFila[6], valoresFila[7]) != -1) {
+                    idEliminar = buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3], valoresFila[4], valoresFila[5], valoresFila[6], valoresFila[7]);
                     eliminar(idEliminar);
                 }
             } else {
@@ -297,11 +343,11 @@ public final class JfTerminalesConsulta extends javax.swing.JFrame {
 
     private void JtableTerminalesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JtableTerminalesMouseClicked
         // TODO add your handling code here:
-       valoresFila = obtenerValoresFilaTabla();
+        valoresFila = obtenerValoresFilaTabla();
         if (valoresFila != null) {
-            if (buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3],valoresFila[4], valoresFila[5], valoresFila[6], valoresFila[7]) != -1) {
+            if (buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3], valoresFila[4], valoresFila[5], valoresFila[6], valoresFila[7]) != -1) {
                 // Se asigna el ID encontrado a la variable idActualizar.
-                idActualizar = buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3],valoresFila[4], valoresFila[5], valoresFila[6], valoresFila[7]);
+                idActualizar = buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3], valoresFila[4], valoresFila[5], valoresFila[6], valoresFila[7]);
             }
         }
     }//GEN-LAST:event_JtableTerminalesMouseClicked

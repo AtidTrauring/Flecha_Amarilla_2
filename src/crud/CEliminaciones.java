@@ -41,100 +41,151 @@ public class CEliminaciones {
         consulta = "DELETE FROM ruta WHERE Id_ruta = " + idRuta;
         return cnslt.elimina(consulta);
     }
+
     //Viajes
     public boolean eliminaRutaAutobus(int id) throws SQLException {
         consulta = "DELETE FROM flecha_amarilla.rutaautobus WHERE rutaautobus.Id_RutAut= " + id;
         return cnslt.elimina(consulta);
-    }  
-     //Terminales
-     public boolean eliminarTerminalCompleta(int idTerminal) throws SQLException {
-        consulta = "DELETE FROM telefonoTerminal WHERE Id_terminal = " + idTerminal;
-        if (!cnslt.elimina(consulta)) {
-            return false;
-        }
-        consulta = "DELETE FROM rutaTerminal WHERE Id_terminal = " + idTerminal;
-        if (!cnslt.elimina(consulta)) {
-            return false;
-        }
-        consulta = "DELETE FROM origen WHERE Id_terminal = " + idTerminal;
-        if (!cnslt.elimina(consulta)) {
-            return false;
-        }
-        consulta = "DELETE FROM destino WHERE Id_terminal = " + idTerminal;
-        if (!cnslt.elimina(consulta)) {
-            return false;
-        }
-        consulta = "DELETE FROM ruta WHERE Id_origen IN (SELECT Id_origen FROM origen WHERE Id_terminal = " + idTerminal + ") OR Id_destino IN (SELECT Id_destino FROM destino WHERE Id_terminal = " + idTerminal + ")";
-        if (!cnslt.elimina(consulta)) {
-            return false;
-        }
-        consulta = "DELETE FROM boleto WHERE Id_ruta IN (SELECT Id_ruta FROM ruta WHERE Id_origen IN (SELECT Id_origen FROM origen WHERE Id_terminal = " + idTerminal + ") OR Id_destino IN (SELECT Id_destino FROM destino WHERE Id_terminal = " + idTerminal + "))";
-        if (!cnslt.elimina(consulta)) {
-            return false;
-        }
-        consulta = "DELETE FROM terminal WHERE Id_terminal = " + idTerminal;
+    }
+
+    //Terminales
+    public boolean eliminarTerminalTelefono(int id) throws SQLException {
+        consulta = "DELETE FROM telefonoTerminal WHERE Id_terminal = " + id;
         return cnslt.elimina(consulta);
     }
-     //Paradas
-      public boolean eliminaRutaTerminal(int idRuta) throws SQLException {
+
+    public boolean eliminarTerminalReembolso(int id) throws SQLException {
+        consulta = "DELETE FROM reembolso WHERE id_boleto IN (SELECT id_boleto FROM boleto WHERE id_ruta IN (SELECT id_ruta FROM ruta WHERE id_origen IN ("
+                + "SELECT id_origen FROM origen WHERE id_terminal = " + id + ") OR id_destino IN (SELECT id_destino FROM destino WHERE id_terminal = " + id + ")))";
+        return cnslt.elimina(consulta);
+    }
+
+    public boolean eliminarTerminalBoleto(int id) throws SQLException {
+        consulta = "DELETE FROM boleto WHERE id_ruta IN (SELECT id_ruta FROM ruta WHERE id_origen IN (SELECT id_origen FROM origen WHERE id_terminal = " + id
+                + ") OR id_destino IN ( SELECT id_destino FROM destino WHERE id_terminal = " + id + "))";
+        return cnslt.elimina(consulta);
+    }
+
+    public boolean eliminarTerminalRuta(int id) throws SQLException {
+        consulta = "DELETE FROM ruta WHERE id_origen IN (SELECT id_origen FROM origen WHERE id_terminal = " + id + ") OR id_destino IN ("
+                + "SELECT id_destino FROM destino WHERE id_terminal = " + id  + ")";
+        return cnslt.elimina(consulta);
+    }
+
+    public boolean eliminarTerminalOrigen(int id) throws SQLException {
+        consulta = "DELETE FROM origen WHERE id_terminal = " + id;
+        return cnslt.elimina(consulta);
+    }
+
+    public boolean eliminarTerminalDestino(int id) throws SQLException {
+        consulta = "DELETE FROM destino WHERE id_terminal = " + id;
+        return cnslt.elimina(consulta);
+    }
+
+    public boolean eliminarTerminal(int id) throws SQLException {
+        consulta = "DELETE FROM terminal WHERE id_terminal = " + id;
+        return cnslt.elimina(consulta);
+    }
+
+    public boolean eliminarBoletoClientePorTerminal(int id) throws SQLException {
+        consulta = "DELETE FROM boletoCliente WHERE id_boleto IN (SELECT id_boleto FROM boleto WHERE id_ruta IN (SELECT id_ruta FROM ruta WHERE id_origen IN ("
+                + "SELECT id_origen FROM origen WHERE id_terminal = " + id + ") OR id_destino IN (SELECT id_destino FROM destino WHERE id_terminal = " + id + ")))";
+        return cnslt.elimina(consulta);
+    }
+
+    public boolean eliminarRutaAutobusPorTerminal(int id) throws SQLException {
+        consulta = "DELETE FROM rutaAutobus WHERE id_ruta IN (SELECT id_ruta FROM ruta WHERE id_origen IN (SELECT id_origen FROM origen WHERE id_terminal = " + id
+                + ") OR id_destino IN (SELECT id_destino FROM destino WHERE id_terminal = " + id + "))";
+        return cnslt.elimina(consulta);
+    }
+
+    public boolean eliminarRutaTerminalRPorTerminal(int id) throws SQLException {
+        consulta = "DELETE FROM rutaTerminal WHERE id_ruta IN (SELECT id_ruta FROM ruta WHERE id_origen IN (SELECT id_origen FROM origen WHERE id_terminal = " + id
+                + ") OR id_destino IN (SELECT id_destino FROM destino WHERE id_terminal = " + id + "))";
+        return cnslt.elimina(consulta);
+    }
+
+    public boolean eliminarRutaTerminalPorTerminal(int id) throws SQLException {
+        consulta = "DELETE FROM rutaTerminal WHERE id_terminal = " + id;
+        return cnslt.elimina(consulta);
+    }
+
+    public boolean eliminarRutaConductorPorTerminal(int id) throws SQLException {
+        consulta = "DELETE FROM rutaConductor WHERE id_ruta IN (SELECT id_ruta FROM ruta WHERE id_origen IN (SELECT id_origen FROM origen WHERE id_terminal = " + id
+                + ") OR id_destino IN (SELECT id_destino FROM destino WHERE id_terminal = " + id + "))";
+        return cnslt.elimina(consulta);
+
+    }
+
+    //Paradas
+    public boolean eliminaRutaTerminal(int idRuta) throws SQLException {
         consulta = "DELETE FROM flecha_amarilla.rutaterminal WHERE rutaterminal.Id_RutTer = " + idRuta;
         return cnslt.elimina(consulta);
     }
+
     //Conductor
     public boolean eliminaTelefono(int id) throws SQLException {
         consulta = "DELETE FROM flecha_amarilla.telefono_persona WHERE telefono_persona.Id_persona = " + id;
         return cnslt.elimina(consulta);
     }
+
     public boolean eliminaConductor(int id) throws SQLException {
         consulta = "DELETE FROM flecha_amarilla.conductor WHERE conductor.Id_persona = " + id;
         return cnslt.elimina(consulta);
     }
+
     public boolean eliminaAutbousConductor(int idConductor) throws SQLException {
         consulta = "DELETE FROM `autobusconductor` WHERE autobusconductor.Id_conductor = " + idConductor;
         return cnslt.elimina(consulta);
     }
+
     public boolean eliminaRutaConductor(int idConductor) throws SQLException {
         consulta = "DELETE FROM `rutaconductor` WHERE rutaconductor.Id_conductor = " + idConductor;
         return cnslt.elimina(consulta);
     }
+
     public boolean eliminaPersona(int id) throws SQLException {
         consulta = "DELETE FROM persona WHERE persona.Id_persona = " + id;
         return cnslt.elimina(consulta);
     }
+
     //Cliente
     public boolean eliminaBoletoCliente(int idCliente) throws SQLException {
         consulta = "DELETE FROM flecha_amarilla.boletocliente WHERE boletocliente.Id_cliente = " + idCliente;
         return cnslt.elimina(consulta);
     }
+
     public boolean eliminaTarjetaCliente(int idCliente) throws SQLException {
         consulta = "DELETE FROM `tarjeta` WHERE tarjeta.Id_cliente = " + idCliente;
         return cnslt.elimina(consulta);
     }
+
     public boolean eliminaCliente(int id) throws SQLException {
         consulta = "DELETE FROM flecha_amarilla.cliente WHERE cliente.Id_persona = " + id;
         return cnslt.elimina(consulta);
     }
+
     //Pasajero
     public boolean eliminarPasajeroCompleto(int idPasajero) throws SQLException {
-    consulta = "DELETE FROM reembolso WHERE Id_boleto IN (SELECT Id_boleto FROM boleto WHERE Id_pasajero = " + idPasajero + ")";
-    if (!cnslt.elimina(consulta)) {
-        return false;
+        consulta = "DELETE FROM reembolso WHERE Id_boleto IN (SELECT Id_boleto FROM boleto WHERE Id_pasajero = " + idPasajero + ")";
+        if (!cnslt.elimina(consulta)) {
+            return false;
+        }
+        consulta = "DELETE FROM boleto WHERE Id_pasajero = " + idPasajero;
+        if (!cnslt.elimina(consulta)) {
+            return false;
+        }
+        consulta = "DELETE FROM telefono_persona WHERE Id_persona = (SELECT Id_persona FROM pasajero WHERE Id_pasajero = " + idPasajero + ")";
+        if (!cnslt.elimina(consulta)) {
+            return false;
+        }
+        consulta = "DELETE FROM persona WHERE Id_persona = (SELECT Id_persona FROM pasajero WHERE Id_pasajero = " + idPasajero + ")";
+        if (!cnslt.elimina(consulta)) {
+            return false;
+        }
+        consulta = "DELETE FROM pasajero WHERE Id_pasajero = " + idPasajero;
+        return cnslt.elimina(consulta);
     }
-    consulta = "DELETE FROM boleto WHERE Id_pasajero = " + idPasajero;
-    if (!cnslt.elimina(consulta)) {
-        return false;
-    }
-    consulta = "DELETE FROM telefono_persona WHERE Id_persona = (SELECT Id_persona FROM pasajero WHERE Id_pasajero = " + idPasajero + ")";
-    if (!cnslt.elimina(consulta)) {
-        return false;
-    }
-    consulta = "DELETE FROM persona WHERE Id_persona = (SELECT Id_persona FROM pasajero WHERE Id_pasajero = " + idPasajero + ")";
-    if (!cnslt.elimina(consulta)) {
-        return false;
-    }
-    consulta = "DELETE FROM pasajero WHERE Id_pasajero = " + idPasajero;
-    return cnslt.elimina(consulta);
-}
 //    public boolean eliminaRutaTerminal(int id) throws SQLException {
 //        consulta = "DELETE FROM flecha_amarilla.rutaterminal WHERE rutaterminal.Id_RutTer= " + id;
 //        return cnslt.elimina(consulta);
