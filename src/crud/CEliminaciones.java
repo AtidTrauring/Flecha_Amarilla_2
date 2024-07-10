@@ -12,6 +12,49 @@ public class CEliminaciones {
         consulta = "DELETE FROM flecha_amarilla.rutaautobus WHERE rutaautobus.Id_RutAut= " + id;
         return cnslt.elimina(consulta);
     }
+        
+     //Terminales
+     public boolean eliminarTerminalCompleta(int idTerminal) throws SQLException {
+        // Eliminar filas en telefonoTerminal relacionadas con Id_terminal
+        consulta = "DELETE FROM telefonoTerminal WHERE Id_terminal = " + idTerminal;
+        if (!cnslt.elimina(consulta)) {
+            return false;
+        }
+
+        // Eliminar filas en rutaTerminal relacionadas con Id_terminal
+        consulta = "DELETE FROM rutaTerminal WHERE Id_terminal = " + idTerminal;
+        if (!cnslt.elimina(consulta)) {
+            return false;
+        }
+
+        // Eliminar filas en origen relacionadas con Id_terminal
+        consulta = "DELETE FROM origen WHERE Id_terminal = " + idTerminal;
+        if (!cnslt.elimina(consulta)) {
+            return false;
+        }
+
+        // Eliminar filas en destino relacionadas con Id_terminal
+        consulta = "DELETE FROM destino WHERE Id_terminal = " + idTerminal;
+        if (!cnslt.elimina(consulta)) {
+            return false;
+        }
+
+        // Eliminar filas en ruta relacionadas con Id_origen/Id_destino
+        consulta = "DELETE FROM ruta WHERE Id_origen IN (SELECT Id_origen FROM origen WHERE Id_terminal = " + idTerminal + ") OR Id_destino IN (SELECT Id_destino FROM destino WHERE Id_terminal = " + idTerminal + ")";
+        if (!cnslt.elimina(consulta)) {
+            return false;
+        }
+
+        // Eliminar filas en boleto relacionadas con Id_ruta
+        consulta = "DELETE FROM boleto WHERE Id_ruta IN (SELECT Id_ruta FROM ruta WHERE Id_origen IN (SELECT Id_origen FROM origen WHERE Id_terminal = " + idTerminal + ") OR Id_destino IN (SELECT Id_destino FROM destino WHERE Id_terminal = " + idTerminal + "))";
+        if (!cnslt.elimina(consulta)) {
+            return false;
+        }
+
+        // Finalmente, eliminar la fila en terminal
+        consulta = "DELETE FROM terminal WHERE Id_terminal = " + idTerminal;
+        return cnslt.elimina(consulta);
+    }
 //    public boolean eliminaTelefono(int id) throws SQLException {
 //        consulta = "DELETE FROM flecha_amarilla.telefono_persona WHERE telefono_persona.Id_persona = " + id;
 //        return cnslt.elimina(consulta);

@@ -19,7 +19,7 @@ import javax.swing.table.TableRowSorter;
 public final class JfTerminalesConsulta extends javax.swing.JFrame {
 
     //**************   ATRIBUTOS  *******************/
-       private DefaultTableModel modelo;
+        private DefaultTableModel modelo;
     private DefaultComboBoxModel listas;
     private TableRowSorter tr;
     private final CInserciones queryInserta = new CInserciones();
@@ -138,49 +138,29 @@ public final class JfTerminalesConsulta extends javax.swing.JFrame {
         return -1;
     }
           
-       public void eliminar(int id) {
-        try {
-            String idTerminal = queryBusca.buscarTerminales(id);
-            if (idTerminal!= null || idTerminal.isEmpty()) {
-                // Eliminando
-                if (queryElimina.eliminaTeriminalTelefono(id)) {
-                    CMensajes.msg("Se elimino el telefono correspondiente", "Eliminar");
-                    if (queryElimina.eliminaDestinoTerminal(id)) {
-                        CMensajes.msg("Se eliminaron las relaciones del destino \ncon las terminales", "Eliminar");
-                        // Eliminando relacion de ruta con Conductor
-                        if (queryElimina.eliminaOrigenTerminal(id)) {
-                            CMensajes.msg("Se eliminaron las relaciones del origen \ncon las terminales", "Eliminar");
-                            // Eliminando relacion de la tabla Conductor
-                            if (queryElimina.eliminaTerminalRuta(Integer.parseInt(idTerminal))) {
-                                 CMensajes.msg("Se elimino la terminal de la ruta", "Eliminar");
-                                if (queryElimina.eliminaTerminal(id)) {
-                                    CMensajes.msg("Se elimino la terminal", "Eliminar");
-                                } else {
-                                    CMensajes.msg_error("Ocurrio un error al eliminar la terminal", "Eliminando");
-                                }
-                            } else {
-                                CMensajes.msg_error("Ocurrio un error al eliminar \nLas rutas asociadas a la terminal", "Eliminar");
-                            }
-                        } else {
-                            CMensajes.msg_error("Ocurrio un error al eliminar \nlos origenes asociados a la terminal", "Eliminar");
-                        }
-                    } else {
-                        CMensajes.msg_error("Ocurrio un error al eliminar \nlos destinos asociadas a la terminal", "Eliminar");
-                    }
-                } else {
-                    CMensajes.msg_error("Ocurrio un error al eliminar el telefono asociado a la terminal", "Eliminar");
-                }
+    public void eliminar(int id) {
+    try {
+        // Buscar la terminal por ID
+        String idTerminal = queryBusca.buscarTerminales(id);
+
+        if (idTerminal != null || !idTerminal.isEmpty()) {
+            // Llamar al método que elimina todas las dependencias y la terminal
+            if (queryElimina.eliminarTerminalCompleta(Integer.parseInt(idTerminal))) {
+                CMensajes.msg("Terminal eliminada correctamente", "Eliminar");
             } else {
-                CMensajes.msg_error("Usuario no encontrado", "Eliminar-Buscar");
+                CMensajes.msg_error("Ocurrió un error al eliminar la terminal", "Eliminar");
             }
-        } catch (SQLException e) {
-        } finally {
-//            datosConductores.clear();
-            limpiarBuscadores();
-            limpiarFiltro();
-            cargarTabla();
+        } else {
+            CMensajes.msg_error("Terminal no encontrada", "Eliminar");
         }
+    } catch (SQLException e) {
+        CMensajes.msg_error("Error de SQL: " + e.getMessage(), "Eliminar");
+    } finally {
+        limpiarBuscadores();
+        limpiarFiltro();
+        cargarTabla();
     }
+}
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -317,7 +297,7 @@ public final class JfTerminalesConsulta extends javax.swing.JFrame {
 
     private void JtableTerminalesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JtableTerminalesMouseClicked
         // TODO add your handling code here:
-        valoresFila = obtenerValoresFilaTabla();
+       valoresFila = obtenerValoresFilaTabla();
         if (valoresFila != null) {
             if (buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3],valoresFila[4], valoresFila[5], valoresFila[6], valoresFila[7]) != -1) {
                 // Se asigna el ID encontrado a la variable idActualizar.
