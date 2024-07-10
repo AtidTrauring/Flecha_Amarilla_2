@@ -18,7 +18,7 @@ import javax.swing.table.TableRowSorter;
 public final class JfParadasConsulta extends javax.swing.JFrame {
 
     //**************   ATRIBUTOS  *******************/
-    private DefaultTableModel modelo;
+     private DefaultTableModel modelo;
     private DefaultComboBoxModel listas;
     private TableRowSorter tr;
     private final CInserciones queryInserta = new CInserciones();
@@ -327,23 +327,18 @@ public final class JfParadasConsulta extends javax.swing.JFrame {
     private void JbtnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnEliminarActionPerformed
         // TODO add your handling code here:
         if (JtableParadas.getSelectedRow() != -1) {
-            int respuesta = JOptionPane.showConfirmDialog(null, "¿Desea eliminar la parada seleccionada?", "Confirmación", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-            if (respuesta == JOptionPane.YES_OPTION) {
+            if (JOptionPane.showConfirmDialog(null, "¿Desea eliminar el registro seleccionado?", "Confimacion", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                 valoresFila = obtenerValoresFilaTabla();
-                int idEncontrado = buscarId(valoresFila[0], valoresFila[1]);
-                if (idEncontrado != -1) {
-                    idEliminar = idEncontrado;
+                if (buscarId(valoresFila[0], valoresFila[1]) != -1) {
+                    idEliminar = buscarId(valoresFila[0], valoresFila[1]);
                     eliminar(idEliminar);
-                } else {
-                    CMensajes.msg_error("Parada no encontrada", "Eliminar-Buscar");
                 }
             } else {
-                CMensajes.msg("Acción cancelada", "Eliminación");
+                CMensajes.msg("Accion cancelada", "Eliminacion");
             }
         } else {
             CMensajes.msg_error("Seleccione un registro", "Eliminar");
         }
-
     }//GEN-LAST:event_JbtnEliminarActionPerformed
 
     private void JtableParadasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JtableParadasMouseClicked

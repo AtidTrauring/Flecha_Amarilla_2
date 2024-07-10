@@ -55,6 +55,12 @@ public class CEliminaciones {
         consulta = "DELETE FROM terminal WHERE Id_terminal = " + idTerminal;
         return cnslt.elimina(consulta);
     }
+     
+     //Paradas
+      public boolean eliminaRutaTerminal(int idRuta) throws SQLException {
+        consulta = "DELETE FROM flecha_amarilla.rutaterminal WHERE rutaterminal.Id_RutTer = " + idRuta;
+        return cnslt.elimina(consulta);
+    }
 //    public boolean eliminaTelefono(int id) throws SQLException {
 //        consulta = "DELETE FROM flecha_amarilla.telefono_persona WHERE telefono_persona.Id_persona = " + id;
 //        return cnslt.elimina(consulta);
