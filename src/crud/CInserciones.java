@@ -61,4 +61,21 @@ public class CInserciones {
                 "VALUES ('"+Id_RutAut+"','"+Id_ruta+"','"+Id_autobus+"','"+Id_fecha+"');";
         return cnslt.inserta(consulta);
     }
+           public boolean insertaMarca(int Id_marca, String nombre) throws SQLException {
+        consulta = "INSERT INTO `marca`(`Id_marca`, `nombre`) VALUES ('"+Id_marca+"','"+nombre+"')";
+        return cnslt.inserta(consulta);
+    }
+           public boolean insertaAnio(int Id_anio,int anio) throws SQLException {
+        consulta = "INSERT INTO `anio`(`Id_anio`, `anio`) VALUES ('"+Id_anio+"','"+anio+"')";
+        return cnslt.inserta(consulta);
+    }
+                public boolean insertaMadelo(int Id_modelo, String nombre,int Id_marca) throws SQLException {
+        consulta = "INSERT INTO `modelo`(`Id_modelo`, `nombre`, `Id_marca`) VALUES ('"+Id_modelo+"','"+nombre+"','"+Id_marca+"');";
+        return cnslt.inserta(consulta);
+    }
+                  public boolean insertaAutobus(int Id_autobus, int capacidad, String num_economico, String placa, int Id_anio, int Id_fecha, int Id_modelo) throws SQLException {
+        consulta = "INSERT INTO `autobus`(`Id_autobus`, `capacidad`, `num_economico`, `placa`, `Id_anio`, `Id_fecha`, `Id_modelo`) VALUES"+
+                " ('"+Id_autobus+"','"+capacidad+"','"+num_economico+"','"+placa+"','"+Id_anio+"','"+Id_fecha+"','"+Id_modelo+"');";
+        return cnslt.inserta(consulta);
+    }
 }
