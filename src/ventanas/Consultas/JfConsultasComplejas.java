@@ -36,12 +36,15 @@ public class JfConsultasComplejas extends javax.swing.JFrame {
                     datosConsultas = queryBusca.consulta8();
                     break;
                 case 2:
-                    datosConsultas = queryBusca.consulta12();
+                    datosConsultas = queryBusca.consulta9();
                     break;
                 case 3:
-                    datosConsultas = queryBusca.consulta13();
+                    datosConsultas = queryBusca.consulta12();
                     break;
                 case 4:
+                    datosConsultas = queryBusca.consulta13();
+                    break;
+                case 5:
                     datosConsultas = queryBusca.consulta14();
                     break;
             }
@@ -65,13 +68,16 @@ public class JfConsultasComplejas extends javax.swing.JFrame {
                 cargarTabla(new String[]{"Pasajero", "Conductor", "Ruta", "Fecha"}, 4, 1);
                 break;
             case 2:
-                cargarTabla(new String[]{"Chofer", "Ruta", "Origen", "Destino", "Parada", "Cliente"}, 6, 2);
+                cargarTabla(new String[]{"Ruta", "Duracion", "Salida", "Llegada", "Precio", "Distancia", "Origen", "Destino"}, 8, 2);
                 break;
             case 3:
-                cargarTabla(new String[]{"Origen", "Destino"}, 2, 3);
+                cargarTabla(new String[]{"Chofer", "Ruta", "Origen", "Destino", "Parada", "Cliente"}, 6, 3);
                 break;
             case 4:
-                cargarTabla(new String[]{"Asiento", "Marca", "Modelo"}, 3, 4);
+                cargarTabla(new String[]{"Origen", "Destino"}, 2, 4);
+                break;
+            case 5:
+                cargarTabla(new String[]{"Asiento", "Marca", "Modelo"}, 3, 5);
                 break;
         }
     }
@@ -105,7 +111,7 @@ public class JfConsultasComplejas extends javax.swing.JFrame {
         ));
         JSPTablaConsultas.setViewportView(JtableConsultas);
 
-        JcmbxConsultas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione una opcion", "Pasajeros y Conductores que viajaron el día 16 de Junio de 2024.", "Información de los pasajeros con viaje “Ciudad de México - Cancún” de los choferes y de las paradas de dicho viaje.", "Ciudades de origen y destino con 3 choferes.", "Asientos disponibles del camión correspondiente a la ruta Ciudad de México – Morelia el 20 de junio 2024." }));
+        JcmbxConsultas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione una opcion", "Pasajeros y Conductores que viajaron el día 16 de Junio de 2024.", "Rutas donde almenos un cliente pago en efectivo", "Información de los pasajeros con viaje “Ciudad de México - Cancún” de los choferes y de las paradas de dicho viaje.", "Ciudades de origen y destino con 3 choferes.", "Asientos disponibles del camión correspondiente a la ruta Ciudad de México – Morelia el 20 de junio 2024.", " " }));
         JcmbxConsultas.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 JcmbxConsultasItemStateChanged(evt);
@@ -185,6 +191,10 @@ public class JfConsultasComplejas extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(JfConsultasComplejas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>

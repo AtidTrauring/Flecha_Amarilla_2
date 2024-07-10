@@ -99,12 +99,14 @@
         <Component class="javax.swing.JComboBox" name="JcmbxConsultas">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="5">
+              <StringArray count="7">
                 <StringItem index="0" value="Seleccione una opcion"/>
                 <StringItem index="1" value="Pasajeros y Conductores que viajaron el d&#xed;a 16 de Junio de 2024."/>
-                <StringItem index="2" value="Informaci&#xf3;n de los pasajeros con viaje &#x201c;Ciudad de M&#xe9;xico - Canc&#xfa;n&#x201d; de los choferes y de las paradas de dicho viaje."/>
-                <StringItem index="3" value="Ciudades de origen y destino con 3 choferes."/>
-                <StringItem index="4" value="Asientos disponibles del cami&#xf3;n correspondiente a la ruta Ciudad de M&#xe9;xico &#x2013; Morelia el 20 de junio 2024."/>
+                <StringItem index="2" value="Rutas donde almenos un cliente pago en efectivo"/>
+                <StringItem index="3" value="Informaci&#xf3;n de los pasajeros con viaje &#x201c;Ciudad de M&#xe9;xico - Canc&#xfa;n&#x201d; de los choferes y de las paradas de dicho viaje."/>
+                <StringItem index="4" value="Ciudades de origen y destino con 3 choferes."/>
+                <StringItem index="5" value="Asientos disponibles del cami&#xf3;n correspondiente a la ruta Ciudad de M&#xe9;xico &#x2013; Morelia el 20 de junio 2024."/>
+                <StringItem index="6" value=" "/>
               </StringArray>
             </Property>
           </Properties>

@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.sql.SQLException;
 
 public class CBusquedas {
-    
-    
-      public int obtenIdBuscaAño(int año) throws SQLException {
+
+    public int obtenIdBuscaAño(int año) throws SQLException {
         consulta = "SELECT\n"
                 + "anio.Id_anio\n"
                 + "FROM\n"
@@ -15,42 +14,44 @@ public class CBusquedas {
                 + "anio.anio = " + año + ";";
         return Integer.parseInt(cnslt.buscarValor(consulta));
     }
-      
-      public int obtenIdBuscaNunEconomico(String numero) throws SQLException {
+
+    public int obtenIdBuscaNunEconomico(String numero) throws SQLException {
         consulta = "SELECT\n"
                 + "autobus.Id_autobus\n"
                 + "FROM\n"
                 + "autobus\n"
                 + "WHERE\n"
-                + "autobus.num_economico = '"+numero+"';";
+                + "autobus.num_economico = '" + numero + "';";
         return Integer.parseInt(cnslt.buscarValor(consulta));
     }
-       public int obtenIdBuscaMarca(String marca) throws SQLException {
+
+    public int obtenIdBuscaMarca(String marca) throws SQLException {
         consulta = "SELECT\n"
                 + "marca.Id_marca\n"
                 + "FROM\n"
                 + "marca\n"
                 + "WHERE\n"
-                + "marca.nombre = '"+marca+"';";
+                + "marca.nombre = '" + marca + "';";
         return Integer.parseInt(cnslt.buscarValor(consulta));
     }
-         public int obtenIdBuscaModelo(String modelo) throws SQLException {
+
+    public int obtenIdBuscaModelo(String modelo) throws SQLException {
         consulta = "SELECT\n"
                 + "modelo.Id_modelo\n"
                 + "FROM\n"
                 + "modelo\n"
                 + "WHERE\n"
-                + "modelo.nombre = '"+modelo+"';";
+                + "modelo.nombre = '" + modelo + "';";
         return Integer.parseInt(cnslt.buscarValor(consulta));
     }
-         
-          public int obtenIdBuscaPlaca(String placa) throws SQLException {
+
+    public int obtenIdBuscaPlaca(String placa) throws SQLException {
         consulta = "SELECT\n"
                 + "autobus.Id_autobus\n"
                 + "FROM\n"
                 + "autobus\n"
                 + "WHERE\n"
-                + "autobus.placa = '"+placa+"';";
+                + "autobus.placa = '" + placa + "';";
         return Integer.parseInt(cnslt.buscarValor(consulta));
     }
 
@@ -260,6 +261,25 @@ public class CBusquedas {
         return cnslt.buscarValores(consulta, 4);
     }
 
+    public ArrayList<String[]> consulta9() throws SQLException {
+//        consulta = "SELECT DISTINCT ruta.Id_ruta, ruta.nombre, ruta.duracion_ruta,"
+//                + " ruta.hora_salida, ruta.hora_llegada, ruta.precio, ruta.distancia,"
+//                + " ruta.Id_origen, origen.nombre, ruta.Id_destino, destino.nombre FROM"
+//                + " ruta INNER JOIN boleto ON ruta.Id_ruta = boleto.Id_ruta INNER JOIN"
+//                + " metodo_pago ON boleto.Id_metodo = metodo_pago.Id_metodo INNER JOIN"
+//                + " terminal AS origen ON origen.Id_terminal = ruta.Id_origen INNER JOIN"
+//                + " terminal AS destino ON destino.Id_terminal = ruta.Id_destino WHERE"
+//                + " metodo_pago.Id_metodo = 1;";
+        consulta = "SELECT DISTINCT ruta.nombre, ruta.duracion_ruta, ruta.hora_salida,"
+                + " ruta.hora_llegada, ruta.precio, ruta.distancia, origen.nombre,"
+                + " destino.nombre FROM ruta INNER JOIN boleto ON ruta.Id_ruta = boleto.Id_ruta"
+                + " INNER JOIN metodo_pago ON boleto.Id_metodo = metodo_pago.Id_metodo"
+                + " INNER JOIN terminal AS origen ON origen.Id_terminal = ruta.Id_origen"
+                + " INNER JOIN terminal AS destino ON destino.Id_terminal = ruta.Id_destino"
+                + " WHERE metodo_pago.Id_metodo = 1;";
+        return cnslt.buscarValores(consulta, 8);
+    }
+
     public ArrayList<String[]> consulta12() throws SQLException {
         consulta = "SELECT DISTINCT CONCAT( p.nombre, ' ', p.ApPat, ' ', p.ApMat ) AS Nombre_Chofer,"
                 + " r.nombre AS Nombre_Ruta, cor.nombre AS Ciudad_Origen, cde.nombre AS Ciudad_Destino,"
@@ -435,6 +455,7 @@ public class CBusquedas {
                 + "autobus.num_economico = '" + numAutobus + "';";
         return Integer.parseInt(cnslt.buscarValor(consulta));
     }
+
     public int obtenIdBuscaAnio(int anio) throws SQLException {
         consulta = "SELECT\n"
                 + "anio.Id_anio\n"
@@ -444,6 +465,7 @@ public class CBusquedas {
                 + "anio.anio = " + anio + ";";
         return Integer.parseInt(cnslt.buscarValor(consulta));
     }
+
     public int obtenIdBuscaFecha(int dia, String mes, int año) throws SQLException {
         consulta = "SELECT\n"
                 + "fecha.Id_fecha\n"
@@ -457,26 +479,25 @@ public class CBusquedas {
                 + "fecha.dia = " + dia + ";";
         return Integer.parseInt(cnslt.buscarValor(consulta));
     }
-         
-    
-     public int obtenIdFinalAño() throws SQLException {
+
+    public int obtenIdFinalAño() throws SQLException {
         consulta = "SELECT MAX(Id_anio) FROM flecha_amarilla.anio;";
         return Integer.parseInt(cnslt.buscarValor(consulta));
     }
-     
-     public int obtenIdFinalMarca() throws SQLException {
+
+    public int obtenIdFinalMarca() throws SQLException {
         consulta = "SELECT MAX(Id_marca) FROM flecha_amarilla.marca;";
         return Integer.parseInt(cnslt.buscarValor(consulta));
     }
-      public int obtenIdFinalModelo() throws SQLException {
+
+    public int obtenIdFinalModelo() throws SQLException {
         consulta = "SELECT MAX(Id_modelo) FROM flecha_amarilla.modelo;";
         return Integer.parseInt(cnslt.buscarValor(consulta));
     }
-       public int obtenIdFinalAutobus() throws SQLException {
+
+    public int obtenIdFinalAutobus() throws SQLException {
         consulta = "SELECT MAX(Id_autobus) FROM flecha_amarilla.autobus;";
         return Integer.parseInt(cnslt.buscarValor(consulta));
     }
-       
-       
 
 }
