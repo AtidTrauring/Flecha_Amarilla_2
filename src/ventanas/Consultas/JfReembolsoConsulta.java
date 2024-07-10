@@ -26,7 +26,7 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
     private final CActualizaciones queryActualiza = new CActualizaciones();
     private final CCargaCombos queryCarga = new CCargaCombos();
     private ArrayList<String[]> datosReembolso = new ArrayList<>();
-
+    
     public JfReembolsoConsulta() {
         initComponents();
         JtableReembolsos.getTableHeader().setReorderingAllowed(false);
@@ -42,7 +42,7 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
             modelo.removeRow(i);
         }
     }
-
+    
     public void cargaComboBox(JComboBox combo, int metodoCarga) {
         listas = (DefaultComboBoxModel) combo.getModel();
         try {
@@ -71,12 +71,12 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
                     dias = null;
                     break;
             }
-
+            
         } catch (SQLException e) {
         }
-
+        
     }
-
+    
     public void cargarTabla() {
         modelo = (DefaultTableModel) JtableReembolsos.getModel();
         try {
@@ -89,7 +89,7 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
             CMensajes.msg_error("No se pudo cargar la informacion en la tabla", "Cargando Tabla");
         }
     }
-
+    
     public String[] asignaDias(JComboBox mes, JComboBox anio) {
         String[] Dias = null;
         int anios = 0;
@@ -97,7 +97,7 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
             anios = Integer.parseInt(anio.getSelectedItem().toString());
         }
         String mesSeleccionado = mes.getSelectedItem().toString();
-
+        
         switch (mesSeleccionado) {
             case "Enero":
             case "Marzo":
@@ -143,7 +143,7 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
         }
         return Dias;
     }
-
+    
     public void cargaComboDias(int opcion) {
         switch (opcion) {
             case 1:
@@ -180,7 +180,7 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
                 break;
         }
     }
-
+    
     public void aplicaFiltros() {
         modelo = (DefaultTableModel) JtableReembolsos.getModel();
         tr = new TableRowSorter<>(modelo);
@@ -207,7 +207,7 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
         RowFilter<String, Integer> rf = RowFilter.andFilter(filtros);
         tr.setRowFilter(rf);
     }
-
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -215,15 +215,6 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
         JpnlLienzo = new javax.swing.JPanel();
         JSPTablaReembolsos = new javax.swing.JScrollPane();
         JtableReembolsos = new javax.swing.JTable();
-        JlblDia = new javax.swing.JLabel();
-        JlblMes = new javax.swing.JLabel();
-        JcmbxMeses = new javax.swing.JComboBox<>();
-        JlblAnio = new javax.swing.JLabel();
-        JcmbxAnios = new javax.swing.JComboBox<>();
-        JbtnBuscar = new javax.swing.JButton();
-        JbtnEliminar = new javax.swing.JButton();
-        JlblFondo = new javax.swing.JLabel();
-        JbtnActualizar = new javax.swing.JButton();
         JpnlDatosCliente = new javax.swing.JPanel();
         JlblApPaterno = new javax.swing.JLabel();
         JtxtApPaterno = new javax.swing.JTextField();
@@ -234,7 +225,17 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
         JspNombres = new javax.swing.JSeparator();
         JtxtNombres = new javax.swing.JTextField();
         JlblNombres = new javax.swing.JLabel();
+        JlblDia = new javax.swing.JLabel();
         JcmbxDias = new javax.swing.JComboBox<>();
+        JlblMes = new javax.swing.JLabel();
+        JcmbxMeses = new javax.swing.JComboBox<>();
+        JlblAnio = new javax.swing.JLabel();
+        JcmbxAnios = new javax.swing.JComboBox<>();
+        JbtnTotal = new javax.swing.JButton();
+        JbtnEliminar = new javax.swing.JButton();
+        JbtnActualizar = new javax.swing.JButton();
+        JlblTotal = new javax.swing.JLabel();
+        JlblFondo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Reembolsos");
@@ -245,10 +246,7 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
 
         JtableReembolsos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
+
             },
             new String [] {
                 "Nombre(s)", "Apellido Paterno", "Apellido Materno", "Cantidad", "Dia", "Mes", "Año"
@@ -257,49 +255,6 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
         JSPTablaReembolsos.setViewportView(JtableReembolsos);
 
         JpnlLienzo.add(JSPTablaReembolsos, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 210, 630, 147));
-
-        JlblDia.setText("Dia");
-        JpnlLienzo.add(JlblDia, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, -1, -1));
-
-        JlblMes.setText("Mes");
-        JpnlLienzo.add(JlblMes, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, -1, -1));
-
-        JcmbxMeses.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione una opcion" }));
-        JcmbxMeses.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                JcmbxMesesItemStateChanged(evt);
-            }
-        });
-        JpnlLienzo.add(JcmbxMeses, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 110, -1, -1));
-
-        JlblAnio.setText("Año");
-        JpnlLienzo.add(JlblAnio, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, -1, -1));
-
-        JcmbxAnios.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione una opcion" }));
-        JcmbxAnios.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                JcmbxAniosItemStateChanged(evt);
-            }
-        });
-        JpnlLienzo.add(JcmbxAnios, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, -1, -1));
-
-        JbtnBuscar.setBackground(new java.awt.Color(160, 16, 70));
-        JbtnBuscar.setForeground(new java.awt.Color(255, 255, 255));
-        JbtnBuscar.setText("Buscar");
-        JpnlLienzo.add(JbtnBuscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 120, 90, -1));
-
-        JbtnEliminar.setBackground(new java.awt.Color(160, 16, 70));
-        JbtnEliminar.setForeground(new java.awt.Color(255, 255, 255));
-        JbtnEliminar.setText("Eliminar");
-        JpnlLienzo.add(JbtnEliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 150, 90, -1));
-
-        JlblFondo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/FondoReembolso.png"))); // NOI18N
-        JpnlLienzo.add(JlblFondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 10, 210, 190));
-
-        JbtnActualizar.setBackground(new java.awt.Color(160, 16, 70));
-        JbtnActualizar.setForeground(new java.awt.Color(255, 255, 255));
-        JbtnActualizar.setText("Actualizar");
-        JpnlLienzo.add(JbtnActualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 90, 90, -1));
 
         JpnlDatosCliente.setBackground(new java.awt.Color(255, 255, 255));
         JpnlDatosCliente.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1), "Datos del Cliente"));
@@ -374,6 +329,9 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
 
         JpnlLienzo.add(JpnlDatosCliente, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 10, 160, 190));
 
+        JlblDia.setText("Dia");
+        JpnlLienzo.add(JlblDia, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, -1, -1));
+
         JcmbxDias.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione un mes" }));
         JcmbxDias.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -381,6 +339,62 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
             }
         });
         JpnlLienzo.add(JcmbxDias, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, -1, -1));
+
+        JlblMes.setText("Mes");
+        JpnlLienzo.add(JlblMes, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, -1, -1));
+
+        JcmbxMeses.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione una opcion" }));
+        JcmbxMeses.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                JcmbxMesesItemStateChanged(evt);
+            }
+        });
+        JpnlLienzo.add(JcmbxMeses, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 110, -1, -1));
+
+        JlblAnio.setText("Año");
+        JpnlLienzo.add(JlblAnio, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, -1, -1));
+
+        JcmbxAnios.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione una opcion" }));
+        JcmbxAnios.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                JcmbxAniosItemStateChanged(evt);
+            }
+        });
+        JpnlLienzo.add(JcmbxAnios, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, -1, -1));
+
+        JbtnTotal.setBackground(new java.awt.Color(160, 16, 70));
+        JbtnTotal.setForeground(new java.awt.Color(255, 255, 255));
+        JbtnTotal.setText("Total");
+        JbtnTotal.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                JbtnTotalMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                JbtnTotalMouseExited(evt);
+            }
+        });
+        JbtnTotal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JbtnTotalActionPerformed(evt);
+            }
+        });
+        JpnlLienzo.add(JbtnTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 120, 90, -1));
+
+        JbtnEliminar.setBackground(new java.awt.Color(160, 16, 70));
+        JbtnEliminar.setForeground(new java.awt.Color(255, 255, 255));
+        JbtnEliminar.setText("Eliminar");
+        JpnlLienzo.add(JbtnEliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 150, 90, -1));
+
+        JbtnActualizar.setBackground(new java.awt.Color(160, 16, 70));
+        JbtnActualizar.setForeground(new java.awt.Color(255, 255, 255));
+        JbtnActualizar.setText("Actualizar");
+        JpnlLienzo.add(JbtnActualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 90, 90, -1));
+
+        JlblTotal.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        JpnlLienzo.add(JlblTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 20, 130, 40));
+
+        JlblFondo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/FondoReembolso.png"))); // NOI18N
+        JpnlLienzo.add(JlblFondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 10, 210, 190));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -422,6 +436,33 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
         aplicaFiltros();
     }//GEN-LAST:event_JcmbxAniosItemStateChanged
 
+    private void JbtnTotalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnTotalActionPerformed
+        Double[] precios = new Double[JtableReembolsos.getRowCount()];
+        for (int i = 0; i < JtableReembolsos.getRowCount(); i++) {
+            precios[i] = Double.parseDouble(String.valueOf(JtableReembolsos.getValueAt(i, 3)));
+        }
+        
+        double total = 0;
+        for (int i = 0; i < precios.length; i++) {
+            total = total + precios[i];
+//            total += precios[i];
+        }
+        JlblTotal.setText("El total es de " + total);
+    }//GEN-LAST:event_JbtnTotalActionPerformed
+
+    private void JbtnTotalMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JbtnTotalMouseEntered
+        if (JtableReembolsos.getRowCount() != 0) {
+            JbtnTotal.setEnabled(true);
+        } else {
+            JbtnTotal.setEnabled(false);
+            JlblTotal.setText("");
+        }
+    }//GEN-LAST:event_JbtnTotalMouseEntered
+
+    private void JbtnTotalMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JbtnTotalMouseExited
+        JbtnTotal.setEnabled(true);
+    }//GEN-LAST:event_JbtnTotalMouseExited
+    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -457,8 +498,8 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane JSPTablaReembolsos;
     private javax.swing.JButton JbtnActualizar;
-    private javax.swing.JButton JbtnBuscar;
     private javax.swing.JButton JbtnEliminar;
+    private javax.swing.JButton JbtnTotal;
     private javax.swing.JComboBox<String> JcmbxAnios;
     private javax.swing.JComboBox<String> JcmbxDias;
     private javax.swing.JComboBox<String> JcmbxMeses;
@@ -469,6 +510,7 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
     private javax.swing.JLabel JlblFondo;
     private javax.swing.JLabel JlblMes;
     private javax.swing.JLabel JlblNombres;
+    private javax.swing.JLabel JlblTotal;
     private javax.swing.JPanel JpnlDatosCliente;
     private javax.swing.JPanel JpnlLienzo;
     private javax.swing.JSeparator JspApMaterno;
