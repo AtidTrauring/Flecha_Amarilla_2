@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
@@ -16,7 +17,7 @@ import javax.swing.table.TableRowSorter;
 public final class JfConduceConsulta extends javax.swing.JFrame {
 
     //**************   ATRIBUTOS  *******************/
-   private DefaultTableModel modelo;
+private DefaultTableModel modelo;
     private DefaultComboBoxModel listas;
     private TableRowSorter tr;
     private final CInserciones queryInserta = new CInserciones();
@@ -26,10 +27,10 @@ public final class JfConduceConsulta extends javax.swing.JFrame {
     private final CCargaCombos queryCarga = new CCargaCombos();
     private ArrayList<String[]> datosConduce = new ArrayList<>();
     private ArrayList<String> datosListas = new ArrayList<>();
-        private int idActualizar;
+    private int idActualizar;
     private int idEliminar;
     private String[] valoresFila;
-    
+
     public JfConduceConsulta() {
         initComponents();
         JtableConducen.getTableHeader().setReorderingAllowed(false);
@@ -40,7 +41,7 @@ public final class JfConduceConsulta extends javax.swing.JFrame {
 
     //**************** METODOS ******************/
     private void limpiarTabla() {
-      modelo = (DefaultTableModel) JtableConducen.getModel();
+        modelo = (DefaultTableModel) JtableConducen.getModel();
         modelo.setRowCount(0);
     }
 
@@ -59,8 +60,8 @@ public final class JfConduceConsulta extends javax.swing.JFrame {
             tr.setRowFilter(null);
         }
     }
-    
-   public void cargarTabla() {
+
+    public void cargarTabla() {
         modelo = (DefaultTableModel) JtableConducen.getModel();
         try {
             datosConduce = queryBusca.buscaConduceCompletos();
@@ -94,7 +95,7 @@ public final class JfConduceConsulta extends javax.swing.JFrame {
                     datosListas.clear();
                     break;
             }
-             
+
         } catch (SQLException e) {
         }
     }
@@ -104,7 +105,7 @@ public final class JfConduceConsulta extends javax.swing.JFrame {
         tr = new TableRowSorter<>(modelo);
         JtableConducen.setRowSorter(tr);
         ArrayList<RowFilter<Object, Object>> filtros = new ArrayList<>();
-       
+
         if (!JtxtNombres.getText().trim().isEmpty()) {
             filtros.add(RowFilter.regexFilter("^" + JtxtNombres.getText().trim() + "$", 0));
         }
@@ -128,7 +129,7 @@ public final class JfConduceConsulta extends javax.swing.JFrame {
         tr.setRowFilter(rf);
     }
 
-     private String[] obtenerValoresFilaTabla() {
+    private String[] obtenerValoresFilaTabla() {
         String[] valores = new String[6];
         int filaSeleccionada = JtableConducen.getSelectedRow();
         if (filaSeleccionada != -1) {
@@ -144,8 +145,8 @@ public final class JfConduceConsulta extends javax.swing.JFrame {
 
     public int buscarId(String nombre, String apPat, String apMat, String placa, String marca, String modelo) {
         for (String[] conduce : datosConduce) {
-            if (conduce[1].equals(nombre) && conduce[2].equals(apPat) && conduce[3].equals(apMat) && conduce[4].equals(placa)&&
-                    conduce[5].equals(marca) && conduce[6].equals(modelo)) {
+            if (conduce[1].equals(nombre) && conduce[2].equals(apPat) && conduce[3].equals(apMat) && conduce[4].equals(placa)
+                    && conduce[5].equals(marca) && conduce[6].equals(modelo)) {
                 return Integer.parseInt(conduce[0]);
             }
         }
@@ -153,26 +154,64 @@ public final class JfConduceConsulta extends javax.swing.JFrame {
     }
 
     public void actualizar(int id) {
-        String nombre = (String) JtableConducen.getValueAt(JtableConducen.getSelectedRow(), 0);
-        String apPaterno = (String) JtableConducen.getValueAt(JtableConducen.getSelectedRow(), 1);
-        String apMaterno = (String) JtableConducen.getValueAt(JtableConducen.getSelectedRow(), 2);
-        String correo = (String) JtableConducen.getValueAt(JtableConducen.getSelectedRow(), 3);
+//        String nombre = (String) JtableConducen.getValueAt(JtableConducen.getSelectedRow(), 0);
+//        String apPaterno = (String) JtableConducen.getValueAt(JtableConducen.getSelectedRow(), 1);
+//        String apMaterno = (String) JtableConducen.getValueAt(JtableConducen.getSelectedRow(), 2);
+//        String placa = (String) JtableConducen.getValueAt(JtableConducen.getSelectedRow(), 3);
+//        String marca = (String) JtableConducen.getValueAt(JtableConducen.getSelectedRow(), 4);
+//        String modelo = (String) JtableConducen.getValueAt(JtableConducen.getSelectedRow(), 5);
+//        try {
+//            String idConduce = queryBusca.buscaConduce(id);
+//            if (idConduce != null || idConduce.isEmpty()) {
+//                if (queryActualiza.actualizarPersona(nombre, apPaterno, apMaterno, id)) {
+//                    CMensajes.msg("Se actualizo la informacion del cliente", "Actualizar");
+//                    if (queryActualiza.actualizarMarca(marca, id)) {
+//                        CMensajes.msg("Se actualizo la marca del autobus", "Actualizar");
+//                        if (queryActualiza.actualizarModelo(modelo, id)) {
+//                            CMensajes.msg("Se actualizo la modelo del autobus", "Actualizar");
+//                            if (queryActualiza.actualizarPlacasAutobus(placa, id)) {
+//                                CMensajes.msg("Se actualizo la placa del autobus", "Actualizar");
+////                                if (queryActualiza.actualizarModeloAutobus(modelo, id)) {
+////                                CMensajes.msg("Se actualizo la placa del autobus", "Actualizar");
+////                            } else {
+////                                CMensajes.msg_error("Ocurrio un error al actualizar la placa", "Actualizar");
+////                            }
+//                            } else {
+//                                CMensajes.msg_error("Ocurrio un error al actualizar la placa", "Actualizar");
+//                            }
+//                        } else {
+//                            CMensajes.msg_error("Ocurrio un error al actualizar el modelo", "Actualizar");
+//                        }
+//                    } else {
+//                        CMensajes.msg_error("Ocurrio un error al actualizar la marca", "Actualizar");
+//                    }
+//                } else {
+//                    CMensajes.msg_error("Ocurrio un error al actualizar a la persona", "Actualizar");
+//                }
+//
+//            } else {
+//                CMensajes.msg_error("Usuario no encontrado", "Actualizar-Buscar");
+//            }
+//        } catch (SQLException e) {
+//        } finally {
+////            datosConductores.clear();
+//            limpiarBuscadores();
+//            limpiarFiltro();
+//            cargarTabla();
+//        }
+    }
+    public void eliminar(int id) {
         try {
-            String idCliente = queryBusca.buscarClientes(id);
-            if (idCliente != null || idCliente.isEmpty()) {
-                if (queryActualiza.actualizarPersona(nombre, apPaterno, apMaterno, id)) {
-                    CMensajes.msg("Se actualizo la informacion del cliente", "Actualizar");
-                    if (queryActualiza.actualizarCorreo(correo, id)) {
-                        CMensajes.msg("Se actualizo el correo del cliente", "Actualizar");
-                    } else {
-                        CMensajes.msg_error("Ocurrio un error al actualizar el correo", "Actualizar");
-                    }
+            String idConduce = queryBusca.buscaConduce(id);
+            if (idConduce != null || idConduce.isEmpty()) {
+                // Eliminando
+                if (queryElimina.eliminaAutbousConductor(id)) {
+                    CMensajes.msg("Se elimino la relacion de Autobus con Conductor", "Eliminar");
                 } else {
-                    CMensajes.msg_error("Ocurrio un error al actualizar", "Actualizar");
+                    CMensajes.msg_error("Ocurrio un error al eliminar la relacion autpobus ocn conductor", "Eliminar");
                 }
-
             } else {
-                CMensajes.msg_error("Usuario no encontrado", "Actualizar-Buscar");
+                CMensajes.msg_error("Usuario no encontrado", "Eliminar-Buscar");
             }
         } catch (SQLException e) {
         } finally {
@@ -438,14 +477,43 @@ public final class JfConduceConsulta extends javax.swing.JFrame {
 
     private void JbtnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnActualizarActionPerformed
         // TODO add your handling code here:
+         if (JtableConducen.getSelectedRow() != -1) {
+            actualizar(idActualizar);
+        } else {
+            CMensajes.msg_error("Seleccione un registro", "Eliminar");
+        }
     }//GEN-LAST:event_JbtnActualizarActionPerformed
 
     private void JbtnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnEliminarActionPerformed
         // TODO add your handling code here:
+          if (JtableConducen.getSelectedRow() != -1) {
+            if (JOptionPane.showConfirmDialog(null, "¿Desea eliminar el registro seleccionado?", "Confimacion", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                // Obtenemos los valores de la fila seleccionada en el arreglo valoresFila
+                valoresFila = obtenerValoresFilaTabla();
+                if (buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3], valoresFila[4], valoresFila[5]) != -1) {
+                    // Se asigna el ID encontrado a la variable idEliminar.
+                    idEliminar = buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3], valoresFila[4], valoresFila[5]);
+                    // Eliminamos el registro
+                    eliminar(idEliminar);
+                }
+            } else {
+                CMensajes.msg("Accion cancelada", "Eliminacion");
+            }
+        } else {
+            CMensajes.msg_error("Seleccione un registro", "Eliminar");
+        }
     }//GEN-LAST:event_JbtnEliminarActionPerformed
 
     private void JtableConducenMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JtableConducenMouseClicked
         // TODO add your handling code here:
+         valoresFila = obtenerValoresFilaTabla();
+        // Si se obtienen valores.
+        if (valoresFila != null) {
+            if (buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3], valoresFila[4], valoresFila[5]) != -1) {
+                // Se asigna el ID encontrado a la variable idActualizar.
+                idActualizar = buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3], valoresFila[4], valoresFila[5]);
+            }
+        }
     }//GEN-LAST:event_JtableConducenMouseClicked
 
     public static void main(String args[]) {

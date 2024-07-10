@@ -11,8 +11,7 @@ public class CEliminaciones {
     public boolean eliminaRutaAutobus(int id) throws SQLException {
         consulta = "DELETE FROM flecha_amarilla.rutaautobus WHERE rutaautobus.Id_RutAut= " + id;
         return cnslt.elimina(consulta);
-    }
-        
+    }  
      //Terminales
      public boolean eliminarTerminalCompleta(int idTerminal) throws SQLException {
         // Eliminar filas en telefonoTerminal relacionadas con Id_terminal
@@ -55,36 +54,32 @@ public class CEliminaciones {
         consulta = "DELETE FROM terminal WHERE Id_terminal = " + idTerminal;
         return cnslt.elimina(consulta);
     }
-     
      //Paradas
       public boolean eliminaRutaTerminal(int idRuta) throws SQLException {
         consulta = "DELETE FROM flecha_amarilla.rutaterminal WHERE rutaterminal.Id_RutTer = " + idRuta;
         return cnslt.elimina(consulta);
     }
-//    public boolean eliminaTelefono(int id) throws SQLException {
-//        consulta = "DELETE FROM flecha_amarilla.telefono_persona WHERE telefono_persona.Id_persona = " + id;
-//        return cnslt.elimina(consulta);
-//    }
-//
-//    public boolean eliminaConductor(int id) throws SQLException {
-//        consulta = "DELETE FROM flecha_amarilla.conductor WHERE conductor.Id_persona = " + id;
-//        return cnslt.elimina(consulta);
-//    }
-//
-//    public boolean eliminaAutbousConductor(int idConductor) throws SQLException {
-//        consulta = "DELETE FROM `autobusconductor` WHERE autobusconductor.Id_conductor = " + idConductor;
-//        return cnslt.elimina(consulta);
-//    }
-//
-//    public boolean eliminaRutaConductor(int idConductor) throws SQLException {
-//        consulta = "DELETE FROM `rutaconductor` WHERE rutaconductor.Id_conductor = " + idConductor;
-//        return cnslt.elimina(consulta);
-//    }
-//
-//    public boolean eliminaPersona(int id) throws SQLException {
-//        consulta = "DELETE FROM persona WHERE persona.Id_persona = " + id;
-//        return cnslt.elimina(consulta);
-//    }
+    //Conductor
+    public boolean eliminaTelefono(int id) throws SQLException {
+        consulta = "DELETE FROM flecha_amarilla.telefono_persona WHERE telefono_persona.Id_persona = " + id;
+        return cnslt.elimina(consulta);
+    }
+    public boolean eliminaConductor(int id) throws SQLException {
+        consulta = "DELETE FROM flecha_amarilla.conductor WHERE conductor.Id_persona = " + id;
+        return cnslt.elimina(consulta);
+    }
+    public boolean eliminaAutbousConductor(int idConductor) throws SQLException {
+        consulta = "DELETE FROM `autobusconductor` WHERE autobusconductor.Id_conductor = " + idConductor;
+        return cnslt.elimina(consulta);
+    }
+    public boolean eliminaRutaConductor(int idConductor) throws SQLException {
+        consulta = "DELETE FROM `rutaconductor` WHERE rutaconductor.Id_conductor = " + idConductor;
+        return cnslt.elimina(consulta);
+    }
+    public boolean eliminaPersona(int id) throws SQLException {
+        consulta = "DELETE FROM persona WHERE persona.Id_persona = " + id;
+        return cnslt.elimina(consulta);
+    }
 //
 //    public boolean eliminaRutaTerminal(int id) throws SQLException {
 //        consulta = "DELETE FROM flecha_amarilla.rutaterminal WHERE rutaterminal.Id_RutTer= " + id;
