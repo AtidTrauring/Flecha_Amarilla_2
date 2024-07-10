@@ -139,10 +139,22 @@ public final class JfPasajeroConsulta extends javax.swing.JFrame {
         try {
             String idPasajero = queryBusca.buscaPasajero(id);
             if (idPasajero != null && !idPasajero.isEmpty()) {
-                if (queryElimina.eliminarPasajeroCompleto(id)) {
-                    CMensajes.msg("Se eliminó el pasajero", "Eliminar");
+                if (queryElimina.eliminarPasajeroReembolso(id)) {
+                    if (queryElimina.eliminarPasajeroBoletoCliente(id)) {
+                        if (queryElimina.eliminarPasajeroBoleto(id)) {
+                            if (queryElimina.eliminarPasajero(id)) {
+                                
+                            } else {
+                                CMensajes.msg_error("Ocurrió un error al eliminar al pasajero", "Eliminar");
+                            }
+                        } else {
+                            CMensajes.msg_error("Ocurrió un error al eliminar el boleto", "Eliminar");
+                        }
+                    } else {
+                        CMensajes.msg_error("Ocurrió un error al eliminar Boleto-Cliente", "Eliminar");
+                    }
                 } else {
-                    CMensajes.msg_error("Ocurrió un error al eliminar el pasajero", "Eliminar");
+                    CMensajes.msg_error("Ocurrió un error al eliminar el reembolso", "Eliminar");
                 }
             } else {
                 CMensajes.msg_error("Pasajero no encontrado", "Eliminar-Buscar");
@@ -330,13 +342,9 @@ public final class JfPasajeroConsulta extends javax.swing.JFrame {
         if (JtablePasajeros.getSelectedRow() != -1) {
             if (JOptionPane.showConfirmDialog(null, "¿Desea eliminar el registro seleccionado?", "Confimacion", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                 valoresFila = obtenerValoresFilaTabla();
-                System.out.println("El condcutor es " + buscarId(valoresFila[0], valoresFila[1], valoresFila[2], regresaTipo(valoresFila[3]), valoresFila[4]));
                 if (buscarId(valoresFila[0], valoresFila[1], valoresFila[2], regresaTipo(valoresFila[3]), valoresFila[4]) != -1) {
-                    // Se asigna el ID encontrado a la variable idEliminar.
-//                    idEliminar = buscarId(valoresFila[0], valoresFila[1], valoresFila[2], regresaTipo(valoresFila[3]), valoresFila[4]);
-                    // Eliminamos el registro
-//                    eliminar(idEliminar);
-                    System.out.println("Se elimino el registro");
+                    idEliminar = buscarId(valoresFila[0], valoresFila[1], valoresFila[2], regresaTipo(valoresFila[3]), valoresFila[4]);
+                    eliminar(idEliminar);
                 }
             } else {
                 CMensajes.msg("Accion cancelada", "Eliminacion");

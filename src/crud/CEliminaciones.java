@@ -166,27 +166,26 @@ public class CEliminaciones {
     }
 
     //Pasajero
-    public boolean eliminarPasajeroCompleto(int idPasajero) throws SQLException {
-        consulta = "DELETE FROM reembolso WHERE Id_boleto IN (SELECT Id_boleto FROM boleto WHERE Id_pasajero = " + idPasajero + ")";
-        if (!cnslt.elimina(consulta)) {
-            return false;
-        }
-        consulta = "DELETE FROM boleto WHERE Id_pasajero = " + idPasajero;
-        if (!cnslt.elimina(consulta)) {
-            return false;
-        }
-        consulta = "DELETE FROM telefono_persona WHERE Id_persona = (SELECT Id_persona FROM pasajero WHERE Id_pasajero = " + idPasajero + ")";
-        if (!cnslt.elimina(consulta)) {
-            return false;
-        }
-        consulta = "DELETE FROM persona WHERE Id_persona = (SELECT Id_persona FROM pasajero WHERE Id_pasajero = " + idPasajero + ")";
-        if (!cnslt.elimina(consulta)) {
-            return false;
-        }
-        consulta = "DELETE FROM pasajero WHERE Id_pasajero = " + idPasajero;
+    public boolean eliminarPasajeroBoletoCliente(int id) throws SQLException {
+        consulta = "DELETE FROM boletocliente WHERE Id_boleto IN (SELECT Id_boleto FROM boleto WHERE Id_pasajero = " + id + ")";
         return cnslt.elimina(consulta);
     }
 
+    public boolean eliminarPasajeroReembolso(int id) throws SQLException {
+        consulta = "DELETE FROM reembolso WHERE Id_boleto IN (SELECT Id_boleto FROM boleto WHERE Id_pasajero = " + id + ")";
+        return cnslt.elimina(consulta);
+    }
+
+    public boolean eliminarPasajeroBoleto(int id) throws SQLException {
+        consulta = "DELETE FROM boleto WHERE Id_pasajero = " + id;
+        return cnslt.elimina(consulta);
+    }
+
+    public boolean eliminarPasajero(int id) throws SQLException {
+    consulta = "DELETE FROM pasajero WHERE pasajero.Id_pasajero = " + id;
+    return cnslt.elimina(consulta);
+}
+    
     //Autobus
     public boolean eliminarAutobusConductor(int id) throws SQLException {
         consulta = "DELETE FROM autobusConductor WHERE autobusConductor.id_autobus = " + id;
