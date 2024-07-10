@@ -291,29 +291,29 @@ public final class JfBoletosConsulta extends javax.swing.JFrame {
     }
 
     public void eliminar(int id) {
-        try {
-            String idBoleto = queryBusca.buscarBoletos(id);
-            if (idBoleto != null || idBoleto.isEmpty()) {
-                if (queryElimina.eliminaClienteBoleto(Integer.parseInt(idBoleto))) {
-                    CMensajes.msg("Se eliminaron las relaciones del cliente \ncon los boletos correspondientes", "Eliminar");
-                    if (queryElimina.eliminaBoleto(id)) {
-                        CMensajes.msg("Se elimino el telefono correspondiente", "Eliminar");
-                    } else {
-                        CMensajes.msg_error("Ocurrio un error al eliminar el Boleto", "Eliminar");
-                    }
-                } else {
-                    CMensajes.msg_error("Ocurrio un error al eliminar \nlas compras asociadas al cliente", "Eliminar");
-                }
-            } else {
-                CMensajes.msg_error("Usuario no encontrado", "Eliminar-Buscar");
-            }
-        } catch (SQLException e) {
-        } finally {
-//            datosConductores.clear();
-            limpiarBuscadores();
-            limpiarFiltro();
-            cargarTabla();
-        }
+//        try {
+//            String idBoleto = queryBusca.buscarBoletos(id);
+//            if (idBoleto != null || idBoleto.isEmpty()) {
+//                if (queryElimina.eliminaClienteBoleto(Integer.parseInt(idBoleto))) {
+//                    CMensajes.msg("Se eliminaron las relaciones del cliente \ncon los boletos correspondientes", "Eliminar");
+//                    if (queryElimina.eliminaBoleto(id)) {
+//                        CMensajes.msg("Se elimino el telefono correspondiente", "Eliminar");
+//                    } else {
+//                        CMensajes.msg_error("Ocurrio un error al eliminar el Boleto", "Eliminar");
+//                    }
+//                } else {
+//                    CMensajes.msg_error("Ocurrio un error al eliminar \nlas compras asociadas al cliente", "Eliminar");
+//                }
+//            } else {
+//                CMensajes.msg_error("Usuario no encontrado", "Eliminar-Buscar");
+//            }
+//        } catch (SQLException e) {
+//        } finally {
+////            datosConductores.clear();
+//            limpiarBuscadores();
+//            limpiarFiltro();
+//            cargarTabla();
+//        }
     }
 
     @SuppressWarnings("unchecked")

@@ -112,7 +112,7 @@ public class CBusquedas {
     }
 
     public ArrayList<String[]> buscarPasajerosCompletos() throws SQLException {
-        consulta = "SELECT pasajero.Id_pasajero, persona.nombre, persona.ApPat, persona.ApMat, pasajero.tipoPasajero, pasajero.descuento FROM  flecha_amarilla.pasajero INNER JOIN flecha_amarilla.persona ON pasajero.Id_persona = persona.Id_persona;";
+        consulta = "SELECT  p.Id_pasajero, pe.nombre, pe.ApPat,  pe.ApMat,  p.tipoPasajero,  p.descuento FROM flecha_amarilla.pasajero AS p INNER JOIN  flecha_amarilla.persona AS pe ON  p.Id_persona = pe.Id_persona;";
         return cnslt.buscarValores(consulta, 6);
     }
 

@@ -100,10 +100,10 @@ public final class JfPasajeroConsulta extends javax.swing.JFrame {
             filtros.add(RowFilter.regexFilter("^" + JtxtNombres.getText().trim() + "$", 0));
         }
         if (!JtxtApPaterno.getText().trim().isEmpty()) {
-            filtros.add(RowFilter.regexFilter("^" + JtxtApPaterno.getText().trim() + "$", 0));
+            filtros.add(RowFilter.regexFilter("^" + JtxtApPaterno.getText().trim() + "$", 1));
         }
         if (!JtxtApMaterno.getText().trim().isEmpty()) {
-            filtros.add(RowFilter.regexFilter("^" + JtxtApMaterno.getText().trim() + "$", 0));
+            filtros.add(RowFilter.regexFilter("^" + JtxtApMaterno.getText().trim() + "$", 2));
         }
         if (JcmbxTIpoPasajero.getSelectedIndex() != 0) {
             filtros.add(RowFilter.regexFilter(JcmbxTIpoPasajero.getSelectedItem().toString(), 3));
@@ -134,38 +134,27 @@ public final class JfPasajeroConsulta extends javax.swing.JFrame {
         }
         return -1;
     }
-
+    
     public void eliminar(int id) {
-        try {
-            String idPasajero = queryBusca.buscaPasajero(id);
-            if (idPasajero != null || idPasajero.isEmpty()) {
-                // Eliminando
-                if (queryElimina.eliminaTelefono(id)) {
-                    CMensajes.msg("Se elimino el telefono correspondiente", "Eliminar");
-                    if (queryElimina.eliminaPasajero(id)) {
-                        CMensajes.msg("Se eliminaron los pasajeros", "Eliminar");
-                        if (queryElimina.eliminaPersona(id)) {
-                            CMensajes.msg("Se elimino al conductor seleccionado", "Eliminar");
-                        } else {
-                            CMensajes.msg_error("Ocurrio un error al eliminar a la persona", "Eliminando");
-                        }
-                    } else {
-                        CMensajes.msg_error("Ocurrio un error al eliminar al pasajero", "Eliminar");
-                    }
-                } else {
-                    CMensajes.msg_error("Ocurrio un error al eliminar el telefono asociado al pasajero", "Eliminar");
-                }
+    try {
+        String idPasajero = queryBusca.buscaPasajero(id);
+        if (idPasajero != null && !idPasajero.isEmpty()) {
+            if (queryElimina.eliminarPasajeroCompleto(id)) {
+                CMensajes.msg("Se eliminó el pasajero", "Eliminar");
             } else {
-                CMensajes.msg_error("Usuario no encontrado", "Eliminar-Buscar");
+                CMensajes.msg_error("Ocurrió un error al eliminar el pasajero", "Eliminar");
             }
-        } catch (SQLException e) {
-        } finally {
-//            datosConductores.clear();
-            limpiarBuscadores();
-            limpiarFiltro();
-            cargarTabla();
+        } else {
+            CMensajes.msg_error("Pasajero no encontrado", "Eliminar-Buscar");
         }
+    } catch (SQLException e) {
+        CMensajes.msg_error("Error al eliminar el pasajero: " + e.getMessage(), "Error");
+    } finally {
+        limpiarBuscadores();
+        limpiarFiltro();
+        cargarTabla();
     }
+}
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
