@@ -152,4 +152,12 @@ public class CCargaCombos {
         return cnslt.buscarValoresCombos(consulta);
     }
 
+    
+      public ArrayList<String> cargaComboMes() throws SQLException {
+        consulta = "SELECT\n"
+                + "mes.mes\n"
+                + "FROM\n"
+                + "mes";
+        return cnslt.buscarValoresCombos(consulta);
+    }
 }
