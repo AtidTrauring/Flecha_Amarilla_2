@@ -17,7 +17,7 @@ public final class JfBoletoConsulta extends javax.swing.JFrame {
     private DefaultComboBoxModel listas;
     private final CCargaCombos queryCarga = new CCargaCombos();
     private final CBusquedas queryBusca = new CBusquedas();
-    private ArrayList<String> datosBoletos = new ArrayList<>();
+    private ArrayList<String[]> datosBoletos = new ArrayList<>();
     private ArrayList<String> datosListas = new ArrayList<>();
     private final Calendar fechaCalendario = Calendar.getInstance();
 
@@ -286,6 +286,7 @@ public final class JfBoletoConsulta extends javax.swing.JFrame {
 //                        limpiarSeleccion();
                         JfRegistroPasajeros rp = new JfRegistroPasajeros();
                         rp.asignaPasajeros(numeroBoletos);
+                        rp.asignaAsientos(datosBoletos);
                         rp.setVisible(true);
                         rp.setLocationRelativeTo(null);
                         rp.setSize(445, 290);

@@ -2,17 +2,22 @@ package ventanas.Registros;
 
 import crud.CInserciones;
 import crud.CMensajes;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 public class JfRegistroPasajeros extends javax.swing.JFrame {
 
     //**************   ATRIBUTOS  *******************/
+    private DefaultComboBoxModel modeloCombo;
     private final CInserciones queryInserta = new CInserciones();
     private String[] telefonos;
     public ArrayList<String[]> pasajerosInfo = new ArrayList<>();
+    public ArrayList<String[]> asientosInfo = new ArrayList<>();
     private String nombres, apPaterno, apMaterno;
     private String[] datosPasajero;
     private boolean sinTelefono = false;
@@ -26,6 +31,26 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
 
     public int asignaPasajeros(int numeroBoletos) {
         return numPasajeros = numeroBoletos;
+    }
+
+    public void asignaAsientos(ArrayList<String[]> asientos) throws SQLException {
+        asientosInfo = asientos;
+    }
+
+    public void cargaAsientos(JComboBox modelo) {
+        modeloCombo = (DefaultComboBoxModel) modelo.getModel();
+        ArrayList<String[]> asientos = asientosInfo;
+        for (String[] asiento : asientos) {
+            modeloCombo.addElement(asiento[1]);
+        }
+    }
+
+    public void remueveAsientos(String asientoRemover) {
+        for (String[] asiento : asientosInfo) {
+            if (asiento[1].equals(asientoRemover)) {
+                asientosInfo.remove(asientoRemover);
+            }
+        }
     }
 
     public String[] asignaValores() {
@@ -152,9 +177,15 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
             if (telefonos != null) {
                 if (sinTelefono == false) {
                     String[] datosObtenidos = asignaValores();
-                    datosUnidos = new String[datosObtenidos.length + telefonos.length];
+                    datosUnidos = new String[datosObtenidos.length + telefonos.length + 1];
                     System.arraycopy(datosObtenidos, 0, datosUnidos, 0, datosObtenidos.length);
+//                    System.arraycopy(JcmbxAsientos.getSelectedItem().toString(), 0, datosUnidos, datosObtenidos.length, 1);
+                    System.arraycopy("ID-Asiento", 0, datosUnidos, datosObtenidos.length, 1);
                     System.arraycopy(telefonos, 0, datosUnidos, datosObtenidos.length, telefonos.length);
+                    for (int i = 0; i < datosUnidos.length; i++) {
+                        System.out.println(" [" + datosUnidos[i] + "] - ");
+
+                    }
                     limpiaValores();
                 }
             }
@@ -179,6 +210,7 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
         JbtnEnviar = new javax.swing.JButton();
         JcmbxTipoPasajeros = new javax.swing.JComboBox<>();
         JcmbxTelefonos = new javax.swing.JComboBox<>();
+        JcmbxAsientos = new javax.swing.JComboBox<>();
         JlblFondo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -217,7 +249,7 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
                 JbtnEnviarActionPerformed(evt);
             }
         });
-        JPnlLienzo.add(JbtnEnviar, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 220, 80, -1));
+        JPnlLienzo.add(JbtnEnviar, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 220, 80, -1));
 
         JcmbxTipoPasajeros.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tipo de pasajero", "Adulto", "Niño", "Docente", "Estudiante", "INAPAM" }));
         JPnlLienzo.add(JcmbxTipoPasajeros, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 180, 170, -1));
@@ -225,14 +257,17 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
         JcmbxTelefonos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Numeros de Telefono", "1 Telefono", "2 Telefonos", "3 Telefonos", "4 Telefonos", "5 Telefonos" }));
         JPnlLienzo.add(JcmbxTelefonos, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 210, 170, -1));
 
+        JcmbxAsientos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Asientos" }));
+        JPnlLienzo.add(JcmbxAsientos, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 20, 110, -1));
+
         JlblFondo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/FondoUsuariosFondos.jpg"))); // NOI18N
-        JPnlLienzo.add(JlblFondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 0, 220, 250));
+        JPnlLienzo.add(JlblFondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 0, 220, 250));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(JPnlLienzo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(JPnlLienzo, javax.swing.GroupLayout.DEFAULT_SIZE, 531, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -313,6 +348,7 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel JPnlLienzo;
     private javax.swing.JButton JbtnEnviar;
+    private javax.swing.JComboBox<String> JcmbxAsientos;
     private javax.swing.JComboBox<String> JcmbxTelefonos;
     private javax.swing.JComboBox<String> JcmbxTipoPasajeros;
     private javax.swing.JLabel JlblApellidoMaterno;

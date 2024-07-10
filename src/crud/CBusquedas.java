@@ -63,7 +63,8 @@ public class CBusquedas {
                 + "JOIN persona p ON pas.Id_persona = p.Id_persona JOIN fecha f ON r.Id_fecha = f.Id_fecha JOIN mes m ON f.Id_mes = m.Id_mes JOIN anio a ON f.Id_anio = a.Id_anio;";
         return cnslt.buscarValores(consulta, 8);
     }
-        public String buscarReembolso(int id) throws SQLException {
+
+    public String buscarReembolso(int id) throws SQLException {
         String idReembolso = cnslt.buscarValor("SELECT reembolso.Id_reembolso FROM flecha_amarilla.reembolso WHERE reembolso.Id_reembolso = " + id);
         return idReembolso;
     }
@@ -334,8 +335,8 @@ public class CBusquedas {
         return cnslt.buscarValores(consulta, 3);
     }
 
-    public ArrayList<String> buscaAsientos(String destino, String origen, String mes, String dia, String anio) throws SQLException {
-        consulta = "SELECT asiento.asiento AS 'Nombre Asiento'\n"
+    public ArrayList<String[]> buscaAsientos(String destino, String origen, String mes, String dia, String anio) throws SQLException {
+        consulta = "SELECT asiento.id_asiento, asiento.asiento\n"
                 + "FROM autobus\n"
                 + "JOIN rutaAutobus ON autobus.Id_autobus = rutaAutobus.Id_autobus\n"
                 + "JOIN ruta ON rutaAutobus.Id_ruta = ruta.Id_ruta\n"
@@ -356,7 +357,7 @@ public class CBusquedas {
                 + "  AND mes.mes = '" + mes + "'\n"
                 + "  AND anio.anio = " + anio + "\n"
                 + "  AND boleto.Id_boleto IS NULL;";
-        return cnslt.buscarValoresCombos(consulta);
+        return cnslt.buscarValores(consulta, 2);
     }
 
     public int obtenIdFinalRuta() throws SQLException {
