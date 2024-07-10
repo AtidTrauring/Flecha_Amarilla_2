@@ -499,5 +499,97 @@ public class CBusquedas {
         consulta = "SELECT MAX(Id_autobus) FROM flecha_amarilla.autobus;";
         return Integer.parseInt(cnslt.buscarValor(consulta));
     }
-
+       public int obtenIdFinalCodigoPostal() throws SQLException {
+        consulta = "SELECT MAX(Id_CP) FROM flecha_amarilla.codigo_postal;";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+       
+        public int obtenIdFinalColonia() throws SQLException {
+        consulta = "SELECT MAX(Id_colonia) FROM flecha_amarilla.colonia;";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+            public int obtenIdFinalDireciion() throws SQLException {
+        consulta = "SELECT MAX(Id_direccion) FROM flecha_amarilla.direccion;";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+    public int obtenIdFinalTerminal() throws SQLException {
+        consulta = "SELECT MAX(Id_terminal) FROM flecha_amarilla.terminal;";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+    
+    public int obtenIdFinalEstado() throws SQLException {
+        consulta = "SELECT MAX(Id_estado) FROM flecha_amarilla.estado;";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+        public int obtenIdFinalCiudad() throws SQLException {
+        consulta = "SELECT MAX(Id_ciudad) FROM flecha_amarilla.ciudad;";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+    
+      public int obtenIdBuscaEstado(String estado) throws SQLException {
+        consulta = "SELECT\n"
+                + "estado.Id_estado\n"
+                + "FROM\n"
+                + "estado\n"
+                + "WHERE\n"
+                + "estado.nombre = '"+estado+"';";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+    
+    
+      public int obtenIdtEstado(String estado) throws SQLException {
+        consulta = "SELECT\n"
+                + "estado.Id_estado\n"
+                + "FROM\n"
+                + "estado\n"
+                + "WHERE\n"
+                + "estado.nombre = '"+estado+"';";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+       public int obtenIdCodigoPostal(int codigoPostal) throws SQLException {
+        consulta = "SELECT\n"
+                + "codigo_postal.Id_CP\n"
+                + "FROM\n"
+                + "codigo_postal\n"
+                + "WHERE\n"
+                + "codigo_postal.codigo_postal = "+codigoPostal+";";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+       
+        public int obtenIdtCiudad(String Ciudad) throws SQLException {
+        consulta = "SELECT\n"
+                + "ciudad.Id_ciudad\n"
+                + "FROM\n"
+                + "ciudad\n"
+                + "WHERE\n"
+                + "ciudad.nombre = '"+Ciudad+"';";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+        
+           
+    public int obtenIdtColonia(String colonia) throws SQLException {
+        consulta = "SELECT\n"
+                + "colonia.Id_colonia\n"
+                + "FROM\n"
+                + "colonia\n"
+                + "WHERE\n"
+                + "colonia.colonia = '"+colonia+"';";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+      
+     public int obtenIdBuscaDireccion(String calle, int numero) throws SQLException {
+        consulta = "SELECT\n"
+                + "direccion.Id_direccion\n"
+                + "FROM\n"
+                + "direccion\n"
+                + "INNER JOIN ciudad ON ciudad.Id_ciudad = direccion.Id_ciudad\n"
+                + "INNER JOIN colonia ON colonia.Id_colonia = direccion.Id_colonia\n"
+                + "INNER JOIN codigo_postal ON codigo_postal.Id_CP = direccion.Id_CP\n"
+                + "INNER JOIN estado ON estado.Id_estado = ciudad.Id_estado\n"
+                + "WHERE\n"
+                + "direccion.nombre_calle = '"+calle+"' AND\n"
+                + "direccion.numero = "+numero+";";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+    
 }
