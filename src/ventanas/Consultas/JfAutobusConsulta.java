@@ -58,6 +58,22 @@ public final class JfAutobusConsulta extends javax.swing.JFrame {
         }
     }
 
+    private void limpiarBuscadores() {
+        // Limpia los cuadro de texto
+        JcmbxCapacidad.setSelectedIndex(0);
+        JcmbxMarcas.setSelectedIndex(0);
+        JcmbxModelos.setSelectedIndex(0);
+        JcmbxOrdenar.setSelectedIndex(0);
+    }
+
+    public void limpiarFiltro() {
+        // Si el objeto 'tr' tiene algun filtro
+        if (tr != null) {
+            // Elimina el filtro 
+            tr.setRowFilter(null);
+        }
+    }
+
     // Metodo que permite ingresar los valores necesarios a la tabla
     public void cargarTabla() {
         // Obtenemos el modelo para poder manipularlo
@@ -71,10 +87,39 @@ public final class JfAutobusConsulta extends javax.swing.JFrame {
             for (String[] datosAutobus : datosAutobuses) {
                 modelo.addRow(new Object[]{datosAutobus[0], datosAutobus[1], datosAutobus[2], datosAutobus[3]});
             }
+            // Crea un TableRowSorter para permitir la ordenación de las filas de la tabla.
+            tr = new TableRowSorter<>(modelo);
+
+            // Establece el TableRowSorter en la tabla 'JtableConductores'.
+            JtableAutobuses.setRowSorter(tr);
         } catch (SQLException e) {
             CMensajes.msg_error("No se pudo cargar la informacion en la tabla", "Cargando Tabla");
         }
     }
+
+    public void cargarTabla(int opcionConsulta) {
+        modelo = (DefaultTableModel) JtableAutobuses.getModel();
+        try {
+            limpiarTabla();
+            switch (opcionConsulta) {
+                case 1:
+                    datosAutobuses = queryBusca.buscaAutobuses();
+                    break;
+                case 2:
+                    datosAutobuses = queryBusca.buscaAutobusesActivos();
+                    break;
+                case 3:
+                    datosAutobuses = queryBusca.buscaAutobusesInactivos();
+                    break;
+            }
+            for (String[] datos : datosAutobuses) {
+                modelo.addRow(datos);
+            }
+        } catch (SQLException e) {
+            CMensajes.msg_error("No se pudo cargar la informacion en la tabla", "Cargando Tabla");
+        }
+    }
+
 
     /* Metodo que permite cargar las opciones en las listas
      Recibe por parametro el JComboBox al que se agregaran items */
@@ -127,7 +172,7 @@ public final class JfAutobusConsulta extends javax.swing.JFrame {
         // Asignamos el TableRowSorter a la tabla para que se pueda ordenar y filtrar
         JtableAutobuses.setRowSorter(tr);
         // Creamos una lista para almacenar los filtros que se van a aplicar
-        ArrayList<RowFilter<String, Integer>> filtros = new ArrayList<>();
+        ArrayList<RowFilter<Object, Object>> filtros = new ArrayList<>();
         // Si se selecciona una marca (índice diferente de 0), agregamos un filtro para esa marca
         if (JcmbxMarcas.getSelectedIndex() != 0) {
             filtros.add(RowFilter.regexFilter(JcmbxMarcas.getSelectedItem().toString(), 0));
@@ -141,7 +186,7 @@ public final class JfAutobusConsulta extends javax.swing.JFrame {
             filtros.add(RowFilter.regexFilter(JcmbxCapacidad.getSelectedItem().toString(), 2));
         }
         // Creamos un filtro combinando todos los filtros de la lista
-        RowFilter<String, Integer> rf = RowFilter.andFilter(filtros);
+        RowFilter<Object, Object> rf = RowFilter.andFilter(filtros);
 
         // Aplicamos el filtro combinado al TableRowSorter
         tr.setRowFilter(rf);
@@ -234,7 +279,7 @@ public final class JfAutobusConsulta extends javax.swing.JFrame {
         JlblOrdenar.setText("Ordenar");
         JpnlLienzo.add(JlblOrdenar, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 160, -1, -1));
 
-        JcmbxOrdenar.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione una opcion" }));
+        JcmbxOrdenar.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione una opcion", "Activos", "Inactivos" }));
         JcmbxOrdenar.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 JcmbxOrdenarItemStateChanged(evt);
@@ -276,10 +321,12 @@ public final class JfAutobusConsulta extends javax.swing.JFrame {
 
     private void JcmbxOrdenarItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxOrdenarItemStateChanged
         // Aun no esta programado
-        if (JcmbxOrdenar.getSelectedIndex() != 0) {
-            if (JcmbxOrdenar.getSelectedIndex() == 1) {
-            }
-        } else {
+        if (JcmbxOrdenar.getSelectedIndex() == 0) {
+            cargarTabla(1);
+        } else if (JcmbxOrdenar.getSelectedIndex() == 1) {
+            cargarTabla(2);
+        } else if (JcmbxOrdenar.getSelectedIndex() == 2) {
+            cargarTabla(3);
         }
     }//GEN-LAST:event_JcmbxOrdenarItemStateChanged
 

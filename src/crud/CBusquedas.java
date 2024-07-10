@@ -17,9 +17,9 @@ public class CBusquedas {
     }
 
     public ArrayList<String[]> buscaViajeCompleta() throws SQLException {
-        consulta = "SELECT ra.Id_RutAut, t_origen.nombre AS origen, t_destino.nombre AS destino, a.placa, m.nombre AS modelo, ma.nombre AS marca, f.dia, me.mes FROM ruta r " 
-    + "JOIN terminal t_origen ON r.Id_origen = t_origen.Id_terminal JOIN terminal t_destino ON r.Id_destino = t_destino.Id_terminal JOIN rutaAutobus ra ON r.Id_ruta = ra.Id_ruta " 
-    + "JOIN autobus a ON ra.Id_autobus = a.Id_autobus JOIN modelo m ON a.Id_modelo = m.Id_modelo JOIN marca ma ON m.Id_marca = ma.Id_marca JOIN fecha f ON ra.Id_fecha = f.Id_fecha JOIN mes me ON f.Id_mes = me.Id_mes;";
+        consulta = "SELECT ra.Id_RutAut, t_origen.nombre AS origen, t_destino.nombre AS destino, a.placa, m.nombre AS modelo, ma.nombre AS marca, f.dia, me.mes FROM ruta r "
+                + "JOIN terminal t_origen ON r.Id_origen = t_origen.Id_terminal JOIN terminal t_destino ON r.Id_destino = t_destino.Id_terminal JOIN rutaAutobus ra ON r.Id_ruta = ra.Id_ruta "
+                + "JOIN autobus a ON ra.Id_autobus = a.Id_autobus JOIN modelo m ON a.Id_modelo = m.Id_modelo JOIN marca ma ON m.Id_marca = ma.Id_marca JOIN fecha f ON ra.Id_fecha = f.Id_fecha JOIN mes me ON f.Id_mes = me.Id_mes;";
 //        return cnslt.buscarCon7(consulta);
         return cnslt.buscarValores(consulta, 8);
     }
@@ -28,12 +28,12 @@ public class CBusquedas {
         String idViaje = cnslt.buscarValor("SELECT rutaautobus.Id_RutAut FROM flecha_amarilla.rutaautobus WHERE rutaautobus.Id_RutAut = " + id);
         return idViaje;
     }
-    
+
     public String buscaConduce(int id) throws SQLException {
         String idConduce = cnslt.buscarValor("SELECT autobusconductor.Id_AutCon FROM flecha_amarilla.autobusconductor WHERE autobusconductor.Id_AutCon = " + id);
         return idConduce;
     }
-    
+
     public ArrayList<String[]> buscaConduceCompletos() throws SQLException {
         consulta = "SELECT autobusconductor.Id_AutCon, persona.nombre, persona.ApPat, persona.ApMat, autobus.placa, marca.nombre AS nombre_marca, modelo.nombre AS nombre_modelo FROM flecha_amarilla.autobus INNER JOIN autobusconductor ON autobus.Id_autobus = autobusconductor.Id_autobus "
                 + " INNER JOIN conductor ON autobusconductor.Id_conductor = conductor.Id_conductor INNER JOIN modelo ON autobus.Id_modelo = modelo.Id_modelo INNER JOIN marca ON modelo.Id_marca = marca.Id_marca INNER JOIN persona ON conductor.Id_persona = persona.Id_persona ";
@@ -50,7 +50,7 @@ public class CBusquedas {
 //        return cnslt.buscarCon5(consulta);
         return cnslt.buscarValores(consulta, 5);
     }
-    
+
     public String buscarClientes(int id) throws SQLException {
         String idConductor = cnslt.buscarValor("SELECT cliente.Id_cliente FROM flecha_amarilla.cliente WHERE cliente.Id_persona = " + id);
         return idConductor;
@@ -60,7 +60,7 @@ public class CBusquedas {
         String idPasajero = cnslt.buscarValor("SELECT pasajero.Id_pasajero FROM flecha_amarilla.pasajero WHERE pasajero.Id_pasajero = " + id);
         return idPasajero;
     }
-       
+
     public ArrayList<String[]> buscarPasajerosCompletos() throws SQLException {
         consulta = "SELECT pasajero.Id_pasajero, persona.nombre, persona.ApPat, persona.ApMat, pasajero.tipoPasajero, pasajero.descuento FROM  flecha_amarilla.pasajero INNER JOIN flecha_amarilla.persona ON pasajero.Id_persona = persona.Id_persona;";
         return cnslt.buscarValores(consulta, 6);
@@ -95,10 +95,30 @@ public class CBusquedas {
                 + " fecha, mes, modelo, anio, marca WHERE autobus.Id_modelo = modelo.Id_modelo"
                 + " AND autobus.Id_fecha = fecha.Id_fecha AND fecha.Id_mes = mes.Id_mes "
                 + " AND fecha.Id_anio = anio.Id_anio AND modelo.Id_marca = marca.Id_marca";
-//        return cnslt.buscarCon4(consulta);
         return cnslt.buscarValores(consulta, 4);
     }
 
+    public ArrayList<String[]> buscaAutobusesActivos() throws SQLException {
+        consulta = "SELECT marca.nombre, modelo.nombre, autobus.capacidad, "
+                + "CONCAT(fecha.dia, ' - ', mes.mes, ' - ', anio.anio) FROM "
+                + "autobus JOIN fecha ON autobus.Id_fecha = fecha.Id_fecha JOIN "
+                + "mes ON fecha.Id_mes = mes.Id_mes JOIN anio ON fecha.Id_anio = "
+                + "anio.Id_anio JOIN modelo ON autobus.Id_modelo = modelo.Id_modelo JOIN "
+                + "marca ON modelo.Id_marca = marca.Id_marca LEFT JOIN baja ON "
+                + "autobus.Id_autobus = baja.Id_autobus WHERE baja.Id_autobus IS NULL";
+        return cnslt.buscarValores(consulta, 4);
+    }
+
+    public ArrayList<String[]> buscaAutobusesInactivos() throws SQLException {
+        consulta = "SELECT marca.nombre, modelo.nombre, autobus.capacidad, "
+                + "CONCAT( fecha.dia, ' - ', mes.mes, ' - ', anio.anio ) FROM "
+                + "autobus JOIN fecha ON autobus.Id_fecha = fecha.Id_fecha JOIN "
+                + "mes ON fecha.Id_mes = mes.Id_mes JOIN anio ON fecha.Id_anio = "
+                + "anio.Id_anio JOIN modelo ON autobus.Id_modelo = modelo.Id_modelo "
+                + "JOIN marca ON modelo.Id_marca = marca.Id_marca JOIN baja ON "
+                + "autobus.Id_autobus = baja.Id_autobus;";
+        return cnslt.buscarValores(consulta, 4);
+    }
 
     public ArrayList<String[]> buscaParadasCompletas() throws SQLException {
         consulta = " SELECT rutaterminal.Id_RutTer, ruta.nombre, terminal.nombre FROM rutaterminal "
@@ -107,17 +127,17 @@ public class CBusquedas {
 //        return cnslt.buscarCon2(consulta);
         return cnslt.buscarValores(consulta, 3);
     }
-    
+
     public String buscarParadas(int id) throws SQLException {
         String idParada = cnslt.buscarValor("SELECT rutaterminal.Id_RutTer FROM flecha_amarilla.rutaterminal WHERE rutaterminal.Id_RutTer = " + id);
         return idParada;
     }
-    
+
     public String buscarBoletos(int id) throws SQLException {
         String idBoleto = cnslt.buscarValor("SELECT boleto.Id_boleto FROM flecha_amarilla.boleto WHERE boleto.Id_boleto = " + id);
-        return idBoleto ;
+        return idBoleto;
     }
-    
+
     public ArrayList<String[]> buscaBoletosCompletos() throws SQLException {
         consulta = "SELECT boleto.Id_boleto, asiento.asiento, terminal_origen.nombre AS Origen, terminal_destino.nombre AS Destino, fecha.dia, mes.mes, anio.anio, boleto.tipo_boleto, boleto.precioDescuento FROM boleto "
                 + "JOIN asiento ON boleto.Id_asiento = asiento.Id_asiento JOIN ruta ON boleto.Id_ruta = ruta.Id_ruta JOIN origen ON ruta.Id_origen = origen.Id_origen JOIN destino ON ruta.Id_destino = destino.Id_destino "
@@ -133,9 +153,9 @@ public class CBusquedas {
 //        return cnslt.buscarCon8(consulta);
         return cnslt.buscarValores(consulta, 9);
     }
-    
-     public String buscarTerminales(int id) throws SQLException {
-        String idTerminal= cnslt.buscarValor("SELECT terminal.Id_terminal FROM flecha_amarilla.terminal WHERE terminal.Id_terminal = " + id);
+
+    public String buscarTerminales(int id) throws SQLException {
+        String idTerminal = cnslt.buscarValor("SELECT terminal.Id_terminal FROM flecha_amarilla.terminal WHERE terminal.Id_terminal = " + id);
         return idTerminal;
     }
 
@@ -150,7 +170,6 @@ public class CBusquedas {
 //        return cnslt.buscarCon8(consulta);
         return cnslt.buscarValores(consulta, 8);
     }
-
 
     public int obtenIdFinalPersona() throws SQLException {
         consulta = "SELECT MAX(Id_persona) FROM flecha_amarilla.persona;";
