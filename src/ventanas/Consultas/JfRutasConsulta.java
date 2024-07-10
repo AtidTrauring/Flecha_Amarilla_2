@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
@@ -236,6 +237,11 @@ public final class JfRutasConsulta extends javax.swing.JFrame {
                 "Nombre", "Origen", "Destino", "Distancia", "Salida", "Llegada", "Duracion", "Precio"
             }
         ));
+        JtableRutas.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                JtableRutasMouseClicked(evt);
+            }
+        });
         JSPTablaRutas.setViewportView(JtableRutas);
 
         JpnlLienzo.add(JSPTablaRutas, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 6, 600, 182));
@@ -353,7 +359,32 @@ public final class JfRutasConsulta extends javax.swing.JFrame {
 
     private void JbtnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnEliminarActionPerformed
         // TODO add your handling code here:
+        if (JtableRutas.getSelectedRow() != -1) {
+            if (JOptionPane.showConfirmDialog(null, "¿Desea eliminar el registro seleccionado?", "Confimacion", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                valoresFila = obtenerValoresFilaTabla();
+                if (buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3], valoresFila[4], valoresFila[5], valoresFila[6], valoresFila[7]) != -1) {
+                    idEliminar = buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3], valoresFila[4], valoresFila[5], valoresFila[6], valoresFila[7]);
+                    eliminar(idEliminar);
+                }
+            } else {
+                CMensajes.msg("Accion cancelada", "Eliminacion");
+            }
+        } else {
+            CMensajes.msg_error("Seleccione un registro", "Eliminar");
+
+        }
     }//GEN-LAST:event_JbtnEliminarActionPerformed
+
+    private void JtableRutasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JtableRutasMouseClicked
+        // TODO add your handling code here:
+        valoresFila = obtenerValoresFilaTabla();
+        if (valoresFila != null) {
+            if (buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3], valoresFila[4], valoresFila[5], valoresFila[6], valoresFila[7]) != -1) {
+                // Se asigna el ID encontrado a la variable idActualizar.
+                idActualizar = buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3], valoresFila[4], valoresFila[5], valoresFila[6], valoresFila[7]);
+            }
+        }
+    }//GEN-LAST:event_JtableRutasMouseClicked
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
