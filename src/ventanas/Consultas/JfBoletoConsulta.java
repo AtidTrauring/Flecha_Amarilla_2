@@ -28,6 +28,13 @@ public final class JfBoletoConsulta extends javax.swing.JFrame {
         cargaComboBox(JcmbxMeses, 4);
     }
 
+    public void limpiarSeleccion() {
+        JcmbxDestinos.setSelectedIndex(0);
+        JcmbxOrigenes.setSelectedIndex(0);
+        JcmbxMeses.setSelectedIndex(0);
+        JcmbxDias.setSelectedIndex(0);
+    }
+
     public void cargaComboBox(JComboBox combo, int metodoCarga) {
         listas = (DefaultComboBoxModel) combo.getModel();
         try {
@@ -106,10 +113,10 @@ public final class JfBoletoConsulta extends javax.swing.JFrame {
     }
 
     private boolean validaCombos() {
-        return JcmbxDestinos.getSelectedIndex() != 0
-                || JcmbxOrigenes.getSelectedIndex() != 0
-                || JcmbxMeses.getSelectedIndex() != 0
-                || JcmbxDias.getSelectedIndex() != 0;
+        return JcmbxDestinos.getSelectedIndex() == 0
+                || JcmbxOrigenes.getSelectedIndex() == 0
+                || JcmbxMeses.getSelectedIndex() == 0
+                || JcmbxDias.getSelectedIndex() == 0;
     }
 
     private String cantidadBoletos(int cantidadBoletos) {
@@ -124,7 +131,7 @@ public final class JfBoletoConsulta extends javax.swing.JFrame {
                         JOptionPane.INFORMATION_MESSAGE) == JOptionPane.YES_OPTION) {
                     numeroBoletos = "1";
                 } else {
-                    numeroBoletos = null;
+                    numeroBoletos = "0";
                 }
 
                 break;
@@ -241,7 +248,7 @@ public final class JfBoletoConsulta extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void JbtnConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnConsultarActionPerformed
-        if (!validaCombos()) {
+        if (validaCombos()) {
             CMensajes.msg_advertencia("Seleccione una opcion por lista", "Compra");
         } else {
             try {
@@ -251,35 +258,43 @@ public final class JfBoletoConsulta extends javax.swing.JFrame {
                         JcmbxDias.getSelectedItem().toString(),
                         String.valueOf(fechaCalendario.get(Calendar.YEAR))
                 );
-                String compraBoletos = cantidadBoletos(datosBoletos.size());
-                if (compraBoletos != null) {
-                    int numeroBoletos = 0;
-                    switch (compraBoletos) {
-                        case "1 boleto":
-                            numeroBoletos = 1;
-                            break;
-                        case "2 boletos":
-                            numeroBoletos = 2;
-                            break;
-                        case "3 boletos":
-                            numeroBoletos = 3;
-                            break;
-                        case "4 boletos":
-                            numeroBoletos = 4;
-                            break;
-                        case "5 boletos":
-                            numeroBoletos = 5;
-                            break;
-                    }
-                    JfRegistroPasajeros rp = new JfRegistroPasajeros();
-                    rp.asignaPasajeros(numeroBoletos);
-                    rp.setVisible(true);
-                    rp.setLocationRelativeTo(null);
-                    rp.setSize(445, 285);
-                    rp.setResizable(false);
-                    rp.setTitle("Registro Pasajeros");
+                if (datosBoletos.size() == 0) {
+                    CMensajes.msg_advertencia("No contamos con asientos disponibles", "Compra");
+                    limpiarSeleccion();
                 } else {
-                    CMensajes.msg("Entendido", "Escoge boletos");
+
+                    String compraBoletos = cantidadBoletos(datosBoletos.size());
+                    if (compraBoletos != null) {
+                        int numeroBoletos = 0;
+                        switch (compraBoletos) {
+                            case "1 boleto":
+                                numeroBoletos = 1;
+                                break;
+                            case "2 boletos":
+                                numeroBoletos = 2;
+                                break;
+                            case "3 boletos":
+                                numeroBoletos = 3;
+                                break;
+                            case "4 boletos":
+                                numeroBoletos = 4;
+                                break;
+                            case "5 boletos":
+                                numeroBoletos = 5;
+                                break;
+                        }
+//                        limpiarSeleccion();
+                        JfRegistroPasajeros rp = new JfRegistroPasajeros();
+                        rp.asignaPasajeros(numeroBoletos);
+                        rp.setVisible(true);
+                        rp.setLocationRelativeTo(null);
+                        rp.setSize(445, 290);
+                        rp.setResizable(false);
+                        rp.setTitle("Registro Pasajeros");
+                    } else {
+                        CMensajes.msg("Entendido", "Escoge boletos");
+                        limpiarSeleccion();
+                    }
                 }
             } catch (SQLException ex) {
                 CMensajes.msg_error("Ocurrio un error al obtener los asientos", "Comprar");
@@ -326,6 +341,8 @@ public final class JfBoletoConsulta extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(JfBoletoConsulta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 

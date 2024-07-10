@@ -3,6 +3,7 @@ package ventanas.Registros;
 import crud.CInserciones;
 import crud.CMensajes;
 import java.util.ArrayList;
+import java.util.Arrays;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
@@ -28,10 +29,28 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
     }
 
     public String[] asignaValores() {
+        String[] datosPasajero = new String[5];
         nombres = JtxtNombres.getText();
         apPaterno = JtxtApPaterno.getText();
         apMaterno = JtxtApMaterno.getText();
-        return new String[]{nombres, apPaterno, apMaterno, asignaTipoPasajero()};
+        switch ((String) JcmbxTipoPasajeros.getSelectedItem()) {
+            case "Adulto":
+                datosPasajero = new String[]{nombres, apPaterno, apMaterno, "A", "0"};
+                break;
+            case "Niño":
+                datosPasajero = new String[]{nombres, apPaterno, apMaterno, "N", "20"};
+                break;
+            case "Docente":
+                datosPasajero = new String[]{nombres, apPaterno, apMaterno, "D", "25"};
+                break;
+            case "Estudiante":
+                datosPasajero = new String[]{nombres, apPaterno, apMaterno, "E", "35"};
+                break;
+            case "INAPAM":
+                datosPasajero = new String[]{nombres, apPaterno, apMaterno, "AT", "30"};
+                break;
+        }
+        return datosPasajero;
     }
 
     public void limpiaValores() {
@@ -51,37 +70,34 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
     }
 
     public String devuelveCadena(JTextField campo, String regex) {
-        String cadena = null;
-        cadena = campo.getText();
-        if (cadena.isEmpty()) {
-            cadena = null;
-        } else if (cadena.matches("^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ]+(?: [a-zA-ZáéíóúÁÉÍÓÚüÜñÑ]+)?$")) {
-            return cadena;
+        String texto = campo.getText().trim();
+        if (texto.isEmpty()) {
+            return null;
+        } else if (!texto.matches(regex)) {
+            return "NoValido";
         } else {
-            cadena = "NoValido";
+            return texto;
         }
-        return cadena;
     }
 
     public boolean validaCampo(String campoTexto, JTextField campo, String regex, String mensajeVacio, String mensajeInvalido) {
-        boolean valida = true;
         campoTexto = devuelveCadena(campo, regex);
+
         if (campoTexto == null) {
             CMensajes.msg_advertencia(mensajeVacio, "Registro Usuarios");
-            valida = false;
+            return false;
         } else if (campoTexto.equals("NoValido")) {
             CMensajes.msg_error(mensajeInvalido, "Registro Usuarios");
-            valida = false;
+            return false;
         } else {
-            valida = true;
+            return true;
         }
-        return valida;
     }
 
     public boolean validaCampos() {
         return validaCampo(nombres, JtxtNombres, regexNombres, "Ingrese nombre(s)", "Valores invalidos para nombre(s)")
-                || validaCampo(apPaterno, JtxtApPaterno, regexNombres, "Ingrerse un apellido paterno.", "Valores invalidos para apellido paterno")
-                || validaCampo(apMaterno, JtxtApMaterno, regexNombres, "Ingrese un apellido materno.", "Valores invalidos para apellido materno");
+                && validaCampo(apPaterno, JtxtApPaterno, regexNombres, "Ingrese un apellido paterno.", "Valores invalidos para apellido paterno")
+                && validaCampo(apMaterno, JtxtApMaterno, regexNombres, "Ingrese un apellido materno.", "Valores invalidos para apellido materno");
     }
 
     public String obtieneTelefono(String mensaje) {
@@ -94,12 +110,10 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
                 return telefono;
             } else if (telefono.isEmpty()) {
                 CMensajes.msg_advertencia("No puede dejar el campo vacio", "Obtiene Telefono");
-                telefono = null;
             } else {
                 CMensajes.msg_advertencia("Ingrese un numero de telefono valido", "Obtiene Telefono");
-                telefono = null;
             }
-        } while (telefono == null);
+        } while (telefono == null || !telefono.matches("^[0-9]{10}$"));
         return telefono;
     }
 
@@ -110,71 +124,25 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
             sinTelefono = true;
             return null;
         } else {
-            telefono = new String[JcmbxTelefonos.getSelectedIndex()];
+            int cantidad = JcmbxTelefonos.getSelectedIndex();
+            telefono = new String[cantidad];
             sinTelefono = false;
-            for (int i = 1; i <= JcmbxTelefonos.getSelectedIndex(); i++) {
-                switch (i) {
-                    case 1:
-                        telefono[i - 1] = obtieneTelefono("Ingrese el número de telefono: ");
-                        if (telefono[i - 1] == null) {
-                            i = 10;
-                            telefono = null;
-                        }
-                        break;
-                    case 2:
-                        telefono[i - 1] = obtieneTelefono("Ingrese el segundo número de telefono: ");
-                        if (telefono[i - 1] == null) {
-                            i = 10;
-                            telefono = null;
-                        }
-                        break;
-                    case 3:
-                        telefono[i - 1] = obtieneTelefono("Ingrese el tercer número de telefono: ");
-                        if (telefono[i - 1] == null) {
-                            i = 10;
-                            telefono = null;
-                        }
-                        break;
-                    case 4:
-                        telefono[i - 1] = obtieneTelefono("Ingrese el cuarto número de telefono: ");
-                        if (telefono[i - 1] == null) {
-                            i = 10;
-                            telefono = null;
-                        }
-                        break;
-                    case 5:
-                        telefono[i - 1] = obtieneTelefono("Ingrese el quinto número de telefono: ");
-                        if (telefono[i - 1] == null) {
-                            i = 10;
-                            telefono = null;
-                        }
-                        break;
+
+            for (int i = 0; i < cantidad; i++) {
+                int j = i;
+                String mensaje = "Ingrese el número de telefono: ";
+                if (i > 0) {
+                    mensaje = "Ingrese el " + (j + 1) + "º número de telefono: ";
+                }
+
+                telefono[i] = obtieneTelefono(mensaje);
+                if (telefono[i] == null) {
+                    sinTelefono = true;
+                    return null;
                 }
             }
         }
         return telefono;
-    }
-
-    public String asignaTipoPasajero() {
-        String tipoPasajero = "";
-        switch ((String) JcmbxTipoPasajeros.getSelectedItem()) {
-            case "Adulto":
-                tipoPasajero = "A";
-                break;
-            case "Niño":
-                tipoPasajero = "N";
-                break;
-            case "Docente":
-                tipoPasajero = "D";
-                break;
-            case "Estudiante":
-                tipoPasajero = "E";
-                break;
-            case "INAPAM":
-                tipoPasajero = "AT";
-                break;
-        }
-        return tipoPasajero;
     }
 
     public String[] almcenaDatos() {
@@ -187,6 +155,7 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
                     datosUnidos = new String[datosObtenidos.length + telefonos.length];
                     System.arraycopy(datosObtenidos, 0, datosUnidos, 0, datosObtenidos.length);
                     System.arraycopy(telefonos, 0, datosUnidos, datosObtenidos.length, telefonos.length);
+                    limpiaValores();
                 }
             }
         }
@@ -277,12 +246,21 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
     private void JbtnEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnEnviarActionPerformed
         if (JcmbxTipoPasajeros.getSelectedIndex() != 0) {
             if (contador <= numPasajeros) {
-                pasajerosInfo.add(almcenaDatos());
-                CMensajes.msg("Registre al siguiente pasajero", "Registro pasajero");
-                contador++;
-                limpiarCampos();
-            } else {
-                CMensajes.msg("Se guardo la informacion\n de los " + numPasajeros + " pasajeros", "Registro pasajeros");
+                String[] pasajero = almcenaDatos();
+                if (pasajero == null) {
+//                    CMensajes.msg_advertencia("Omitio un dato\n Porfavor verifique", "Registro pasajero");
+                } else {
+                    pasajerosInfo.add(pasajero);
+                    CMensajes.msg("Registre al siguiente pasajero", "Registro pasajero");
+                    contador++;
+                    limpiarCampos();
+                    if (contador > numPasajeros) {
+                        CMensajes.msg("Se guardo la informacion\n de los " + numPasajeros + " pasajeros", "Registro pasajeros");
+                        for (String[] pasajeroInfo : pasajerosInfo) {
+                            System.out.println(Arrays.toString(pasajeroInfo));
+                        }
+                    }
+                }
             }
         } else {
             CMensajes.msg_advertencia("Seleccione un tipo de pasajero", "Registro Usuario");
@@ -319,6 +297,8 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(JfRegistroPasajeros.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
