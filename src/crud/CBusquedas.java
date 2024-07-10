@@ -58,12 +58,14 @@ public class CBusquedas {
     private final CConsultas cnslt = new CConsultas();
     private String consulta;
 
-    public ArrayList<String[]> buscarReembolso() throws SQLException {
-        consulta = "SELECT p.nombre,  p.ApPat,  p.ApMat, r.cantidad AS cantidad_reembolso, f.dia, m.mes,  a.anio FROM reembolso r JOIN boleto b ON r.Id_boleto = b.Id_boleto JOIN pasajero pas ON b.Id_pasajero = pas.Id_pasajero "
+    public ArrayList<String[]> buscarReembolsoCompleto() throws SQLException {
+        consulta = "SELECT r.Id_reembolso, p.nombre,  p.ApPat,  p.ApMat, r.cantidad AS cantidad_reembolso, f.dia, m.mes,  a.anio FROM reembolso r JOIN boleto b ON r.Id_boleto = b.Id_boleto JOIN pasajero pas ON b.Id_pasajero = pas.Id_pasajero "
                 + "JOIN persona p ON pas.Id_persona = p.Id_persona JOIN fecha f ON r.Id_fecha = f.Id_fecha JOIN mes m ON f.Id_mes = m.Id_mes JOIN anio a ON f.Id_anio = a.Id_anio;";
-//        return cnslt.buscarCon7(consulta);
-        return cnslt.buscarValores(consulta, 7);
-
+        return cnslt.buscarValores(consulta, 8);
+    }
+        public String buscarReembolso(int id) throws SQLException {
+        String idReembolso = cnslt.buscarValor("SELECT reembolso.Id_reembolso FROM flecha_amarilla.reembolso WHERE reembolso.Id_reembolso = " + id);
+        return idReembolso;
     }
 
     public ArrayList<String[]> buscaViajeCompleta() throws SQLException {

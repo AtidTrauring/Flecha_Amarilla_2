@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
@@ -26,6 +27,9 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
     private final CActualizaciones queryActualiza = new CActualizaciones();
     private final CCargaCombos queryCarga = new CCargaCombos();
     private ArrayList<String[]> datosReembolso = new ArrayList<>();
+    private int idActualizar;
+    private String[] valoresFila;
+    private int idEliminar;
     
     public JfReembolsoConsulta() {
         initComponents();
@@ -38,11 +42,25 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
     //**************** METODOS ******************/
     private void limpiarTabla() {
         modelo = (DefaultTableModel) JtableReembolsos.getModel();
-        for (int i = (JtableReembolsos.getRowCount() - 1); i >= 0; i--) {
-            modelo.removeRow(i);
+        modelo.setRowCount(0);
+    }
+
+    private void limpiarBuscadores() {
+        // Limpia los cuadro de texto
+        JcmbxDias.setSelectedIndex(0);
+        JcmbxMeses.setSelectedIndex(0);
+        JcmbxAnios.setSelectedIndex(0);
+        JtxtNombres.setText(null);
+        JtxtApPaterno.setText(null);
+        JtxtApMaterno.setText(null);
+    }
+
+    public void limpiarFiltro() {
+        if (tr != null) {
+            tr.setRowFilter(null);
         }
     }
-    
+
     public void cargaComboBox(JComboBox combo, int metodoCarga) {
         listas = (DefaultComboBoxModel) combo.getModel();
         try {
@@ -71,25 +89,25 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
                     dias = null;
                     break;
             }
-            
+
         } catch (SQLException e) {
         }
-        
+
     }
-    
+
     public void cargarTabla() {
         modelo = (DefaultTableModel) JtableReembolsos.getModel();
         try {
-            datosReembolso = queryBusca.buscarReembolso();
+            datosReembolso = queryBusca.buscarReembolsoCompleto();
             limpiarTabla();
             for (String[] datosRee : datosReembolso) {
-                modelo.addRow(new Object[]{datosRee[0], datosRee[1], datosRee[2], datosRee[3], datosRee[4], datosRee[5], datosRee[6]});
+                modelo.addRow(new Object[]{datosRee[1], datosRee[2], datosRee[3], datosRee[4], datosRee[5], datosRee[6], datosRee[7]});
             }
         } catch (SQLException e) {
             CMensajes.msg_error("No se pudo cargar la informacion en la tabla", "Cargando Tabla");
         }
     }
-    
+
     public String[] asignaDias(JComboBox mes, JComboBox anio) {
         String[] Dias = null;
         int anios = 0;
@@ -97,7 +115,7 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
             anios = Integer.parseInt(anio.getSelectedItem().toString());
         }
         String mesSeleccionado = mes.getSelectedItem().toString();
-        
+
         switch (mesSeleccionado) {
             case "Enero":
             case "Marzo":
@@ -143,7 +161,7 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
         }
         return Dias;
     }
-    
+
     public void cargaComboDias(int opcion) {
         switch (opcion) {
             case 1:
@@ -180,7 +198,7 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
                 break;
         }
     }
-    
+
     public void aplicaFiltros() {
         modelo = (DefaultTableModel) JtableReembolsos.getModel();
         tr = new TableRowSorter<>(modelo);
@@ -207,7 +225,48 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
         RowFilter<String, Integer> rf = RowFilter.andFilter(filtros);
         tr.setRowFilter(rf);
     }
+
+    private String[] obtenerValoresFilaTabla() {
+        String[] valores = new String[7];
+        int filaSeleccionada = JtableReembolsos.getSelectedRow();
+        if (filaSeleccionada != -1) {
+            for (int i = 0; i < JtableReembolsos.getColumnCount(); i++) {
+                valores[i] = (String) JtableReembolsos.getValueAt(filaSeleccionada, i);
+            }
+        } else {
+            CMensajes.msg_error("No hay fila seleccionada", "Obteniendo datos fila");
+            return null;
+        }
+        return valores;
+    }
+
+    public int buscarId(String nombre, String apPat, String apMat, String cantidad, String dia, String mes, String anio) {
+        for (String[] ree : datosReembolso) {
+            if (ree[1].equals(nombre) && ree[2].equals(apPat) && ree[3].equals(apMat) && ree[4].equals(cantidad) && ree[5].equals(dia) && ree[6].equals(mes) && ree[7].equals(anio)) {
+                return Integer.parseInt(ree[0]);
+            }
+        }
+        return -1;
+    }
     
+     public void eliminar(int id) {
+        try {
+            String idRee = queryBusca.buscarReembolso(id);
+            if (idRee != null || idRee.isEmpty()) {
+                if (queryElimina.eliminarReembolso(id)) {
+                    CMensajes.msg("Se elimino el reembolso", "Eliminar");
+                }
+            } else {
+                CMensajes.msg_error("Reembolso no encontrado ", "Eliminar-Buscar");
+            }
+        } catch (SQLException e) {
+        } finally {
+            limpiarBuscadores();
+            limpiarFiltro();
+            cargarTabla();
+        }
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -252,6 +311,11 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
                 "Nombre(s)", "Apellido Paterno", "Apellido Materno", "Cantidad", "Dia", "Mes", "Año"
             }
         ));
+        JtableReembolsos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                JtableReembolsosMouseClicked(evt);
+            }
+        });
         JSPTablaReembolsos.setViewportView(JtableReembolsos);
 
         JpnlLienzo.add(JSPTablaReembolsos, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 210, 630, 147));
@@ -383,6 +447,11 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
         JbtnEliminar.setBackground(new java.awt.Color(160, 16, 70));
         JbtnEliminar.setForeground(new java.awt.Color(255, 255, 255));
         JbtnEliminar.setText("Eliminar");
+        JbtnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JbtnEliminarActionPerformed(evt);
+            }
+        });
         JpnlLienzo.add(JbtnEliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 150, 90, -1));
 
         JbtnActualizar.setBackground(new java.awt.Color(160, 16, 70));
@@ -441,7 +510,7 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
         for (int i = 0; i < JtableReembolsos.getRowCount(); i++) {
             precios[i] = Double.parseDouble(String.valueOf(JtableReembolsos.getValueAt(i, 3)));
         }
-        
+
         double total = 0;
         for (int i = 0; i < precios.length; i++) {
             total = total + precios[i];
@@ -462,7 +531,36 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
     private void JbtnTotalMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JbtnTotalMouseExited
         JbtnTotal.setEnabled(true);
     }//GEN-LAST:event_JbtnTotalMouseExited
-    
+
+    private void JtableReembolsosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JtableReembolsosMouseClicked
+        // TODO add your handling code here:
+         valoresFila = obtenerValoresFilaTabla();
+        if (valoresFila != null) {
+            if (buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3], valoresFila[4], valoresFila[5], valoresFila[6]) != -1) {
+                // Se asigna el ID encontrado a la variable idActualizar.
+                idActualizar = buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3], valoresFila[4], valoresFila[5], valoresFila[6]);
+            }
+        }
+    }//GEN-LAST:event_JtableReembolsosMouseClicked
+
+    private void JbtnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnEliminarActionPerformed
+        // TODO add your handling code here:
+        if (JtableReembolsos.getSelectedRow() != -1) {
+            if (JOptionPane.showConfirmDialog(null, "¿Desea eliminar el registro seleccionado?", "Confimacion", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                valoresFila = obtenerValoresFilaTabla();
+                if (buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3], valoresFila[4], valoresFila[5], valoresFila[6]) != -1) {
+                    idEliminar = buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3], valoresFila[4], valoresFila[5], valoresFila[6]);
+                    eliminar(idEliminar);
+                }
+            } else {
+                CMensajes.msg("Accion cancelada", "Eliminacion");
+            }
+        } else {
+            CMensajes.msg_error("Seleccione un registro", "Eliminar");
+
+        }
+    }//GEN-LAST:event_JbtnEliminarActionPerformed
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
