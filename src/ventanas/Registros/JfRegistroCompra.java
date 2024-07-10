@@ -195,8 +195,28 @@ public class JfRegistroCompra extends javax.swing.JFrame {
         return telefono;
     }
 
+//    public boolean insertaPersona(){
+//        
+//    }
+//    
+//    public boolean insertaTelefono(){
+//        
+//    }
+//    
+//    public boolean insertaCliente(){
+//        
+//    }
+//    
+//    public boolean insertaPasajero(){
+//        
+//    }
+//    public boolean insertaMetodoDePago(){
+//        
+//    }
+    
     public void enviarDatosCliente() {
         boolean exito = false;
+        boolean exitoC = false;
         if (JrbLinea.isSelected()) {
             if (validaCamposConCorreo()) {
                 telefonos = devuelveTelefonos();
@@ -223,12 +243,14 @@ public class JfRegistroCompra extends javax.swing.JFrame {
                                         }
 
                                     }
-                                    if (exito) {
-                                        CMensajes.msg("Se registraron los voletos de los clientes", correo);
-                                    }
                                     if (queryInserta.insertaPasajeros((queryBusca.obtenIdFinalPasajero() + 1), datosPasajero[3], Integer.parseInt(datosPasajero[4]), queryBusca.obtenIdFinalPersona())) {
                                         System.out.println("Se pudo insertar al pasajero en PASAJERO");
                                         // Mensaje de inserta el pasajero de manera correcta
+                                        if (exito) {
+                                            CMensajes.msg("Se registraron los pasajeros", correo);
+                                        } else {
+                                            CMensajes.msg_error("No se pudieron registrar a los pasajeros", correo);
+                                        }
                                     } else {
                                         System.out.println("No se pudo insertar al pasajero en PASAJERO");
                                         // Ocurrio un error al insertar la informacion del pasajero
@@ -248,11 +270,18 @@ public class JfRegistroCompra extends javax.swing.JFrame {
                                         // Recorriendo el arreglo, insertamos todos los telefonos que se tengan
                                         if (queryInserta.insertaTelefonos((queryBusca.obtenIdFinalTelefono() + 1), telefonos[i], queryBusca.obtenIdFinalPersona())) {
                                             System.out.println("Se inserto el telefono del cliente");
+                                            exitoC = true;
                                             // Se inserto el telefono del cliente
                                         } else {
                                             System.out.println("No se pudo insertar el telefono del cliente");
                                             // No se inserto el telefono del cliente
+                                            exitoC = false;
                                         }
+                                    }
+                                    if (exitoC) {
+                                        CMensajes.msg("Se registro al cliente", correo);
+                                    } else {
+                                        CMensajes.msg_error("No se pudo registrar al cliente", correo);
                                     }
                                 } else {
                                     // No se pudo insertar el cliente
@@ -262,7 +291,6 @@ public class JfRegistroCompra extends javax.swing.JFrame {
                                 // No se pudo insertar a la persona-cliente
                                 System.out.println("No se pudo insertar a la persona-cliente");
                             }
-                            CMensajes.msg("Usuario Registrado", "Registro Usuarios");
                         } catch (SQLException ex) {
 
                         } finally {
@@ -482,6 +510,8 @@ public class JfRegistroCompra extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(JfRegistroCompra.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
