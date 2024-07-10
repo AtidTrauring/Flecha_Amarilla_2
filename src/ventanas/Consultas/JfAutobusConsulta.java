@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
@@ -33,6 +34,9 @@ public final class JfAutobusConsulta extends javax.swing.JFrame {
     private ArrayList<String[]> datosAutobuses = new ArrayList<>();
     // Creacion de lista, para la obtencion de valores de las listas
     private ArrayList<String> datosListas = new ArrayList<>();
+    private int idActualizar;
+    private String[] valoresFila;
+    private int idEliminar;
 
     public JfAutobusConsulta() {
         initComponents();
@@ -49,13 +53,8 @@ public final class JfAutobusConsulta extends javax.swing.JFrame {
     //**************** METODOS ******************/
     // Metodo para limpiar la tabla
     private void limpiarTabla() {
-        // Obtenemos el modelo de la tabla para poder manipularlo
         modelo = (DefaultTableModel) JtableAutobuses.getModel();
-        // Por medio de un for, tomando en cuenta el numero de filas
-        for (int i = (JtableAutobuses.getRowCount() - 1); i >= 0; i--) {
-            // Eliminaremos las filas hasta que el valor del iterador sea mayor o igual a 0
-            modelo.removeRow(i);
-        }
+        modelo.setRowCount(0);
     }
 
     private void limpiarBuscadores() {
@@ -80,12 +79,12 @@ public final class JfAutobusConsulta extends javax.swing.JFrame {
         modelo = (DefaultTableModel) JtableAutobuses.getModel();
         try {
             // Leer los datos
-            datosAutobuses = queryBusca.buscaAutobuses();
+            datosAutobuses = queryBusca.buscaAutobusesCompletos();
             // Limpiamos la tabla
             limpiarTabla();
             // Asignamos los valores obtenidos en la tabla
             for (String[] datosAutobus : datosAutobuses) {
-                modelo.addRow(new Object[]{datosAutobus[0], datosAutobus[1], datosAutobus[2], datosAutobus[3]});
+                modelo.addRow(new Object[]{datosAutobus[1], datosAutobus[2], datosAutobus[3], datosAutobus[4], datosAutobus[5], datosAutobus[6]});
             }
             // Crea un TableRowSorter para permitir la ordenación de las filas de la tabla.
             tr = new TableRowSorter<>(modelo);
@@ -97,13 +96,13 @@ public final class JfAutobusConsulta extends javax.swing.JFrame {
         }
     }
 
-    public void cargarTabla(int opcionConsulta) {
+    public void cargarTabl(int opcionConsulta) {
         modelo = (DefaultTableModel) JtableAutobuses.getModel();
         try {
             limpiarTabla();
             switch (opcionConsulta) {
                 case 1:
-                    datosAutobuses = queryBusca.buscaAutobuses();
+                    datosAutobuses = queryBusca.buscaAutobusesCompletos();
                     break;
                 case 2:
                     datosAutobuses = queryBusca.buscaAutobusesActivos();
@@ -133,7 +132,7 @@ public final class JfAutobusConsulta extends javax.swing.JFrame {
                     datosListas = queryCarga.cargaComboMarca();
                     // listas.addElement("Seleccione una opcion");
                     // Asiganamos los valores obtenidos al JComboBox
-                    for (int i = 1; i < datosListas.size(); i++) {
+                    for (int i = 0; i < datosListas.size(); i++) {
                         // Añadimos items por string dentro de la lista
                         listas.addElement(datosListas.get(i));
                     }
@@ -142,14 +141,14 @@ public final class JfAutobusConsulta extends javax.swing.JFrame {
                     break;
                 case 2:
                     datosListas = queryCarga.cargaComboModelo();
-                    for (int i = 1; i < datosListas.size(); i++) {
+                    for (int i = 0; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
                     datosListas.clear();
                     break;
                 case 3:
                     datosListas = queryCarga.cargaComboCapacidad();
-                    for (int i = 1; i < datosListas.size(); i++) {
+                    for (int i = 0; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
                     datosListas.clear();
@@ -192,6 +191,81 @@ public final class JfAutobusConsulta extends javax.swing.JFrame {
         tr.setRowFilter(rf);
     }
 
+    private String[] obtenerValoresFilaTabla() {
+        String[] valores = new String[6];
+        int filaSeleccionada = JtableAutobuses.getSelectedRow();
+        if (filaSeleccionada != -1) {
+            for (int i = 0; i < JtableAutobuses.getColumnCount(); i++) {
+                valores[i] = (String) JtableAutobuses.getValueAt(filaSeleccionada, i);
+            }
+        } else {
+            CMensajes.msg_error("No hay fila seleccionada", "Obteniendo datos fila");
+            return null;
+        }
+        return valores;
+    }
+
+    public int buscarId(String marca, String modelo, String capacidad, String dia, String mes, String anio) {
+        for (String[] autobus : datosAutobuses) {
+            if (autobus[1].equals(marca) && autobus[2].equals(modelo) && autobus[3].equals(capacidad) && autobus[4].equals(dia) && autobus[5].equals(mes) && autobus[6].equals(anio)) {
+                return Integer.parseInt(autobus[0]);
+            }
+        }
+        return -1;
+    }
+
+    public void eliminar(int id) {
+        try {
+            // Buscar la terminal por ID
+            String idTerminal = queryBusca.buscarTerminales(id);
+
+            if (idTerminal != null || !idTerminal.isEmpty()) {
+                // Llamar al método que elimina todas las dependencias y la terminal
+                if (queryElimina.eliminarAutobusConductor(id)) {
+                    if (queryElimina.eliminarAutobusRuta(id)) {
+                        if (queryElimina.eliminarAutobusBaja(id)) {
+                            if (queryElimina.eliminarAutobusReembolsos(id)) {
+                                if (queryElimina.eliminarAutobusBoletosCliente(id)) {
+                                    if (queryElimina.eliminarAutobusBoletos(id)) {
+                                        if (queryElimina.eliminarAutobusAsiento(id)) {
+                                            if (queryElimina.eliminarAutobus(id)) {
+                                                CMensajes.msg("Autobus eliminado y su informacion asociada", "Eliminar");
+                                            } else {
+                                                CMensajes.msg_error("Ocurrió un error al eliminar el autobus", "Eliminar");
+                                            }
+                                        } else {
+                                            CMensajes.msg_error("Ocurrió un error al eliminar el asiento", "Eliminar");
+                                        }
+                                    } else {
+                                        CMensajes.msg_error("Ocurrió un error al eliminar el boletoo", "Eliminar");
+                                    }
+                                } else {
+                                    CMensajes.msg_error("Ocurrió un error al eliminar Boletos-cliente", "Eliminar");
+                                }
+                            } else {
+                                CMensajes.msg_error("Ocurrió un error al eliminar el reembolso", "Eliminar");
+                            }
+                        } else {
+                            CMensajes.msg_error("Ocurrió un error el autobus de baja", "Eliminar");
+                        }
+                    } else {
+                        CMensajes.msg_error("Ocurrió un error al eliminar Autobus-Ruta", "Eliminar");
+                    }
+                } else {
+                    CMensajes.msg_error("Ocurrió un error al eliminar Autpbus-Conductor", "Eliminar");
+                }
+            } else {
+                CMensajes.msg_error("Autobus no encontrado", "Eliminar");
+            }
+        } catch (SQLException e) {
+            CMensajes.msg_error("Error de SQL: " + e.getMessage(), "Eliminar");
+        } finally {
+            limpiarBuscadores();
+            limpiarFiltro();
+            cargarTabla();
+        }
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -222,11 +296,16 @@ public final class JfAutobusConsulta extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Marca", "Modelo", "Capacidad", "Fecha de Registro"
+                "Marca", "Modelo", "Capacidad", "Dia", "Mes", "Anio"
             }
         ));
         JtableAutobuses.getTableHeader().setResizingAllowed(false);
         JtableAutobuses.getTableHeader().setReorderingAllowed(false);
+        JtableAutobuses.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                JtableAutobusesMouseClicked(evt);
+            }
+        });
         JSPTablaAutobuses.setViewportView(JtableAutobuses);
         if (JtableAutobuses.getColumnModel().getColumnCount() > 0) {
             JtableAutobuses.getColumnModel().getColumn(0).setResizable(false);
@@ -234,6 +313,8 @@ public final class JfAutobusConsulta extends javax.swing.JFrame {
             JtableAutobuses.getColumnModel().getColumn(2).setResizable(false);
             JtableAutobuses.getColumnModel().getColumn(3).setResizable(false);
             JtableAutobuses.getColumnModel().getColumn(3).setPreferredWidth(100);
+            JtableAutobuses.getColumnModel().getColumn(4).setResizable(false);
+            JtableAutobuses.getColumnModel().getColumn(5).setResizable(false);
         }
 
         JpnlLienzo.add(JSPTablaAutobuses, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 500, 320));
@@ -241,6 +322,11 @@ public final class JfAutobusConsulta extends javax.swing.JFrame {
         JbtnEliminar.setBackground(new java.awt.Color(160, 16, 70));
         JbtnEliminar.setForeground(new java.awt.Color(255, 255, 255));
         JbtnEliminar.setText("Eliminar");
+        JbtnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JbtnEliminarActionPerformed(evt);
+            }
+        });
         JpnlLienzo.add(JbtnEliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 220, 90, -1));
 
         JlblMarcas.setText("Marca");
@@ -322,13 +408,42 @@ public final class JfAutobusConsulta extends javax.swing.JFrame {
     private void JcmbxOrdenarItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JcmbxOrdenarItemStateChanged
         // Aun no esta programado
         if (JcmbxOrdenar.getSelectedIndex() == 0) {
-            cargarTabla(1);
+            cargarTabl(1);
         } else if (JcmbxOrdenar.getSelectedIndex() == 1) {
-            cargarTabla(2);
+            cargarTabl(2);
         } else if (JcmbxOrdenar.getSelectedIndex() == 2) {
-            cargarTabla(3);
+            cargarTabl(3);
         }
     }//GEN-LAST:event_JcmbxOrdenarItemStateChanged
+
+    private void JtableAutobusesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JtableAutobusesMouseClicked
+        // TODO add your handling code here:
+        valoresFila = obtenerValoresFilaTabla();
+        if (valoresFila != null) {
+            if (buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3], valoresFila[4], valoresFila[5]) != -1) {
+                // Se asigna el ID encontrado a la variable idActualizar.
+                idActualizar = buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3], valoresFila[4], valoresFila[5]);
+            }
+        }
+    }//GEN-LAST:event_JtableAutobusesMouseClicked
+
+    private void JbtnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnEliminarActionPerformed
+        // TODO add your handling code here:
+        if (JtableAutobuses.getSelectedRow() != -1) {
+            if (JOptionPane.showConfirmDialog(null, "¿Desea eliminar el registro seleccionado?", "Confimacion", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                valoresFila = obtenerValoresFilaTabla();
+                if (buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3], valoresFila[4], valoresFila[5]) != -1) {
+                    idEliminar = buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3], valoresFila[4], valoresFila[5]);
+                    eliminar(idEliminar);
+                }
+            } else {
+                CMensajes.msg("Accion cancelada", "Eliminacion");
+            }
+        } else {
+            CMensajes.msg_error("Seleccione un registro", "Eliminar");
+
+        }
+    }//GEN-LAST:event_JbtnEliminarActionPerformed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -357,6 +472,7 @@ public final class JfAutobusConsulta extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+
             public void run() {
                 new JfAutobusConsulta().setVisible(true);
             }

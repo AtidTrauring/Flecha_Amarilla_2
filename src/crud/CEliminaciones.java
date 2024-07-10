@@ -138,33 +138,27 @@ public class CEliminaciones {
         consulta = "DELETE FROM `autobusconductor` WHERE autobusconductor.Id_conductor = " + idConductor;
         return cnslt.elimina(consulta);
     }
-
     public boolean eliminaRutaConductor(int idConductor) throws SQLException {
         consulta = "DELETE FROM `rutaconductor` WHERE rutaconductor.Id_conductor = " + idConductor;
         return cnslt.elimina(consulta);
     }
-
     public boolean eliminaPersona(int id) throws SQLException {
         consulta = "DELETE FROM persona WHERE persona.Id_persona = " + id;
         return cnslt.elimina(consulta);
     }
-
     //Cliente
     public boolean eliminaBoletoCliente(int idCliente) throws SQLException {
         consulta = "DELETE FROM flecha_amarilla.boletocliente WHERE boletocliente.Id_cliente = " + idCliente;
         return cnslt.elimina(consulta);
     }
-
     public boolean eliminaTarjetaCliente(int idCliente) throws SQLException {
         consulta = "DELETE FROM `tarjeta` WHERE tarjeta.Id_cliente = " + idCliente;
         return cnslt.elimina(consulta);
     }
-
     public boolean eliminaCliente(int id) throws SQLException {
         consulta = "DELETE FROM flecha_amarilla.cliente WHERE cliente.Id_persona = " + id;
         return cnslt.elimina(consulta);
     }
-
     //Pasajero
     public boolean eliminarPasajeroCompleto(int idPasajero) throws SQLException {
         consulta = "DELETE FROM reembolso WHERE Id_boleto IN (SELECT Id_boleto FROM boleto WHERE Id_pasajero = " + idPasajero + ")";
@@ -186,6 +180,39 @@ public class CEliminaciones {
         consulta = "DELETE FROM pasajero WHERE Id_pasajero = " + idPasajero;
         return cnslt.elimina(consulta);
     }
+    //Autobus
+    public boolean eliminarAutobusConductor(int id) throws SQLException {
+    consulta = "DELETE FROM autobusConductor WHERE autobusConductor.id_autobus = " + id;
+    return cnslt.elimina(consulta);
+}
+    public boolean eliminarAutobusRuta(int id) throws SQLException {
+    consulta = "DELETE FROM rutaAutobus WHERE id_autobus = " + id;
+    return cnslt.elimina(consulta);
+}
+    public boolean eliminarAutobusBaja(int id) throws SQLException {
+     consulta = "DELETE FROM baja WHERE baja.id_autobus = " + id;
+    return cnslt.elimina(consulta);
+}
+    public boolean eliminarAutobusReembolsos(int id) throws SQLException {
+    consulta = "DELETE FROM reembolso WHERE id_boleto IN (SELECT id_boleto FROM boleto WHERE id_asiento IN (SELECT id_asiento FROM asiento WHERE id_autobus = " + id + "))";
+    return cnslt.elimina(consulta);
+}
+    public boolean eliminarAutobusBoletosCliente(int id) throws SQLException {
+    consulta = "DELETE FROM boletoCliente WHERE id_boleto IN (SELECT id_boleto FROM boleto WHERE id_asiento IN (SELECT id_asiento FROM asiento WHERE id_autobus = " + id + "))";
+    return cnslt.elimina(consulta);
+}
+    public boolean eliminarAutobusBoletos(int id) throws SQLException {
+    consulta = "DELETE FROM boleto WHERE id_asiento IN (SELECT id_asiento FROM asiento WHERE id_autobus = " + id + ")";
+    return cnslt.elimina(consulta);
+}
+    public boolean eliminarAutobusAsiento(int id) throws SQLException {
+        consulta = "DELETE FROM asiento WHERE asiento.id_autobus = " + id;
+        return cnslt.elimina(consulta);
+    }
+    public boolean eliminarAutobus(int id) throws SQLException {
+     consulta = "DELETE FROM autobus WHERE autobus.id_autobus = " + id;
+    return cnslt.elimina(consulta);
+}
 //    public boolean eliminaRutaTerminal(int id) throws SQLException {
 //        consulta = "DELETE FROM flecha_amarilla.rutaterminal WHERE rutaterminal.Id_RutTer= " + id;
 //        return cnslt.elimina(consulta);
