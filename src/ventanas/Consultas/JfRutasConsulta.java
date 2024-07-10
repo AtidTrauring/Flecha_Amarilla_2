@@ -17,7 +17,7 @@ import javax.swing.table.TableRowSorter;
 public final class JfRutasConsulta extends javax.swing.JFrame {
 
     //**************   ATRIBUTOS  *******************/
-    private DefaultTableModel modelo;
+  private DefaultTableModel modelo;
     private DefaultComboBoxModel listas;
     private TableRowSorter tr;
     private final CInserciones queryInserta = new CInserciones();
@@ -27,6 +27,9 @@ public final class JfRutasConsulta extends javax.swing.JFrame {
     private final CCargaCombos queryCarga = new CCargaCombos();
     private ArrayList<String[]> datosRutas = new ArrayList<>();
     private ArrayList<String> datosListas = new ArrayList<>();
+    private int idActualizar;
+    private String[] valoresFila;
+    private int idEliminar;
 
     public JfRutasConsulta() {
         initComponents();
@@ -41,10 +44,10 @@ public final class JfRutasConsulta extends javax.swing.JFrame {
 
     //**************** METODOS ******************/  
     private void limpiarTabla() {
-         modelo = (DefaultTableModel) JtableRutas.getModel();
+        modelo = (DefaultTableModel) JtableRutas.getModel();
         modelo.setRowCount(0);
     }
-    
+
     private void limpiarBuscadores() {
         // Limpia los cuadro de texto
         JtxtNombreTerminal.setText(null);
@@ -64,10 +67,10 @@ public final class JfRutasConsulta extends javax.swing.JFrame {
     public void cargarTabla() {
         modelo = (DefaultTableModel) JtableRutas.getModel();
         try {
-            datosRutas = queryBusca.buscaRutas();
+            datosRutas = queryBusca.buscaRutasCompletas();
             limpiarTabla();
             for (String[] ruta : datosRutas) {
-                modelo.addRow(new Object[]{ruta[0], ruta[1], ruta[2], ruta[3], ruta[4], ruta[5], ruta[6], ruta[7]});
+                modelo.addRow(new Object[]{ruta[1], ruta[2], ruta[3], ruta[4], ruta[5], ruta[6], ruta[7], ruta[8]});
             }
 
         } catch (SQLException e) {
@@ -126,8 +129,9 @@ public final class JfRutasConsulta extends javax.swing.JFrame {
         tr = new TableRowSorter<>(modelo);
         JtableRutas.setRowSorter(tr);
         ArrayList<RowFilter<Object, Object>> filtros = new ArrayList<>();
+
         if (!JtxtNombreTerminal.getText().trim().isEmpty()) {
-            filtros.add(RowFilter.regexFilter(JtxtNombreTerminal.getText().trim(), 0));
+            filtros.add(RowFilter.regexFilter("^" + JtxtNombreTerminal.getText().trim() + "$", 0));
         }
         if (JcmbxOrigenes.getSelectedIndex() != 0) {
             filtros.add(RowFilter.regexFilter(JcmbxOrigenes.getSelectedItem().toString(), 1));
@@ -147,6 +151,53 @@ public final class JfRutasConsulta extends javax.swing.JFrame {
         RowFilter<Object, Object> rf = RowFilter.andFilter(filtros);
         tr.setRowFilter(rf);
     }
+
+    private String[] obtenerValoresFilaTabla() {
+        String[] valores = new String[8];
+        int filaSeleccionada = JtableRutas.getSelectedRow();
+        if (filaSeleccionada != -1) {
+            for (int i = 0; i < JtableRutas.getColumnCount(); i++) {
+                valores[i] = (String) JtableRutas.getValueAt(filaSeleccionada, i);
+            }
+        } else {
+            CMensajes.msg_error("No hay fila seleccionada", "Obteniendo datos fila");
+            return null;
+        }
+        return valores;
+    }
+
+    public int buscarId(String nombre, String origen, String destino, String distancia, String salida, String llegada, String duracion, String precio) {
+        for (String[] ruta : datosRutas) {
+            if (ruta[1].equals(nombre) && ruta[2].equals(origen) && ruta[3].equals(destino) && ruta[4].equals(distancia) && ruta[5].equals(salida)
+                    && ruta[6].equals(llegada) && ruta[7].equals(duracion) && ruta[8].equals(precio)) {
+                return Integer.parseInt(ruta[0]);
+            }
+        }
+        return -1;
+    }
+
+  public void eliminar(int id) {
+    try {
+        String idRuta = queryBusca.buscarRutas(id);
+        
+        if (idRuta != null || idRuta.isEmpty()) {
+            // Llamar al método que elimina todas las dependencias y la ruta
+            if (queryElimina.eliminarRutaCompleta(Integer.parseInt(idRuta))) {
+                CMensajes.msg("Ruta eliminada correctamente", "Eliminar");
+            } else {
+                CMensajes.msg_error("Ocurrió un error al eliminar la ruta", "Eliminar");
+            }
+        } else {
+            CMensajes.msg_error("Ruta no encontrada", "Eliminar");
+        }
+    } catch (SQLException e) {
+        CMensajes.msg_error("Error de SQL: " + e.getMessage(), "Eliminar");
+    } finally {
+        limpiarBuscadores();
+        limpiarFiltro();
+        cargarTabla();
+    }
+}
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -155,7 +206,6 @@ public final class JfRutasConsulta extends javax.swing.JFrame {
         JSPTablaRutas = new javax.swing.JScrollPane();
         JtableRutas = new javax.swing.JTable();
         JbtnActualizar = new javax.swing.JButton();
-        JbtnEliminar = new javax.swing.JButton();
         JlblOrigen = new javax.swing.JLabel();
         JcmbxOrigenes = new javax.swing.JComboBox<>();
         JlblDestino = new javax.swing.JLabel();
@@ -169,7 +219,7 @@ public final class JfRutasConsulta extends javax.swing.JFrame {
         JlblNombreTerminal = new javax.swing.JLabel();
         JtxtNombreTerminal = new javax.swing.JTextField();
         JspNombreTerminal = new javax.swing.JSeparator();
-        JbtnBuscar = new javax.swing.JButton();
+        JbtnEliminar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Rutas");
@@ -194,11 +244,6 @@ public final class JfRutasConsulta extends javax.swing.JFrame {
         JbtnActualizar.setForeground(new java.awt.Color(255, 255, 255));
         JbtnActualizar.setText("Actualizar");
         JpnlLienzo.add(JbtnActualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 200, -1, -1));
-
-        JbtnEliminar.setBackground(new java.awt.Color(160, 16, 70));
-        JbtnEliminar.setForeground(new java.awt.Color(255, 255, 255));
-        JbtnEliminar.setText("Buscar");
-        JpnlLienzo.add(JbtnEliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 260, 82, -1));
 
         JlblOrigen.setText("Origen");
         JpnlLienzo.add(JlblOrigen, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 190, -1, -1));
@@ -262,10 +307,15 @@ public final class JfRutasConsulta extends javax.swing.JFrame {
         JpnlLienzo.add(JtxtNombreTerminal, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 270, 150, -1));
         JpnlLienzo.add(JspNombreTerminal, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 293, 150, 10));
 
-        JbtnBuscar.setBackground(new java.awt.Color(160, 16, 70));
-        JbtnBuscar.setForeground(new java.awt.Color(255, 255, 255));
-        JbtnBuscar.setText("Eliminar");
-        JpnlLienzo.add(JbtnBuscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 230, 82, -1));
+        JbtnEliminar.setBackground(new java.awt.Color(160, 16, 70));
+        JbtnEliminar.setForeground(new java.awt.Color(255, 255, 255));
+        JbtnEliminar.setText("Eliminar");
+        JbtnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JbtnEliminarActionPerformed(evt);
+            }
+        });
+        JpnlLienzo.add(JbtnEliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 230, 82, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -300,6 +350,10 @@ public final class JfRutasConsulta extends javax.swing.JFrame {
     private void JcmbxPreciosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JcmbxPreciosActionPerformed
         aplicaFiltros();
     }//GEN-LAST:event_JcmbxPreciosActionPerformed
+
+    private void JbtnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnEliminarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_JbtnEliminarActionPerformed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -336,7 +390,6 @@ public final class JfRutasConsulta extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane JSPTablaRutas;
     private javax.swing.JButton JbtnActualizar;
-    private javax.swing.JButton JbtnBuscar;
     private javax.swing.JButton JbtnEliminar;
     private javax.swing.JComboBox<String> JcmbxDestinos;
     private javax.swing.JComboBox<String> JcmbxDistancias;

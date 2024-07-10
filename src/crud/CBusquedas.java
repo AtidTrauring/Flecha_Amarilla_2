@@ -208,17 +208,17 @@ public class CBusquedas {
         String idTerminal = cnslt.buscarValor("SELECT terminal.Id_terminal FROM flecha_amarilla.terminal WHERE terminal.Id_terminal = " + id);
         return idTerminal;
     }
+    
+        public ArrayList<String[]> buscaRutasCompletas() throws SQLException {
+        consulta = "SELECT DISTINCT ruta.Id_ruta, ruta.nombre AS NombreRuta,terminal_origen.nombre AS Origen, terminal_destino.nombre AS Destino, ruta.distancia, ruta.hora_salida,"
+                + " ruta.hora_llegada,ruta.duracion_ruta,ruta.precio FROM ruta  JOIN origen ON ruta.Id_origen = origen.Id_origen JOIN destino ON ruta.Id_destino = destino.Id_destino"
+                + " JOIN terminal AS terminal_origen ON origen.Id_terminal = terminal_origen.Id_terminal JOIN terminal AS terminal_destino ON destino.Id_terminal = terminal_destino.Id_terminal";
+        return cnslt.buscarValores(consulta, 9);
+    }
 
-    public ArrayList<String[]> buscaRutas() throws SQLException {
-        consulta = "SELECT DISTINCT ruta.nombre AS NombreRuta,terminal_origen.nombre AS Origen,"
-                + " terminal_destino.nombre AS Destino, ruta.distancia, ruta.hora_salida,"
-                + " ruta.hora_llegada,ruta.duracion_ruta,ruta.precio FROM ruta"
-                + " JOIN origen ON ruta.Id_origen = origen.Id_origen"
-                + " JOIN destino ON ruta.Id_destino = destino.Id_destino"
-                + " JOIN terminal AS terminal_origen ON origen.Id_terminal = terminal_origen.Id_terminal"
-                + " JOIN terminal AS terminal_destino ON destino.Id_terminal = terminal_destino.Id_terminal";
-//        return cnslt.buscarCon8(consulta);
-        return cnslt.buscarValores(consulta, 8);
+         public String buscarRutas(int id) throws SQLException {
+        String idRuta= cnslt.buscarValor("SELECT ruta.Id_ruta FROM flecha_amarilla.ruta WHERE ruta.Id_ruta = " + id);
+        return idRuta;
     }
 
     public int obtenIdFinalPersona() throws SQLException {

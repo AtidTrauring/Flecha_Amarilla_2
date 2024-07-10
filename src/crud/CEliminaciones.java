@@ -7,6 +7,48 @@ public class CEliminaciones {
     private final CConsultas cnslt = new CConsultas();
     private String consulta;
 
+    //Rutas
+    public boolean eliminarRutaCompleta(int idRuta) throws SQLException {
+        // Eliminar filas en reembolso relacionadas con Id_boleto
+        String consulta = "DELETE FROM reembolso WHERE Id_boleto IN (SELECT Id_boleto FROM boleto WHERE Id_ruta = " + idRuta + ")";
+        if (!cnslt.elimina(consulta)) {
+            return false;
+        }
+
+        // Eliminar filas en boletoCliente relacionadas con Id_ruta
+        consulta = "DELETE FROM boletoCliente WHERE Id_boleto IN (SELECT Id_boleto FROM boleto WHERE Id_ruta = " + idRuta + ")";
+        if (!cnslt.elimina(consulta)) {
+            return false;
+        }
+
+        // Eliminar filas en boleto relacionadas con Id_ruta
+        consulta = "DELETE FROM boleto WHERE Id_ruta = " + idRuta;
+        if (!cnslt.elimina(consulta)) {
+            return false;
+        }
+
+        // Eliminar filas en rutaConductor relacionadas con Id_ruta
+        consulta = "DELETE FROM rutaConductor WHERE Id_ruta = " + idRuta;
+        if (!cnslt.elimina(consulta)) {
+            return false;
+        }
+
+        // Eliminar filas en rutaAutobus relacionadas con Id_ruta
+        consulta = "DELETE FROM rutaAutobus WHERE Id_ruta = " + idRuta;
+        if (!cnslt.elimina(consulta)) {
+            return false;
+        }
+
+        // Eliminar filas en rutaTerminal relacionadas con Id_ruta
+        consulta = "DELETE FROM rutaTerminal WHERE Id_ruta = " + idRuta;
+        if (!cnslt.elimina(consulta)) {
+            return false;
+        }
+
+        // Finalmente, eliminar la fila en ruta
+        consulta = "DELETE FROM ruta WHERE Id_ruta = " + idRuta;
+        return cnslt.elimina(consulta);
+    }
     //Viajes
     public boolean eliminaRutaAutobus(int id) throws SQLException {
         consulta = "DELETE FROM flecha_amarilla.rutaautobus WHERE rutaautobus.Id_RutAut= " + id;
