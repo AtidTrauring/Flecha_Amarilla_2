@@ -182,10 +182,10 @@ public class CEliminaciones {
     }
 
     public boolean eliminarPasajero(int id) throws SQLException {
-    consulta = "DELETE FROM pasajero WHERE pasajero.Id_pasajero = " + id;
-    return cnslt.elimina(consulta);
-}
-    
+        consulta = "DELETE FROM pasajero WHERE pasajero.Id_pasajero = " + id;
+        return cnslt.elimina(consulta);
+    }
+
     //Autobus
     public boolean eliminarAutobusConductor(int id) throws SQLException {
         consulta = "DELETE FROM autobusConductor WHERE autobusConductor.id_autobus = " + id;
@@ -230,6 +230,22 @@ public class CEliminaciones {
     //Reembolso
     public boolean eliminarReembolso(int id) throws SQLException {
         consulta = "DELETE FROM reembolso WHERE reembolso.Id_reembolso = " + id;
+        return cnslt.elimina(consulta);
+    }
+
+    //Boleto
+    public boolean eliminarBoletoReembolso(int idBoleto) throws SQLException {
+        consulta = "DELETE FROM reembolso WHERE Id_boleto = " + idBoleto;
+        return cnslt.elimina(consulta);
+    }
+
+    public boolean eliminarBoletoClienteBoleto(int idBoleto) throws SQLException {
+        consulta = "DELETE FROM boletoCliente WHERE Id_boleto = " + idBoleto;
+        return cnslt.elimina(consulta);
+    }
+
+    public boolean eliminarBoleto(int idBoleto) throws SQLException {
+        consulta = "DELETE FROM boleto WHERE Id_boleto = " + idBoleto;
         return cnslt.elimina(consulta);
     }
 //    public boolean eliminaRutaTerminal(int id) throws SQLException {

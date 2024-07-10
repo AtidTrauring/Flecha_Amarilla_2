@@ -143,7 +143,7 @@ public final class JfPasajeroConsulta extends javax.swing.JFrame {
                     if (queryElimina.eliminarPasajeroBoletoCliente(id)) {
                         if (queryElimina.eliminarPasajeroBoleto(id)) {
                             if (queryElimina.eliminarPasajero(id)) {
-                                
+                                CMensajes.msg("Pasajero Eliminado", "Eliminar");
                             } else {
                                 CMensajes.msg_error("Ocurrió un error al eliminar al pasajero", "Eliminar");
                             }

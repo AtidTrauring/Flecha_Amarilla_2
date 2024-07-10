@@ -87,6 +87,19 @@ public final class JfBoletosConsulta extends javax.swing.JFrame {
         }
     }
 
+    public String regresaTipo(String tipoTabla) {
+        String tipoBoleto = "";
+        switch (tipoTabla) {
+            case "Primera Plus":
+                tipoBoleto = "PP";
+                break;
+            case "Comercial":
+                tipoBoleto = "C";
+                break;
+        }
+        return tipoBoleto;
+    }
+
     public void cargaComboBox(JComboBox combo, int metodoCarga) {
         listas = (DefaultComboBoxModel) combo.getModel();
         try {
@@ -290,30 +303,34 @@ public final class JfBoletosConsulta extends javax.swing.JFrame {
         return -1;
     }
 
+
     public void eliminar(int id) {
-//        try {
-//            String idBoleto = queryBusca.buscarBoletos(id);
-//            if (idBoleto != null || idBoleto.isEmpty()) {
-//                if (queryElimina.eliminaClienteBoleto(Integer.parseInt(idBoleto))) {
-//                    CMensajes.msg("Se eliminaron las relaciones del cliente \ncon los boletos correspondientes", "Eliminar");
-//                    if (queryElimina.eliminaBoleto(id)) {
-//                        CMensajes.msg("Se elimino el telefono correspondiente", "Eliminar");
-//                    } else {
-//                        CMensajes.msg_error("Ocurrio un error al eliminar el Boleto", "Eliminar");
-//                    }
-//                } else {
-//                    CMensajes.msg_error("Ocurrio un error al eliminar \nlas compras asociadas al cliente", "Eliminar");
-//                }
-//            } else {
-//                CMensajes.msg_error("Usuario no encontrado", "Eliminar-Buscar");
-//            }
-//        } catch (SQLException e) {
-//        } finally {
-////            datosConductores.clear();
-//            limpiarBuscadores();
-//            limpiarFiltro();
-//            cargarTabla();
-//        }
+        try {
+            String idBoleto = queryBusca.buscarBoletos(id);
+            if (idBoleto != null && !idBoleto.isEmpty()) {
+                if (queryElimina.eliminarBoletoReembolso(id)) {
+                    if (queryElimina.eliminarBoletoClienteBoleto(id)) {
+                        if (queryElimina.eliminarBoleto(id)) {
+                           CMensajes.msg("Boleto Eliminado", "Eliminar");
+                        } else {
+                            CMensajes.msg_error("Ocurrió un error al eliminar Boleto-Cliente", "Eliminar");
+                        }
+                    } else {
+                        CMensajes.msg_error("Ocurrió un error al eliminar el Reembolso", "Eliminar");
+                    }
+                } else {
+                    CMensajes.msg_error("Ocurrió un error al eliminar el reembolso", "Eliminar");
+                }
+            } else {
+                CMensajes.msg_error("Boleto no encontrado", "Eliminar-Buscar");
+            }
+        } catch (SQLException e) {
+            CMensajes.msg_error("Error al eliminar el pasajero: " + e.getMessage(), "Error");
+        } finally {
+            limpiarBuscadores();
+            limpiarFiltro();
+            cargarTabla();
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -573,8 +590,8 @@ public final class JfBoletosConsulta extends javax.swing.JFrame {
         if (JtableBoletos.getSelectedRow() != -1) {
             if (JOptionPane.showConfirmDialog(null, "¿Desea eliminar el registro seleccionado?", "Confimacion", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                 valoresFila = obtenerValoresFilaTabla();
-                if (buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3], valoresFila[4], valoresFila[5], valoresFila[6], valoresFila[7]) != -1) {
-                    idEliminar = buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3], valoresFila[4], valoresFila[5], valoresFila[6], valoresFila[7]);
+                if (buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3], valoresFila[4], valoresFila[5], regresaTipo(valoresFila[6]), valoresFila[7]) != -1) {
+                    idEliminar = buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3], valoresFila[4], valoresFila[5], regresaTipo(valoresFila[6]), valoresFila[7]);
                     eliminar(idEliminar);
                 }
             } else {
