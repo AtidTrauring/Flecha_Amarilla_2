@@ -35,7 +35,6 @@ public final class JfClientesConsulta extends javax.swing.JFrame {
 
     //**************** METODOS ******************/
     private void limpiarTabla() {
-
         modelo = (DefaultTableModel) JtableClientes.getModel();
         modelo.setRowCount(0);
     }
