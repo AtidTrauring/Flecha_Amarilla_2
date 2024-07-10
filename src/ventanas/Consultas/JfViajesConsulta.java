@@ -18,8 +18,7 @@ import javax.swing.table.TableRowSorter;
 public final class JfViajesConsulta extends javax.swing.JFrame {
 
     //**************   ATRIBUTOS  *******************/
-   
-        private DefaultTableModel modelo;
+    private DefaultTableModel modelo;
     private DefaultComboBoxModel listas;
     private TableRowSorter tr;
     private final CInserciones queryInserta = new CInserciones();
@@ -522,18 +521,15 @@ public final class JfViajesConsulta extends javax.swing.JFrame {
     private void JbtnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnEliminarActionPerformed
         // TODO add your handling code here:
         if (JtableViajes.getSelectedRow() != -1) {
-            int respuesta = JOptionPane.showConfirmDialog(null, "¿Desea eliminar el viaje seleccionada?","Confirmación", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE  );
-            if (respuesta == JOptionPane.YES_OPTION) {
+            if (JOptionPane.showConfirmDialog(null, "¿Desea eliminar el registro seleccionado?", "Confimacion", JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                // Obtenemos los valores de la fila seleccionada en el arreglo valoresFila
                 valoresFila = obtenerValoresFilaTabla();
-                int idEncontrado = buscarId(valoresFila[0], valoresFila[1],valoresFila[2], valoresFila[3],valoresFila[4], valoresFila[5],valoresFila[6]);
-                if (idEncontrado != -1) {
-                    idEliminar = idEncontrado;
+                if (buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3], valoresFila[4], valoresFila[5], valoresFila[6]) != -1) {
+                    idEliminar = buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3], valoresFila[4], valoresFila[5], valoresFila[6]);
                     eliminar(idEliminar);
-                } else {
-                    CMensajes.msg_error("Viaje no encontrado", "Eliminar-Buscar");
                 }
             } else {
-                CMensajes.msg("Acción cancelada", "Eliminación");
+                CMensajes.msg("Accion cancelada", "Eliminacion");
             }
         } else {
             CMensajes.msg_error("Seleccione un registro", "Eliminar");
@@ -542,7 +538,7 @@ public final class JfViajesConsulta extends javax.swing.JFrame {
 
     private void JtableViajesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JtableViajesMouseClicked
         // TODO add your handling code here:
-            valoresFila = obtenerValoresFilaTabla();
+          valoresFila = obtenerValoresFilaTabla();
         if (valoresFila != null) {
             if (buscarId(valoresFila[0], valoresFila[1], valoresFila[2], valoresFila[3],valoresFila[4], valoresFila[5], valoresFila[6]) != -1) {
                 // Se asigna el ID encontrado a la variable idActualizar.
