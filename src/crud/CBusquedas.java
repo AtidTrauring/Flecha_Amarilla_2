@@ -8,6 +8,8 @@ public class CBusquedas {
     private final CConsultas cnslt = new CConsultas();
     private String consulta;
 
+    // Metodos Compra
+    //--------------------------------------------------------------------------
     public String buscaPersona(String nombre, String apPat, String apMat) throws SQLException {
         consulta = "SELECT `Id_persona` FROM `persona` WHERE nombre = '" + nombre + "' AND ApPat = '" + apPat + "' AND ApMat = '" + apMat + "'";
         return cnslt.buscarValor(consulta);
@@ -73,6 +75,7 @@ public class CBusquedas {
         return cnslt.buscarValor(consulta);
     }
 
+    //--------------------------------------------------------------------------
     public int obtenIdBuscaAño(int año) throws SQLException {
         consulta = "SELECT\n"
                 + "anio.Id_anio\n"
