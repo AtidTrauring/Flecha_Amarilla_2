@@ -123,6 +123,126 @@ public class CBusquedas {
         return Integer.parseInt(cnslt.buscarValor(consulta));
     }
 
+    public String buscarRutaAutobus(int id) throws SQLException {
+        String idConductor = cnslt.buscarValor("SELECT\n"
+                + "rutaautobus.Id_RutAut\n"
+                + "FROM\n"
+                + "rutaautobus\n"
+                + "WHERE\n"
+                + "rutaautobus.Id_RutAut = " + id + ";");
+        return idConductor;
+    }
+
+    public String buscarIdAutobusRuAuto(String id) throws SQLException {
+        String idConductor = cnslt.buscarValor("SELECT\n"
+                + "rutaautobus.Id_autobus\n"
+                + "FROM\n"
+                + "rutaautobus\n"
+                + "WHERE\n"
+                + "rutaautobus.Id_RutAut = " + id + ";");
+        return idConductor;
+    }
+
+    public String buscarIdModeloAuto(String idAutobus) throws SQLException {
+        String idConductor = cnslt.buscarValor("SELECT\n"
+                + "autobus.Id_modelo\n"
+                + "FROM\n"
+                + "autobus\n"
+                + "WHERE\n"
+                + "autobus.Id_autobus =" + idAutobus + ";");
+        return idConductor;
+    }
+
+    public String buscarIdMarcaModelo(String idModelo) throws SQLException {
+        String idConductor = cnslt.buscarValor("SELECT\n"
+                + "modelo.Id_marca\n"
+                + "FROM\n"
+                + "modelo\n"
+                + "WHERE\n"
+                + "modelo.Id_modelo = " + idModelo + ";");
+        return idConductor;
+    }
+
+    public String buscarIdFechaRuAut(String idViaje) throws SQLException {
+        String idConductor = cnslt.buscarValor("SELECT\n"
+                + "rutaautobus.Id_fecha\n"
+                + "FROM\n"
+                + "rutaautobus\n"
+                + "WHERE\n"
+                + "rutaautobus.Id_RutAut = " + idViaje + ";");
+        return idConductor;
+    }
+
+    public String buscarIdMesFecha(String idFecha) throws SQLException {
+        String idConductor = cnslt.buscarValor("SELECT\n"
+                + "fecha.Id_mes\n"
+                + "FROM\n"
+                + "fecha\n"
+                + "WHERE\n"
+                + "fecha.Id_fecha = " + idFecha + ";");
+        return idConductor;
+    }
+
+    public String buscarIdAnoFecha(String idFecha) throws SQLException {
+        String idConductor = cnslt.buscarValor("SELECT\n"
+                + "fecha.Id_anio\n"
+                + "FROM\n"
+                + "fecha\n"
+                + "WHERE\n"
+                + "fecha.Id_fecha = " + idFecha + ";");
+        return idConductor;
+    }
+
+    public String buscarIdRutaRutAut(String idViaje) throws SQLException {
+        String idConductor = cnslt.buscarValor("SELECT\n"
+                + "rutaautobus.Id_ruta\n"
+                + "FROM\n"
+                + "rutaautobus\n"
+                + "WHERE\n"
+                + "rutaautobus.Id_RutAut = " + idViaje + ";");
+        return idConductor;
+    }
+
+    public String buscarIdOrigenRuta(String idRuta) throws SQLException {
+        String idConductor = cnslt.buscarValor("SELECT\n"
+                + "ruta.Id_origen\n"
+                + "FROM\n"
+                + "ruta\n"
+                + "WHERE\n"
+                + "ruta.Id_ruta = " + idRuta + ";");
+        return idConductor;
+    }
+
+    public String buscarIdTerminalOrigen(String idOrigen) throws SQLException {
+        String idConductor = cnslt.buscarValor("SELECT\n"
+                + "origen.Id_terminal\n"
+                + "FROM\n"
+                + "origen\n"
+                + "WHERE\n"
+                + "origen.Id_origen = " + idOrigen + ";");
+        return idConductor;
+    }
+
+    public String buscarIdDestinoRuta(String idRuta) throws SQLException {
+        String idConductor = cnslt.buscarValor("SELECT\n"
+                + "ruta.Id_destino\n"
+                + "FROM\n"
+                + "ruta\n"
+                + "WHERE\n"
+                + "ruta.Id_ruta = " + idRuta + ";");
+        return idConductor;
+    }
+
+    public String buscarIdTerminalDestino(String idDestino) throws SQLException {
+        String idConductor = cnslt.buscarValor("SELECT\n"
+                + "destino.Id_terminal\n"
+                + "FROM\n"
+                + "destino\n"
+                + "WHERE\n"
+                + "destino.Id_destino = " + idDestino + ";");
+        return idConductor;
+    }
+
     public ArrayList<String[]> buscarReembolsoCompleto() throws SQLException {
         consulta = "SELECT r.Id_reembolso, p.nombre,  p.ApPat,  p.ApMat, r.cantidad AS cantidad_reembolso, f.dia, m.mes,  a.anio FROM reembolso r JOIN boleto b ON r.Id_boleto = b.Id_boleto JOIN pasajero pas ON b.Id_pasajero = pas.Id_pasajero "
                 + "JOIN persona p ON pas.Id_persona = p.Id_persona JOIN fecha f ON r.Id_fecha = f.Id_fecha JOIN mes m ON f.Id_mes = m.Id_mes JOIN anio a ON f.Id_anio = a.Id_anio;";
