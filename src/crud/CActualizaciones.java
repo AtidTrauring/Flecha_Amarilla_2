@@ -83,9 +83,8 @@ public class CActualizaciones {
         consulta = "UPDATE `mes` SET `mes`='" + mes + "' WHERE Id_mes=" + idmes + ";";
         return cnslt.actualiza(consulta);
     }
-
-    public boolean actualizarMes(String idmes, int mes) throws SQLException {
-        consulta = "UPDATE `mes` SET `mes`='" + mes + "' WHERE Id_mes=" + idmes + ";";
+    public boolean actualizarAnioA(String idAnio, String anio) throws SQLException {
+         consulta = "UPDATE `anio` SET `anio`='" + anio + "' WHERE Id_anio= " + idAnio;
         return cnslt.actualiza(consulta);
     }
 
@@ -101,6 +100,10 @@ public class CActualizaciones {
 
     public boolean actualizarAutobus(String id, String placa) throws SQLException {
         consulta = "UPDATE `autobus` SET `placa`='" + placa + "' WHERE Id_autobus= " + id + ";";
+        return cnslt.actualiza(consulta);
+    }
+    public boolean actualizarAutobusCapacidad(String id, String capacidad) throws SQLException {
+        consulta = "UPDATE `autobus` SET `capacidad`='" + capacidad + "' WHERE Id_autobus= " + id + ";";
         return cnslt.actualiza(consulta);
     }
 

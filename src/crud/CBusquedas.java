@@ -146,6 +146,13 @@ public class CBusquedas {
         return idConductor;
     }
 
+    public String buscarIdAutobus(int id) throws SQLException {
+        return cnslt.buscarValor("SELECT Id_autobus FROM autobus WHERE Id_autobus = " + id + ";");
+    }
+    public String buscarIdFechaAuto(String idAutobus) throws SQLException {
+    return cnslt.buscarValor("SELECT Id_fecha FROM autobus WHERE Id_autobus = " + idAutobus + ";");
+}
+
     public String buscarIdModeloAuto(String idAutobus) throws SQLException {
         String idConductor = cnslt.buscarValor("SELECT\n"
                 + "autobus.Id_modelo\n"

@@ -216,46 +216,51 @@ public final class JfAutobusConsulta extends javax.swing.JFrame {
 
     public void actualizar(int id) {
         String marca = (String) JtableAutobuses.getValueAt(JtableAutobuses.getSelectedRow(), 0);
-        String modelos = (String) JtableAutobuses.getValueAt(JtableAutobuses.getSelectedRow(), 1);
+        String modelo = (String) JtableAutobuses.getValueAt(JtableAutobuses.getSelectedRow(), 1);
         String capacidad = (String) JtableAutobuses.getValueAt(JtableAutobuses.getSelectedRow(), 2);
         String dia = (String) JtableAutobuses.getValueAt(JtableAutobuses.getSelectedRow(), 3);
         String mes = (String) JtableAutobuses.getValueAt(JtableAutobuses.getSelectedRow(), 4);
         String anio = (String) JtableAutobuses.getValueAt(JtableAutobuses.getSelectedRow(), 5);
-        int cantidadFlotante = Integer.parseInt(capacidad);
-        int anioFlotante = Integer.parseInt(anio);
-        int diaFlotante = Integer.parseInt(dia);
+
         try {
-            String idAutobus = queryBusca.buscarAutobus(id);
-            if (idAutobus != null || idAutobus.isEmpty()) {
-                if (queryActualiza.actualizarMarca(marca, id)) {
-                    if (queryActualiza.actualizarModelo(modelos, id)) {
-                        if (queryActualiza.actualizarCapacidad(cantidadFlotante, id)) {
-                            if (queryActualiza.actualizarAnio(anioFlotante, id)) {
-                                if (queryActualiza.actualizarMes(mes, id)) {
-                                    if (queryActualiza.actualizarFecha(diaFlotante, id)) {
-                                        CMensajes.msg("Se actualizo la informacion del autobus.", "Actualizar");
+            String idAutobus = queryBusca.buscarIdAutobus(id);
+            String idModelo = queryBusca.buscarIdModeloAuto(idAutobus);
+            String idMarca = queryBusca.buscarIdMarcaModelo(idModelo);
+            String idFecha = queryBusca.buscarIdFechaAuto(idAutobus);
+            String idMes = queryBusca.buscarIdMesFecha(idFecha);
+            String idAnio = queryBusca.buscarIdAnoFecha(idFecha);
+
+            if (idAutobus != null && !idAutobus.isEmpty()) {
+                if (queryActualiza.actualizarAutobusCapacidad(idAutobus, capacidad)) {
+                    if (queryActualiza.actualizaModelo(idModelo, modelo)) {
+                        if (queryActualiza.actualizarMarca(idMarca, marca)) {
+                            if (queryActualiza.actualizarFecha(idFecha, dia)) {
+                                if (queryActualiza.actualizarMes(idMes, mes)) {
+                                    if (queryActualiza.actualizarAnioA(idAnio, anio)) {
+                                        CMensajes.msg("Se actualizaron los datos del autobus", "Actualizar");
                                     } else {
-                                        CMensajes.msg_error("Error al actualizar la ruta.", "Actualizar");
+                                        CMensajes.msg_error("Ocurrió un error al actualizar el año", "Actualizar");
                                     }
                                 } else {
-                                    CMensajes.msg_error("Error al actualizar la terminal de destino.", "Actualizar");
+                                    CMensajes.msg_error("Ocurrió un error al actualizar el mes", "Actualizar");
                                 }
                             } else {
-                                CMensajes.msg_error("Error al actualizar la terminal de origen.", "Actualizar");
+                                CMensajes.msg_error("Ocurrió un error al actualizar el día", "Actualizar");
                             }
                         } else {
-                            CMensajes.msg_error("Error al actualizar la ruta.", "Actualizar");
+                            CMensajes.msg_error("Ocurrió un error al actualizar la marca", "Actualizar");
                         }
                     } else {
-                        CMensajes.msg_error("Error al actualizar la terminal de destino.", "Actualizar");
+                        CMensajes.msg_error("Ocurrió un error al actualizar el modelo", "Actualizar");
                     }
                 } else {
-                    CMensajes.msg_error("Error al actualizar la terminal de origen.", "Actualizar");
+                    CMensajes.msg_error("Ocurrió un error al actualizar la placa", "Actualizar");
                 }
             } else {
-                CMensajes.msg_error("Ocurrio un error al actualizar.", "Actualizar");
+                CMensajes.msg_error("Autobús no encontrado", "Actualizar");
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
+            CMensajes.msg_error("Error: " + e.getMessage(), "Actualizar");
         } finally {
             limpiarBuscadores();
             limpiarFiltro();
