@@ -8,6 +8,71 @@ public class CBusquedas {
     private final CConsultas cnslt = new CConsultas();
     private String consulta;
 
+    public String buscaPersona(String nombre, String apPat, String apMat) throws SQLException {
+        consulta = "SELECT `Id_persona` FROM `persona` WHERE nombre = '" + nombre + "' AND ApPat = '" + apPat + "' AND ApMat = '" + apMat + "'";
+        return cnslt.buscarValor(consulta);
+    }
+
+    public String buscaTelefono(String telefono, int idPersona) throws SQLException {
+        consulta = "SELECT `Id_telefonoPersona`, `telefono`, `Id_persona` FROM `telefono_persona` WHERE telefono = '" + telefono + "', Id_persona = '" + idPersona + "';";
+        return cnslt.buscarValor(consulta);
+    }
+
+    public String buscaPasajero(int idPersona) throws SQLException {
+        consulta = "SELECT `Id_pasajero` FROM `pasajero` WHERE Id_persona = '" + idPersona + "';";
+        return cnslt.buscarValor(consulta);
+    }
+
+    public String buscaCliente(int idPersona) throws SQLException {
+        consulta = "SELECT `Id_cliente` FROM `cliente` WHERE Id_persona = '" + idPersona + "';";
+        return cnslt.buscarValor(consulta);
+    }
+
+    public String buscaFecha(int dia, int idMes, int idAnio) throws SQLException {
+        consulta = "SELECT `Id_fecha` FROM `fecha` WHERE fecha.dia = '" + dia + "' AND fecha.Id_mes = '" + idMes + "' AND fecha.Id_anio = '" + idAnio + "';";
+        return cnslt.buscarValor(consulta);
+    }
+
+    public String buscaAnio(int anio) throws SQLException {
+        consulta = "SELECT `Id_anio` FROM `anio` WHERE anio.anio = '" + anio + "';";
+        return cnslt.buscarValor(consulta);
+    }
+
+    public String buscaMetodoPago(int idFecha) throws SQLException {
+        consulta = "SELECT `Id_metodo` FROM `metodo_pago` WHERE metodo_pago.Id_fecha = '" + idFecha + "';";
+        return cnslt.buscarValor(consulta);
+    }
+
+    public String buscaTarjeta(String numCuenta, int cvv) throws SQLException {
+//        consulta = "SELECT `Id_tarjeta` FROM `tarjeta` WHERE tarjeta.numeroCuenta = '" + numCuenta + "';";
+        consulta = "SELECT `Id_tarjeta` FROM `tarjeta` WHERE tarjeta.numeroCuenta = '" + numCuenta + "' AND tarjeta.CVV = '" + cvv + "';";
+        return cnslt.buscarValor(consulta);
+    }
+
+    public String buscaBoleto(int idMetodo, int idRuta, int idFecha, int idAsiento, int idPasajero, String tipoBoleto, float precioDescuento) throws SQLException {
+        consulta = "SELECT `Id_boleto` FROM `boleto` WHERE boleto.Id_metodo = '" + idMetodo + "'"
+                + " AND boleto.Id_ruta = '" + idRuta + "' AND boleto.Id_fecha = '" + idFecha + "'"
+                + " AND boleto.Id_asiento = '" + idAsiento + "' AND boleto.Id_pasajero = '" + idPasajero + "'"
+                + " AND boleto.tipo_boleto = '" + tipoBoleto + "' AND boleto.precioDescuento = '" + precioDescuento + "';";
+        return cnslt.buscarValor(consulta);
+    }
+
+    public String buscaCompra(int idBoleto, int idCliente, float total) throws SQLException {
+        consulta = "SELECT `Id_BolClie` FROM `boletocliente` WHERE"
+                + " boletocliente.Id_boleto = '" + idBoleto + "' AND"
+                + " boletocliente.Id_cliente = '" + idCliente + "' AND"
+                + " boletocliente.total = '" + total + "';";
+        return cnslt.buscarValor(consulta);
+    }
+
+    public String buscaReembolso(int idBoleto, int idFecha, float cantidad) throws SQLException {
+        consulta = "SELECT `Id_reembolso` FROM `reembolso` WHERE"
+                + " reembolso.Id_boleto = '" + idBoleto + "' AND"
+                + " reembolso.Id_fecha = '" + idFecha + "' AND"
+                + " reembolso.cantidad = '" + cantidad + "';";
+        return cnslt.buscarValor(consulta);
+    }
+
     public int obtenIdBuscaAño(int año) throws SQLException {
         consulta = "SELECT\n"
                 + "anio.Id_anio\n"
@@ -56,121 +121,6 @@ public class CBusquedas {
                 + "WHERE\n"
                 + "autobus.placa = '" + placa + "';";
         return Integer.parseInt(cnslt.buscarValor(consulta));
-    }
-    public String buscarRutaAutobus(int id) throws SQLException {
-        String idConductor = cnslt.buscarValor("SELECT\n"
-                + "rutaautobus.Id_RutAut\n"
-                + "FROM\n"
-                + "rutaautobus\n"
-                + "WHERE\n"
-                + "rutaautobus.Id_RutAut = " + id + ";");
-        return idConductor;
-    }
-    
-     public String buscarIdAutobusRuAuto(String id) throws SQLException {
-        String idConductor = cnslt.buscarValor("SELECT\n"
-                + "rutaautobus.Id_autobus\n"
-                + "FROM\n"
-                + "rutaautobus\n"
-                + "WHERE\n"
-                + "rutaautobus.Id_RutAut = " + id + ";");
-        return idConductor;
-    }
-     
-      public String buscarIdModeloAuto(String idAutobus) throws SQLException {
-        String idConductor = cnslt.buscarValor("SELECT\n"
-                + "autobus.Id_modelo\n"
-                + "FROM\n"
-                + "autobus\n"
-                + "WHERE\n"
-                + "autobus.Id_autobus ="+ idAutobus+";");
-        return idConductor;
-    }
-      
-       public String buscarIdMarcaModelo(String idModelo) throws SQLException {
-        String idConductor = cnslt.buscarValor("SELECT\n"
-                + "modelo.Id_marca\n"
-                + "FROM\n"
-                + "modelo\n"
-                + "WHERE\n"
-                + "modelo.Id_modelo = "+idModelo+";");
-        return idConductor;
-    }
-       
-        public String buscarIdFechaRuAut(String idViaje) throws SQLException {
-        String idConductor = cnslt.buscarValor("SELECT\n"
-                + "rutaautobus.Id_fecha\n"
-                + "FROM\n"
-                + "rutaautobus\n"
-                + "WHERE\n"
-                + "rutaautobus.Id_RutAut = "+idViaje+";");
-        return idConductor;
-    }
-        
-         public String buscarIdMesFecha(String idFecha) throws SQLException {
-        String idConductor = cnslt.buscarValor("SELECT\n"
-                + "fecha.Id_mes\n"
-                + "FROM\n"
-                + "fecha\n"
-                + "WHERE\n"
-                + "fecha.Id_fecha = "+idFecha+";");
-        return idConductor;
-    }
-         public String buscarIdAnoFecha(String idFecha) throws SQLException {
-        String idConductor = cnslt.buscarValor("SELECT\n"
-                + "fecha.Id_anio\n"
-                + "FROM\n"
-                + "fecha\n"
-                + "WHERE\n"
-                + "fecha.Id_fecha = "+idFecha+";");
-        return idConductor;
-    }
-         public String buscarIdRutaRutAut(String idViaje) throws SQLException {
-        String idConductor = cnslt.buscarValor("SELECT\n"
-                + "rutaautobus.Id_ruta\n"
-                + "FROM\n"
-                + "rutaautobus\n"
-                + "WHERE\n"
-                + "rutaautobus.Id_RutAut = " + idViaje + ";");
-        return idConductor;
-    }
-           public String buscarIdOrigenRuta(String idRuta) throws SQLException {
-        String idConductor = cnslt.buscarValor("SELECT\n"
-                + "ruta.Id_origen\n"
-                + "FROM\n"
-                + "ruta\n"
-                + "WHERE\n"
-                + "ruta.Id_ruta = "+idRuta+ ";");
-        return idConductor;
-    }
-           
-           public String buscarIdTerminalOrigen(String idOrigen) throws SQLException {
-        String idConductor = cnslt.buscarValor("SELECT\n"
-                + "origen.Id_terminal\n"
-                + "FROM\n"
-                + "origen\n"
-                + "WHERE\n"
-                + "origen.Id_origen = "+idOrigen+ ";");
-        return idConductor;
-    }
-             public String buscarIdDestinoRuta(String idRuta) throws SQLException {
-        String idConductor = cnslt.buscarValor("SELECT\n"
-                + "ruta.Id_destino\n"
-                + "FROM\n"
-                + "ruta\n"
-                + "WHERE\n"
-                + "ruta.Id_ruta = "+idRuta+ ";");
-        return idConductor;
-    }
-             
-              public String buscarIdTerminalDestino(String idDestino) throws SQLException {
-        String idConductor = cnslt.buscarValor("SELECT\n"
-                + "destino.Id_terminal\n"
-                + "FROM\n"
-                + "destino\n"
-                + "WHERE\n"
-                + "destino.Id_destino = "+idDestino+ ";");
-        return idConductor;
     }
 
     public ArrayList<String[]> buscarReembolsoCompleto() throws SQLException {
@@ -222,11 +172,6 @@ public class CBusquedas {
     public String buscarClientes(int id) throws SQLException {
         String idConductor = cnslt.buscarValor("SELECT cliente.Id_cliente FROM flecha_amarilla.cliente WHERE cliente.Id_persona = " + id);
         return idConductor;
-    }
-
-    public String buscaPasajero(int id) throws SQLException {
-        String idPasajero = cnslt.buscarValor("SELECT pasajero.Id_pasajero FROM flecha_amarilla.pasajero WHERE pasajero.Id_pasajero = " + id);
-        return idPasajero;
     }
 
     public ArrayList<String[]> buscarPasajerosCompletos() throws SQLException {
