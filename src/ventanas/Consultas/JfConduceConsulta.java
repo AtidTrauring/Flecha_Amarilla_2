@@ -153,53 +153,54 @@ private DefaultTableModel modelo;
         return -1;
     }
 
-    public void actualizar(int id) {
-//        String nombre = (String) JtableConducen.getValueAt(JtableConducen.getSelectedRow(), 0);
-//        String apPaterno = (String) JtableConducen.getValueAt(JtableConducen.getSelectedRow(), 1);
-//        String apMaterno = (String) JtableConducen.getValueAt(JtableConducen.getSelectedRow(), 2);
-//        String placa = (String) JtableConducen.getValueAt(JtableConducen.getSelectedRow(), 3);
-//        String marca = (String) JtableConducen.getValueAt(JtableConducen.getSelectedRow(), 4);
-//        String modelo = (String) JtableConducen.getValueAt(JtableConducen.getSelectedRow(), 5);
-//        try {
-//            String idConduce = queryBusca.buscaConduce(id);
-//            if (idConduce != null || idConduce.isEmpty()) {
-//                if (queryActualiza.actualizarPersona(nombre, apPaterno, apMaterno, id)) {
-//                    CMensajes.msg("Se actualizo la informacion del cliente", "Actualizar");
-//                    if (queryActualiza.actualizarMarca(marca, id)) {
-//                        CMensajes.msg("Se actualizo la marca del autobus", "Actualizar");
-//                        if (queryActualiza.actualizarModelo(modelo, id)) {
-//                            CMensajes.msg("Se actualizo la modelo del autobus", "Actualizar");
-//                            if (queryActualiza.actualizarPlacasAutobus(placa, id)) {
-//                                CMensajes.msg("Se actualizo la placa del autobus", "Actualizar");
-////                                if (queryActualiza.actualizarModeloAutobus(modelo, id)) {
-////                                CMensajes.msg("Se actualizo la placa del autobus", "Actualizar");
-////                            } else {
-////                                CMensajes.msg_error("Ocurrio un error al actualizar la placa", "Actualizar");
-////                            }
-//                            } else {
-//                                CMensajes.msg_error("Ocurrio un error al actualizar la placa", "Actualizar");
-//                            }
-//                        } else {
-//                            CMensajes.msg_error("Ocurrio un error al actualizar el modelo", "Actualizar");
-//                        }
-//                    } else {
-//                        CMensajes.msg_error("Ocurrio un error al actualizar la marca", "Actualizar");
-//                    }
-//                } else {
-//                    CMensajes.msg_error("Ocurrio un error al actualizar a la persona", "Actualizar");
-//                }
-//
-//            } else {
-//                CMensajes.msg_error("Usuario no encontrado", "Actualizar-Buscar");
-//            }
-//        } catch (SQLException e) {
-//        } finally {
-////            datosConductores.clear();
-//            limpiarBuscadores();
-//            limpiarFiltro();
-//            cargarTabla();
-//        }
+            public void actualizar(int id) {
+        String nombre = (String) JtableConducen.getValueAt(JtableConducen.getSelectedRow(), 0);
+        String apPat = (String) JtableConducen.getValueAt(JtableConducen.getSelectedRow(), 1);
+        String apMat = (String) JtableConducen.getValueAt(JtableConducen.getSelectedRow(), 2);
+        String placa = (String) JtableConducen.getValueAt(JtableConducen.getSelectedRow(), 3);
+        String modelo = (String) JtableConducen.getValueAt(JtableConducen.getSelectedRow(), 4);
+        String marca = (String) JtableConducen.getValueAt(JtableConducen.getSelectedRow(), 5);
+        try {
+            String idConduce = queryBusca.buscaConduce(id);
+            String idAutobus= queryBusca.buscarIdAutobusRuAuto(idConduce);
+            String idmodelo=queryBusca.buscarIdModeloAuto(idAutobus);
+            String idmarca=queryBusca.buscarIdMarcaModelo(idmodelo);
+            String IdConductor = queryBusca.buscarConductor(id);
+            if (idConduce != null || idConduce.isEmpty()) {
+                if (queryActualiza.actualizarAutobus(idAutobus, placa)) {
+                    CMensajes.msg("Se actualizo la informacion de la placa", "Actualizar");
+                    if (queryActualiza.actualizaModelo(idmodelo, modelo)) {
+                        CMensajes.msg("Se actualizo el Modelo", "Actualizar");
+                        if (queryActualiza.actualizarMarca(idmarca, marca)) {
+                            CMensajes.msg("Se actualizo la marca", "Actualizar");
+                            if (queryActualiza.actualizarPersona(nombre, apPat, apMat, id)) {
+                               CMensajes.msg("Se actualizo el dia", "Actualizar"); 
+                            }else{
+                             CMensajes.msg_error("Ocurrio un error al actualizar el dia", "Actualizar");
+                            }
+                            
+                        }else{
+                        CMensajes.msg_error("Ocurrio un error al actualizar la marca", "Actualizar");
+                        }
+                    } else {
+                        CMensajes.msg_error("Ocurrio un error al actualizar el modelo", "Actualizar");
+                    }
+                } else {
+                    CMensajes.msg_error("Ocurrio un error al actualizar la placa", "Actualizar");
+                }
+
+            } else {
+                CMensajes.msg_error("Usuario no encontrado", "Actualizar-Buscar");
+            }
+        } catch (SQLException e) {
+        } finally {
+//            datosConductores.clear();
+            limpiarBuscadores();
+            limpiarFiltro();
+            cargarTabla();
+        }
     }
+            
     public void eliminar(int id) {
         try {
             String idConduce = queryBusca.buscaConduce(id);

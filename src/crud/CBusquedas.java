@@ -876,4 +876,14 @@ public class CBusquedas {
         return Integer.parseInt(cnslt.buscarValor(consulta));
     }
 
+    public int buscarIdConductorRutaConductor(int idRutaConductor) throws SQLException {
+        consulta = "SELECT Id_conductor FROM rutaConductor WHERE Id_rutaConductor = " + idRutaConductor + ";";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+
+    public int buscarIdPersonaConductor(int idConductor) throws SQLException {
+        consulta = "SELECT Id_persona FROM conductor WHERE Id_conductor = " + idConductor + ";";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+
 }
