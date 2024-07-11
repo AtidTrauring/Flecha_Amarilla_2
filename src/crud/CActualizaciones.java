@@ -133,7 +133,7 @@ public class CActualizaciones {
         consulta = "UPDATE `terminal` SET `nombre`='" + destino + "' WHERE Id_terminal = " + idTerminalDestino + ";";
         return cnslt.actualiza(consulta);
     }
-
+//Boleto
     public boolean actualizarPrecioBoleto(String idBoleto, String precio) throws SQLException {
         consulta = "UPDATE boleto SET precio = " + precio + " WHERE Id_boleto = " + idBoleto;
         return cnslt.actualiza(consulta);
@@ -159,9 +159,12 @@ public class CActualizaciones {
         return cnslt.actualiza(consulta);
     }
 
-    public boolean actualizarTerminal(String idTerminal, String terminal, String tipo) throws SQLException {
-        String campo = tipo.equals("origen") ? "origen" : "destino";
-        consulta = "UPDATE " + campo + " SET nombre = '" + terminal + "' WHERE Id_terminal = " + idTerminal;
+    public boolean actualizarTerminalO(String idTerminal, String destino) throws SQLException {
+        consulta=  "UPDATE terminal SET nombre = " + destino + " WHERE destino.Id_terminal = " + idTerminal;
+        return cnslt.actualiza(consulta);
+    }
+    public boolean actualizarTerminalD(String idTerminal, String origen) throws SQLException {
+       consulta=  "UPDATE terminal SET nombre = " + origen + " WHERE origen.Id_terminal = " + idTerminal;
         return cnslt.actualiza(consulta);
     }
 

@@ -314,9 +314,8 @@ public final class JfBoletosConsulta extends javax.swing.JFrame {
 
     try {
         String idBoletoActual = queryBusca.buscarBoleto(idBoleto);
-        
-        String idTerminalOrigen = queryBusca.buscarIdTerminalPorBoleto(idBoletoActual, "origen");
-        String idTerminalDestino = queryBusca.buscarIdTerminalPorBoleto(idBoletoActual, "destino");
+        String idTerminalDestino = queryBusca.buscarIdTerminalDestino(destino);
+        String idTerminalOrigen = queryBusca.buscarIdTerminalOrigen(origen);
         String idFecha = queryBusca.buscarIdFechaPorBoleto(idBoletoActual);
         String idMes = queryBusca.buscarIdMesPorFecha(idFecha);
         String idAnio = queryBusca.buscarIdAnioPorFecha(idFecha);
@@ -337,10 +336,10 @@ public final class JfBoletosConsulta extends javax.swing.JFrame {
                             if (queryActualiza.actualizarAnioFecha(idAnio, fechaAnio)) {
                                 CMensajes.msg("Se actualizó el año de la fecha del boleto.", "Actualizar");
                                 
-                                if (queryActualiza.actualizarTerminal(idTerminalOrigen, origen, "origen")) {
+                                if (queryActualiza.actualizarTerminalO(idTerminalOrigen, destino)) {
                                     CMensajes.msg("Se actualizó la terminal de origen.", "Actualizar");
                                     
-                                    if (queryActualiza.actualizarTerminal(idTerminalDestino, destino, "destino")) {
+                                    if (queryActualiza.actualizarTerminalD(idTerminalDestino, destino)) {
                                         CMensajes.msg("Se actualizó la terminal de destino.", "Actualizar");
                                     } else {
                                         CMensajes.msg_error("Ocurrió un error al actualizar la terminal de destino.", "Actualizar");

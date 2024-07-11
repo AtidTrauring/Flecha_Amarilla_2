@@ -158,9 +158,8 @@ public class CBusquedas {
         return cnslt.buscarValor("SELECT Id_boleto FROM boleto WHERE Id_boleto = " + idBoleto);
     }
 
-    public String buscarIdTerminalPorBoleto(String idBoleto, String tipo) throws SQLException {
-        String campo = tipo.equals("origen") ? "Id_terminal_origen" : "Id_terminal_destino";
-        return cnslt.buscarValor("SELECT " + campo + " FROM boleto WHERE Id_boleto = " + idBoleto);
+    public String buscarIdTerminal(String idBoleto, String tipo) throws SQLException {
+        return cnslt.buscarValor("SELECT Id_terminal FROM boleto WHERE Id_boleto = " + idBoleto);
     }
 
     public String buscarIdFechaPorBoleto(String idBoleto) throws SQLException {
