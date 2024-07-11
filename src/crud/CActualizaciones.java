@@ -22,6 +22,13 @@ public class CActualizaciones {
         return cnslt.actualiza(consulta);
     }
     
+    public boolean actualizarRuta2(int id, String nombreRuta, String duracion, String salida, String llegada, float precio, String distancia) throws SQLException {
+        consulta = "UPDATE flecha_amarilla.ruta SET `nombre`= '" + nombreRuta + "' ,`duracion_ruta`= '" + duracion + "' ,`hora_salida`= '" +
+                salida+ "' ,`hora_llegada`= '" + llegada + "' ,`precio`= '" + precio + "' ,`distancia`= '" + 
+                distancia + "' WHERE `Id_ruta`=" + id;
+        return cnslt.actualiza(consulta);
+    }
+    
     public boolean actualizarTerminal(String terminal, int id) throws SQLException {
     consulta = "UPDATE flecha_amarilla.terminal SET nombre='" + terminal + "' WHERE terminal.Id_terminal = " + id;
     return cnslt.actualiza(consulta);
