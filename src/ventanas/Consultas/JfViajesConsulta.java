@@ -251,6 +251,88 @@ public final class JfViajesConsulta extends javax.swing.JFrame {
             cargarTabla();
         }
     }
+        
+        
+        
+        
+        
+           
+        public void actualizar(int id) {
+        String origen = (String) JtableViajes.getValueAt(JtableViajes.getSelectedRow(), 0);
+        String destino = (String) JtableViajes.getValueAt(JtableViajes.getSelectedRow(), 1);
+        String placa = (String) JtableViajes.getValueAt(JtableViajes.getSelectedRow(), 2);
+        String modelo = (String) JtableViajes.getValueAt(JtableViajes.getSelectedRow(), 3);
+        String marca = (String) JtableViajes.getValueAt(JtableViajes.getSelectedRow(), 4);
+        String dia = (String) JtableViajes.getValueAt(JtableViajes.getSelectedRow(), 5);
+        String mes = (String) JtableViajes.getValueAt(JtableViajes.getSelectedRow(), 6);
+        try {
+            String idViaje = queryBusca.buscarRutaAutobus(id);
+            
+            String idAutobus= queryBusca.buscarIdAutobusRuAuto(idViaje);
+            String idmodelo=queryBusca.buscarIdModeloAuto(idAutobus);
+            String idmarca=queryBusca.buscarIdMarcaModelo(idmodelo);
+            String idFecha=queryBusca.buscarIdFechaRuAut(idViaje);
+            String idMes=queryBusca.buscarIdMesFecha(idFecha);
+            String idAño=queryBusca.buscarIdAnoFecha(idFecha);
+            String idRuta=queryBusca.buscarIdRutaRutAut(idViaje);
+            String idOrigen=queryBusca.buscarIdOrigenRuta(idRuta);
+            String idTerminalOrigen=queryBusca.buscarIdTerminalOrigen(idOrigen);
+            String idDestino=queryBusca.buscarIdDestinoRuta(idRuta);
+            String idTerminalDestino=queryBusca.buscarIdTerminalDestino(idDestino);
+            if (idViaje != null || idViaje.isEmpty()) {
+                if (queryActualiza.actualizarAutobus(idAutobus, placa)) {
+                    CMensajes.msg("Se actualizo la informacion de la placa", "Actualizar");
+                    if (queryActualiza.actualizaModelo(idmodelo, modelo)) {
+                        CMensajes.msg("Se actualizo el Modelo", "Actualizar");
+                        if (queryActualiza.actualizarMarca(idmarca, marca)) {
+                            CMensajes.msg("Se actualizo la marca", "Actualizar");
+                            if (queryActualiza.actualizarFecha(idFecha, dia)) {
+                               CMensajes.msg("Se actualizo el dia", "Actualizar"); 
+                                if (queryActualiza.actualizarMes(idMes, mes)) {
+                                     CMensajes.msg("Se actualizo el mes", "Actualizar"); 
+                                     if (queryActualiza.actualizaTerminalOrigen(idTerminalOrigen, origen)) {
+                                        CMensajes.msg("Se actualizo la terminal de origen", "Actualizar"); 
+                                         if (queryActualiza.actualizaTerminalDestino(idTerminalDestino, destino)) {
+                                             CMensajes.msg("Se actualizo la terminal de destino", "Actualizar"); 
+                                         }else{
+                                             CMensajes.msg_error("Ocurrio un error al actualizar el destino", "Actualizar");
+                                             
+                                         }
+                                        
+                                    }else{
+                                       CMensajes.msg_error("Ocurrio un error al actualizar el origen", "Actualizar");
+                                     }
+                                     
+                                }else{
+                                CMensajes.msg_error("Ocurrio un error al actualizar en el mes", "Actualizar");
+                                }
+                               
+                               
+                            }else{
+                             CMensajes.msg_error("Ocurrio un error al actualizar el dia", "Actualizar");
+                            }
+                            
+                        }else{
+                        CMensajes.msg_error("Ocurrio un error al actualizar la marca", "Actualizar");
+                        }
+                    } else {
+                        CMensajes.msg_error("Ocurrio un error al actualizar el modelo", "Actualizar");
+                    }
+                } else {
+                    CMensajes.msg_error("Ocurrio un error al actualizar la placa", "Actualizar");
+                }
+
+            } else {
+                CMensajes.msg_error("Usuario no encontrado", "Actualizar-Buscar");
+            }
+        } catch (SQLException e) {
+        } finally {
+//            datosConductores.clear();
+            limpiarBuscadores();
+            limpiarFiltro();
+            cargarTabla();
+        }
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -510,12 +592,11 @@ public final class JfViajesConsulta extends javax.swing.JFrame {
     }//GEN-LAST:event_JcmbxMesesItemStateChanged
 
     private void JbtnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnActualizarActionPerformed
-        // TODO add your handling code here:
-        //        if (JtableViajes.getSelectedRow() != -1) {
-            //            actualizar(idActualizar);
-            //        } else {
-            //            CMensajes.msg_error("Seleccione un registro", "Actualizar");
-            //        }
+        if (JtableViajes.getSelectedRow() != -1) {
+            actualizar(idActualizar);
+        } else {
+            CMensajes.msg_error("Seleccione un registro", "Actualizar");
+        }
     }//GEN-LAST:event_JbtnActualizarActionPerformed
 
     private void JbtnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnEliminarActionPerformed
