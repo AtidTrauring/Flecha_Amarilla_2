@@ -335,30 +335,56 @@ public class CBusquedas {
         return cnslt.buscarValores(consulta, 3);
     }
 
-    public ArrayList<String[]> buscaAsientos(String destino, String origen, String mes, String dia, String anio) throws SQLException {
-        consulta = "SELECT asiento.id_asiento, asiento.asiento\n"
-                + "FROM autobus\n"
-                + "JOIN rutaAutobus ON autobus.Id_autobus = rutaAutobus.Id_autobus\n"
-                + "JOIN ruta ON rutaAutobus.Id_ruta = ruta.Id_ruta\n"
-                + "JOIN asiento ON autobus.Id_autobus = asiento.Id_autobus\n"
-                + "LEFT JOIN boleto ON asiento.Id_asiento = boleto.Id_asiento\n"
-                + "JOIN fecha ON rutaAutobus.Id_fecha = fecha.Id_fecha\n"
-                + "JOIN origen ON ruta.Id_origen = origen.Id_origen\n"
-                + "JOIN destino ON ruta.Id_destino = destino.Id_destino\n"
-                + "JOIN ciudad AS ciudad_origen ON origen.Id_terminal = ciudad_origen.Id_ciudad\n"
-                + "JOIN ciudad AS ciudad_destino ON destino.Id_terminal = ciudad_destino.Id_ciudad\n"
-                + "JOIN mes ON fecha.Id_mes = mes.Id_mes\n"
-                + "JOIN anio ON fecha.Id_anio = anio.Id_anio\n"
-                + "JOIN modelo ON autobus.Id_modelo = modelo.Id_modelo\n"
-                + "JOIN marca ON modelo.Id_marca = marca.Id_marca\n"
-                + "WHERE ciudad_origen.nombre = '" + origen + "'\n"
-                + "  AND ciudad_destino.nombre = '" + destino + "'\n"
-                + "  AND fecha.dia = " + dia + "\n"
-                + "  AND mes.mes = '" + mes + "'\n"
-                + "  AND anio.anio = " + anio + "\n"
-                + "  AND boleto.Id_boleto IS NULL;";
-        return cnslt.buscarValores(consulta, 2);
-    }
+//    public ArrayList<String[]> buscaAsientos(String destino, String origen, String mes, String dia, String anio) throws SQLException {
+//        consulta = "SELECT asiento.id_asiento, asiento.asiento\n"
+//                + "FROM autobus\n"
+//                + "JOIN rutaAutobus ON autobus.Id_autobus = rutaAutobus.Id_autobus\n"
+//                + "JOIN ruta ON rutaAutobus.Id_ruta = ruta.Id_ruta\n"
+//                + "JOIN asiento ON autobus.Id_autobus = asiento.Id_autobus\n"
+//                + "LEFT JOIN boleto ON asiento.Id_asiento = boleto.Id_asiento\n"
+//                + "JOIN fecha ON rutaAutobus.Id_fecha = fecha.Id_fecha\n"
+//                + "JOIN origen ON ruta.Id_origen = origen.Id_origen\n"
+//                + "JOIN destino ON ruta.Id_destino = destino.Id_destino\n"
+//                + "JOIN ciudad AS ciudad_origen ON origen.Id_terminal = ciudad_origen.Id_ciudad\n"
+//                + "JOIN ciudad AS ciudad_destino ON destino.Id_terminal = ciudad_destino.Id_ciudad\n"
+//                + "JOIN mes ON fecha.Id_mes = mes.Id_mes\n"
+//                + "JOIN anio ON fecha.Id_anio = anio.Id_anio\n"
+//                + "JOIN modelo ON autobus.Id_modelo = modelo.Id_modelo\n"
+//                + "JOIN marca ON modelo.Id_marca = marca.Id_marca\n"
+//                + "WHERE ciudad_origen.nombre = '" + origen + "'\n"
+//                + "  AND ciudad_destino.nombre = '" + destino + "'\n"
+//                + "  AND fecha.dia = " + dia + "\n"
+//                + "  AND mes.mes = '" + mes + "'\n"
+//                + "  AND anio.anio = " + anio + "\n"
+//                + "  AND boleto.Id_boleto IS NULL;";
+//        return cnslt.buscarValores(consulta, 2);
+//    }
+    
+   public ArrayList<String[]> buscaAsientosRuta(String destino, String origen, String mes, String dia, String anio) throws SQLException {
+    consulta = "SELECT asiento.id_asiento, asiento.asiento, ruta.Id_ruta, ruta.precio " +
+               "FROM autobus " +
+               "JOIN rutaAutobus ON autobus.Id_autobus = rutaAutobus.Id_autobus " +
+               "JOIN ruta ON rutaAutobus.Id_ruta = ruta.Id_ruta " +
+               "JOIN asiento ON autobus.Id_autobus = asiento.Id_autobus " +
+               "LEFT JOIN boleto ON asiento.Id_asiento = boleto.Id_asiento " +
+               "JOIN fecha ON rutaAutobus.Id_fecha = fecha.Id_fecha " +
+               "JOIN origen ON ruta.Id_origen = origen.Id_origen " +
+               "JOIN destino ON ruta.Id_destino = destino.Id_destino " +
+               "JOIN terminal AS terminal_origen ON origen.Id_terminal = terminal_origen.Id_terminal " +
+               "JOIN terminal AS terminal_destino ON destino.Id_terminal = terminal_destino.Id_terminal " +
+               "JOIN mes ON fecha.Id_mes = mes.Id_mes " +
+               "JOIN anio ON fecha.Id_anio = anio.Id_anio " +
+               "JOIN modelo ON autobus.Id_modelo = modelo.Id_modelo " +
+               "JOIN marca ON modelo.Id_marca = marca.Id_marca " +
+               "WHERE terminal_origen.nombre = '" + origen + "' " +
+               "AND terminal_destino.nombre = '" + destino + "' " +
+               "AND fecha.dia = " + dia + " " +
+               "AND mes.mes = '" + mes + "' " +
+               "AND anio.anio = " + anio + " " +
+               "AND boleto.Id_boleto IS NULL;";
+    return cnslt.buscarValores(consulta, 4);
+}
+
 
     public int obtenIdFinalRuta() throws SQLException {
         consulta = "SELECT MAX(Id_ruta) FROM flecha_amarilla.ruta;";

@@ -17,7 +17,7 @@ public final class JfBoletoConsulta extends javax.swing.JFrame {
     private DefaultComboBoxModel listas;
     private final CCargaCombos queryCarga = new CCargaCombos();
     private final CBusquedas queryBusca = new CBusquedas();
-    private ArrayList<String[]> datosBoletos = new ArrayList<>();
+    private ArrayList<String[]> asientosRuta = new ArrayList<>();
     private ArrayList<String> datosListas = new ArrayList<>();
     private final Calendar fechaCalendario = Calendar.getInstance();
 
@@ -40,14 +40,8 @@ public final class JfBoletoConsulta extends javax.swing.JFrame {
         try {
             switch (metodoCarga) {
                 case 1:
-                    datosListas = queryCarga.cargaComboCiudad();
-                    for (int i = 1; i < datosListas.size(); i++) {
-                        listas.addElement(datosListas.get(i));
-                    }
-                    datosListas.clear();
-                    break;
                 case 2:
-                    datosListas = queryCarga.cargaComboCiudad();
+                    datosListas = queryCarga.cargaComboTerminales();
                     for (int i = 1; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
@@ -252,18 +246,17 @@ public final class JfBoletoConsulta extends javax.swing.JFrame {
             CMensajes.msg_advertencia("Seleccione una opcion por lista", "Compra");
         } else {
             try {
-                datosBoletos = queryBusca.buscaAsientos(JcmbxDestinos.getSelectedItem().toString(),
+                asientosRuta = queryBusca.buscaAsientosRuta(JcmbxDestinos.getSelectedItem().toString(),
                         JcmbxOrigenes.getSelectedItem().toString(),
                         JcmbxMeses.getSelectedItem().toString(),
                         JcmbxDias.getSelectedItem().toString(),
                         String.valueOf(fechaCalendario.get(Calendar.YEAR))
                 );
-                if (datosBoletos.size() == 0) {
+                if (asientosRuta.size() == 0) {
                     CMensajes.msg_advertencia("No contamos con asientos disponibles", "Compra");
                     limpiarSeleccion();
                 } else {
-
-                    String compraBoletos = cantidadBoletos(datosBoletos.size());
+                    String compraBoletos = cantidadBoletos(asientosRuta.size());
                     if (compraBoletos != null) {
                         int numeroBoletos = 0;
                         switch (compraBoletos) {
@@ -286,7 +279,7 @@ public final class JfBoletoConsulta extends javax.swing.JFrame {
 //                        limpiarSeleccion();
                         JfRegistroPasajeros rp = new JfRegistroPasajeros();
                         rp.asignaPasajeros(numeroBoletos);
-                        rp.asignaAsientos(datosBoletos);
+                        rp.asignaAsientos(asientosRuta);
                         rp.cargaAsientos();
                         rp.setVisible(true);
                         rp.setLocationRelativeTo(null);
@@ -344,6 +337,10 @@ public final class JfBoletoConsulta extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(JfBoletoConsulta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>

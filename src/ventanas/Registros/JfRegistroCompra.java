@@ -27,7 +27,6 @@ public class JfRegistroCompra extends javax.swing.JFrame {
 
     public JfRegistroCompra() {
         initComponents();
-        JcmbxAnios.setVisible(false);
         JcmbxMeses.setVisible(false);
         JcmbxTipoTarjeta.setVisible(false);
 
@@ -35,6 +34,11 @@ public class JfRegistroCompra extends javax.swing.JFrame {
         JtxtNumCuenta.setEditable(false);
         JlblNumCuenta.setVisible(false);
         JspNumCuenta.setVisible(false);
+
+        JtxtAnio.setVisible(false);
+        JtxtAnio.setEditable(false);
+        JlblAnio.setVisible(false);
+        JspAnio.setVisible(false);
 
         JpwsCvv.setVisible(false);
         JpwsCvv.setEditable(false);
@@ -47,7 +51,7 @@ public class JfRegistroCompra extends javax.swing.JFrame {
         JspCorreo.setVisible(false);
     }
 
-    public ArrayList<String[]> capturaPasajero3s(ArrayList<String[]> pasajerosInfo) {
+    public ArrayList<String[]> capturaPasajeros(ArrayList<String[]> pasajerosInfo) {
         return datosPasajeros = pasajerosInfo;
     }
 
@@ -70,13 +74,6 @@ public class JfRegistroCompra extends javax.swing.JFrame {
         listas = (DefaultComboBoxModel) combo.getModel();
         try {
             switch (metodoCarga) {
-                case 1:
-                    ArrayList<String[]> Anios = queryCarga.cargaComboAnios();
-                    for (String[] Anio : Anios) {
-                        listas.addElement(Anio[1]);
-                    }
-                    Anios.clear();
-                    break;
                 case 2:
                     ArrayList<String[]> Meses = queryCarga.cargaComboMeses();
                     for (String[] Mes : Meses) {
@@ -102,6 +99,7 @@ public class JfRegistroCompra extends javax.swing.JFrame {
         nombres = null;
         apPaterno = null;
         apMaterno = null;
+        correo = null;
     }
 
     public void limpiarCampos() {
@@ -213,7 +211,6 @@ public class JfRegistroCompra extends javax.swing.JFrame {
 //    public boolean insertaMetodoDePago(){
 //        
 //    }
-    
     public void enviarDatosCliente() {
         boolean exito = false;
         boolean exitoC = false;
@@ -330,7 +327,6 @@ public class JfRegistroCompra extends javax.swing.JFrame {
         JpwsCvv = new javax.swing.JPasswordField();
         JspCvv = new javax.swing.JSeparator();
         JcmbxMeses = new javax.swing.JComboBox<>();
-        JcmbxAnios = new javax.swing.JComboBox<>();
         JcmbxTipoTarjeta = new javax.swing.JComboBox<>();
         JcmbxTelefonos = new javax.swing.JComboBox<>();
         JrbEfectivo = new javax.swing.JRadioButton();
@@ -343,6 +339,9 @@ public class JfRegistroCompra extends javax.swing.JFrame {
         JbtnFinalizar = new javax.swing.JButton();
         JlblPagoPronto = new javax.swing.JLabel();
         JtxtCantidadPago = new javax.swing.JTextField();
+        JlblAnio = new javax.swing.JLabel();
+        JtxtAnio = new javax.swing.JTextField();
+        JspAnio = new javax.swing.JSeparator();
         JlblFondoCompra = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -390,11 +389,8 @@ public class JfRegistroCompra extends javax.swing.JFrame {
         JcmbxMeses.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mes de Caducidad" }));
         JpnlLienzo.add(JcmbxMeses, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 90, 140, -1));
 
-        JcmbxAnios.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Año de Caducidad" }));
-        JpnlLienzo.add(JcmbxAnios, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 120, 140, -1));
-
         JcmbxTipoTarjeta.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tipo deTarjeta" }));
-        JpnlLienzo.add(JcmbxTipoTarjeta, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 150, 140, -1));
+        JpnlLienzo.add(JcmbxTipoTarjeta, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 120, 140, -1));
 
         JcmbxTelefonos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Numeros de Telefono", "1 Telefono", "2 Telefonos", "3 Telefonos", "4 Telefonos", "5 Telefonos" }));
         JpnlLienzo.add(JcmbxTelefonos, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 60, 170, -1));
@@ -445,6 +441,13 @@ public class JfRegistroCompra extends javax.swing.JFrame {
         JtxtCantidadPago.setEditable(false);
         JpnlLienzo.add(JtxtCantidadPago, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 220, 140, -1));
 
+        JlblAnio.setText("Correo");
+        JpnlLienzo.add(JlblAnio, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 150, -1, -1));
+
+        JtxtAnio.setBorder(null);
+        JpnlLienzo.add(JtxtAnio, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 170, 130, -1));
+        JpnlLienzo.add(JspAnio, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 190, 130, 10));
+
         JlblFondoCompra.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/FondoCompra.jpeg"))); // NOI18N
         JpnlLienzo.add(JlblFondoCompra, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 120, 200, 120));
 
@@ -470,8 +473,6 @@ public class JfRegistroCompra extends javax.swing.JFrame {
     }//GEN-LAST:event_JrbLineaItemStateChanged
 
     private void JrbTarjetaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JrbTarjetaItemStateChanged
-        JcmbxAnios.setVisible(JrbTarjeta.isSelected());
-        cargaComboBox(JcmbxAnios, 1);
         JcmbxMeses.setVisible(JrbTarjeta.isSelected());
         cargaComboBox(JcmbxMeses, 2);
         JcmbxTipoTarjeta.setVisible(JrbTarjeta.isSelected());
@@ -486,6 +487,11 @@ public class JfRegistroCompra extends javax.swing.JFrame {
         JpwsCvv.setEditable(JrbTarjeta.isSelected());
         JlblCvv.setVisible(JrbTarjeta.isSelected());
         JspCvv.setVisible(JrbTarjeta.isSelected());
+
+        JtxtAnio.setVisible(JrbTarjeta.isSelected());
+        JtxtAnio.setEditable(JrbTarjeta.isSelected());
+        JlblAnio.setVisible(JrbTarjeta.isSelected());
+        JspAnio.setVisible(JrbTarjeta.isSelected());
     }//GEN-LAST:event_JrbTarjetaItemStateChanged
 
     public static void main(String args[]) {
@@ -514,6 +520,10 @@ public class JfRegistroCompra extends javax.swing.JFrame {
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -527,10 +537,10 @@ public class JfRegistroCompra extends javax.swing.JFrame {
     private javax.swing.ButtonGroup BgMetodoDePago;
     private javax.swing.ButtonGroup BgTipoCompra;
     private javax.swing.JButton JbtnFinalizar;
-    private javax.swing.JComboBox<String> JcmbxAnios;
     private javax.swing.JComboBox<String> JcmbxMeses;
     private javax.swing.JComboBox<String> JcmbxTelefonos;
     private javax.swing.JComboBox<String> JcmbxTipoTarjeta;
+    private javax.swing.JLabel JlblAnio;
     private javax.swing.JLabel JlblApMaterno;
     private javax.swing.JLabel JlblApPaterno;
     private javax.swing.JLabel JlblCorreo;
@@ -545,12 +555,14 @@ public class JfRegistroCompra extends javax.swing.JFrame {
     private javax.swing.JRadioButton JrbLinea;
     private javax.swing.JRadioButton JrbTarjeta;
     private javax.swing.JRadioButton JrbVentanilla;
+    private javax.swing.JSeparator JspAnio;
     private javax.swing.JSeparator JspApMaterno;
     private javax.swing.JSeparator JspApPaterno;
     private javax.swing.JSeparator JspCorreo;
     private javax.swing.JSeparator JspCvv;
     private javax.swing.JSeparator JspNombres;
     private javax.swing.JSeparator JspNumCuenta;
+    private javax.swing.JTextField JtxtAnio;
     private javax.swing.JTextField JtxtApMaterno;
     private javax.swing.JTextField JtxtApPaterno;
     private javax.swing.JTextField JtxtCantidadPago;

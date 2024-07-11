@@ -173,24 +173,26 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
     }
 
     public String[] asientoBoleto() {
-        String asiento = "";
+        String[] datos = new String[4];
         String opcionA = JcmbxAsientos.getSelectedItem().toString();
         String opcionBoleto = "";
         if (JrbComercial.isSelected()) {
-            opcionBoleto = "C";
+            datos[1] = "C";
         } else {
-            opcionBoleto = "PP";
+            datos[1] = "PP";
         }
 
         for (int i = 0; i < asientosInfo.size(); i++) {
             String[] asientoEscogido = asientosInfo.get(i);
             if (asientoEscogido[1].equals(opcionA)) {
-                asiento = asientoEscogido[0];
+                datos[0] = asientoEscogido[0];
+                datos[2] = asientoEscogido[2];
+                datos[3] = asientoEscogido[3];
                 asientosInfo.remove(i);
                 break;
             }
         }
-        return new String[]{asiento, opcionBoleto};
+        return datos;
     }
 
     public String[] almcenaDatos() {
@@ -200,7 +202,7 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
             if (telefonos != null) {
                 if (sinTelefono == false) {
                     String[] datosObtenidos = asignaValores(); // Tiene 5 campos
-                    String[] prueba = asientoBoleto(); // Tiene 2 Campos
+                    String[] prueba = asientoBoleto(); // Tiene 4 Campos
                     datosUnidos = new String[datosObtenidos.length + prueba.length + telefonos.length];
                     System.arraycopy(datosObtenidos, 0, datosUnidos, 0, datosObtenidos.length);
                     System.arraycopy(prueba, 0, datosUnidos, datosObtenidos.length, prueba.length);
@@ -325,6 +327,16 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
                         limpiarCampos();
                         if (contador > numPasajeros) {
                             CMensajes.msg("Se guardo la informacion\n de los " + numPasajeros + " pasajeros", "Registro pasajeros");
+                            for (String[] pasajeros : pasajerosInfo) {
+                                System.out.println(Arrays.toString(pasajeros));
+                            }
+                            JfRegistroCompra rc = new JfRegistroCompra();
+                            rc.capturaPasajeros(pasajerosInfo);
+                            rc.setVisible(true);
+                            rc.setLocationRelativeTo(null);
+                            rc.setSize(580, 290);
+                            rc.setResizable(false);
+                            rc.setTitle("Finalizar compra");
                             this.dispose();
                         }
                     }
@@ -367,6 +379,8 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(JfRegistroPasajeros.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
