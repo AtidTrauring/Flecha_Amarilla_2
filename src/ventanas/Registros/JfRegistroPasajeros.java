@@ -2,6 +2,7 @@ package ventanas.Registros;
 
 import crud.CInserciones;
 import crud.CMensajes;
+import java.lang.reflect.Array;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,19 +38,16 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
         asientosInfo = asientos;
     }
 
-    public void cargaAsientos(JComboBox modelo) {
-        modeloCombo = (DefaultComboBoxModel) modelo.getModel();
-        ArrayList<String[]> asientos = asientosInfo;
-        for (String[] asiento : asientos) {
-            modeloCombo.addElement(asiento[1]);
+    public void cargaAsientos() {
+        remueveAsientos();
+        for (String[] asiento : asientosInfo) {
+            JcmbxAsientos.addItem(asiento[1]);
         }
     }
 
-    public void remueveAsientos(String asientoRemover) {
-        for (String[] asiento : asientosInfo) {
-            if (asiento[1].equals(asientoRemover)) {
-                asientosInfo.remove(asientoRemover);
-            }
+    public void remueveAsientos() {
+        while (JcmbxAsientos.getItemCount() > 1) {
+            JcmbxAsientos.removeItemAt(1);
         }
     }
 
@@ -92,6 +90,10 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
         JtxtApMaterno.setText(null);
         JcmbxTelefonos.setSelectedIndex(0);
         JcmbxTipoPasajeros.setSelectedIndex(0);
+        JcmbxAsientos.setSelectedIndex(0);
+        JrbComercial.setSelected(true);
+        JrbPP.setSelected(false);
+        cargaAsientos();
     }
 
     public String devuelveCadena(JTextField campo, String regex) {
@@ -170,22 +172,40 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
         return telefono;
     }
 
+    public String[] asientoBoleto() {
+        String asiento = "";
+        String opcionA = JcmbxAsientos.getSelectedItem().toString();
+        String opcionBoleto = "";
+        if (JrbComercial.isSelected()) {
+            opcionBoleto = "C";
+        } else {
+            opcionBoleto = "PP";
+        }
+
+        for (int i = 0; i < asientosInfo.size(); i++) {
+            String[] asientoEscogido = asientosInfo.get(i);
+            if (asientoEscogido[1].equals(opcionA)) {
+                asiento = asientoEscogido[0];
+                asientosInfo.remove(i);
+                break;
+            }
+        }
+        return new String[]{asiento, opcionBoleto};
+    }
+
     public String[] almcenaDatos() {
         String[] datosUnidos = null;
         if (validaCampos()) {
             telefonos = devuelveTelefonos();
             if (telefonos != null) {
                 if (sinTelefono == false) {
-                    String[] datosObtenidos = asignaValores();
-                    datosUnidos = new String[datosObtenidos.length + telefonos.length + 1];
+                    String[] datosObtenidos = asignaValores(); // Tiene 5 campos
+                    String[] prueba = asientoBoleto(); // Tiene 2 Campos
+                    datosUnidos = new String[datosObtenidos.length + prueba.length + telefonos.length];
                     System.arraycopy(datosObtenidos, 0, datosUnidos, 0, datosObtenidos.length);
-//                    System.arraycopy(JcmbxAsientos.getSelectedItem().toString(), 0, datosUnidos, datosObtenidos.length, 1);
-                    System.arraycopy("ID-Asiento", 0, datosUnidos, datosObtenidos.length, 1);
-                    System.arraycopy(telefonos, 0, datosUnidos, datosObtenidos.length, telefonos.length);
-                    for (int i = 0; i < datosUnidos.length; i++) {
-                        System.out.println(" [" + datosUnidos[i] + "] - ");
-
-                    }
+                    System.arraycopy(prueba, 0, datosUnidos, datosObtenidos.length, prueba.length);
+                    System.arraycopy(telefonos, 0, datosUnidos, datosObtenidos.length + prueba.length, telefonos.length);
+                    System.out.println(Arrays.toString(datosUnidos));
                     limpiaValores();
                 }
             }
@@ -197,6 +217,7 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        BGTiposBoletos = new javax.swing.ButtonGroup();
         JPnlLienzo = new javax.swing.JPanel();
         JlblNombres = new javax.swing.JLabel();
         JlblApellidoPaterno = new javax.swing.JLabel();
@@ -212,6 +233,8 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
         JcmbxTelefonos = new javax.swing.JComboBox<>();
         JcmbxAsientos = new javax.swing.JComboBox<>();
         JlblFondo = new javax.swing.JLabel();
+        JrbPP = new javax.swing.JRadioButton();
+        JrbComercial = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Pasajeros");
@@ -263,6 +286,17 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
         JlblFondo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/FondoUsuariosFondos.jpg"))); // NOI18N
         JPnlLienzo.add(JlblFondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 0, 220, 250));
 
+        JrbPP.setBackground(new java.awt.Color(255, 255, 255));
+        BGTiposBoletos.add(JrbPP);
+        JrbPP.setText("Primer Plus");
+        JPnlLienzo.add(JrbPP, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 90, -1, -1));
+
+        JrbComercial.setBackground(new java.awt.Color(255, 255, 255));
+        BGTiposBoletos.add(JrbComercial);
+        JrbComercial.setSelected(true);
+        JrbComercial.setText("Comercial");
+        JPnlLienzo.add(JrbComercial, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 50, -1, -1));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -280,22 +314,23 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
 
     private void JbtnEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnEnviarActionPerformed
         if (JcmbxTipoPasajeros.getSelectedIndex() != 0) {
-            if (contador <= numPasajeros) {
-                String[] pasajero = almcenaDatos();
-                if (pasajero == null) {
-//                    CMensajes.msg_advertencia("Omitio un dato\n Porfavor verifique", "Registro pasajero");
-                } else {
-                    pasajerosInfo.add(pasajero);
-                    CMensajes.msg("Registre al siguiente pasajero", "Registro pasajero");
-                    contador++;
-                    limpiarCampos();
-                    if (contador > numPasajeros) {
-                        CMensajes.msg("Se guardo la informacion\n de los " + numPasajeros + " pasajeros", "Registro pasajeros");
-                        for (String[] pasajeroInfo : pasajerosInfo) {
-                            System.out.println(Arrays.toString(pasajeroInfo));
+            if (JcmbxAsientos.getSelectedIndex() != 0) {
+                if (contador <= numPasajeros) {
+                    String[] pasajero = almcenaDatos();
+                    if (pasajero == null) {
+                    } else {
+                        pasajerosInfo.add(pasajero);
+                        CMensajes.msg("Registre al siguiente pasajero", "Registro pasajero");
+                        contador++;
+                        limpiarCampos();
+                        if (contador > numPasajeros) {
+                            CMensajes.msg("Se guardo la informacion\n de los " + numPasajeros + " pasajeros", "Registro pasajeros");
+                            this.dispose();
                         }
                     }
                 }
+            } else {
+                CMensajes.msg_advertencia("Seleccione un asiento", "Registro Usuario");
             }
         } else {
             CMensajes.msg_advertencia("Seleccione un tipo de pasajero", "Registro Usuario");
@@ -334,8 +369,6 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
         }
         //</editor-fold>
         //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -346,6 +379,7 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup BGTiposBoletos;
     private javax.swing.JPanel JPnlLienzo;
     private javax.swing.JButton JbtnEnviar;
     private javax.swing.JComboBox<String> JcmbxAsientos;
@@ -355,6 +389,8 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
     private javax.swing.JLabel JlblApellidoPaterno;
     private javax.swing.JLabel JlblFondo;
     private javax.swing.JLabel JlblNombres;
+    private javax.swing.JRadioButton JrbComercial;
+    private javax.swing.JRadioButton JrbPP;
     private javax.swing.JSeparator JsApellidoMaterno;
     private javax.swing.JSeparator JsApellidoPaterno;
     private javax.swing.JSeparator JsNombre;

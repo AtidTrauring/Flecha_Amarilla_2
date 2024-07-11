@@ -210,7 +210,7 @@ public final class JfBoletoConsulta extends javax.swing.JFrame {
 
         JcmbxDias.setFont(new java.awt.Font("Segoe UI", 0, 10)); // NOI18N
         JcmbxDias.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione un dia" }));
-        JpnlLienzo.add(JcmbxDias, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 210, 130, -1));
+        JpnlLienzo.add(JcmbxDias, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 250, 130, -1));
 
         JcmbxMeses.setFont(new java.awt.Font("Segoe UI", 0, 10)); // NOI18N
         JcmbxMeses.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione un mes" }));
@@ -219,7 +219,7 @@ public final class JfBoletoConsulta extends javax.swing.JFrame {
                 JcmbxMesesItemStateChanged(evt);
             }
         });
-        JpnlLienzo.add(JcmbxMeses, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 240, 130, -1));
+        JpnlLienzo.add(JcmbxMeses, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 220, 130, -1));
 
         JbtnConsultar.setText("Consultar");
         JbtnConsultar.setToolTipText("Verificar dispinibiliad de los boletos");
@@ -287,11 +287,13 @@ public final class JfBoletoConsulta extends javax.swing.JFrame {
                         JfRegistroPasajeros rp = new JfRegistroPasajeros();
                         rp.asignaPasajeros(numeroBoletos);
                         rp.asignaAsientos(datosBoletos);
+                        rp.cargaAsientos();
                         rp.setVisible(true);
                         rp.setLocationRelativeTo(null);
-                        rp.setSize(445, 290);
+                        rp.setSize(550, 290);
                         rp.setResizable(false);
                         rp.setTitle("Registro Pasajeros");
+                        this.dispose();
                     } else {
                         CMensajes.msg("Entendido", "Escoge boletos");
                         limpiarSeleccion();
