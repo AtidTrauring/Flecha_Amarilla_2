@@ -29,6 +29,31 @@ public class CActualizaciones {
         return cnslt.actualiza(consulta);
     }
     
+    public boolean actualizarCodigoPostal(int id, int codigoPostal) throws SQLException{
+        consulta = "UPDATE flecha_amarilla.codigo_postal SET `codigo_postal`= " + codigoPostal+ " WHERE `Id_CP`= " + id;
+        return cnslt.actualiza(consulta);
+    }
+    
+    public boolean actualizarColonia(int id, String colonia) throws SQLException{
+        consulta = "UPDATE flecha_amarilla.colonia SET `colonia`='" + colonia + "' WHERE `Id_colonia`=" + id;
+        return cnslt.actualiza(consulta);
+    }
+    
+    public boolean actualizaEstado(int id, String estado) throws SQLException{
+        consulta = "UPDATE flecha_amarilla.estado SET `nombre`='" + estado + "' WHERE `Id_estado`=" + id;
+        return cnslt.actualiza(consulta);
+    }
+    
+    public boolean actualizaCiudad(int id, String ciudad) throws SQLException{
+        consulta = "UPDATE flecha_amarilla.ciudad SET `nombre`='" + ciudad  +"' WHERE `Id_ciudad`=" + id;
+        return cnslt.actualiza(consulta);
+    }
+    
+    public boolean actualizarDireccion(int id, String nombreCalle, int numero) throws SQLException{
+        consulta = "UPDATE flecha_amarilla.direccion SET `nombre_calle`='" + nombreCalle + "',`numero`=" + numero + " WHERE `Id_direccion`=" + id;;
+        return cnslt.actualiza(consulta);
+    }
+    
     public boolean actualizarTerminal(String terminal, int id) throws SQLException {
     consulta = "UPDATE flecha_amarilla.terminal SET nombre='" + terminal + "' WHERE terminal.Id_terminal = " + id;
     return cnslt.actualiza(consulta);
