@@ -138,6 +138,54 @@ public final class JfTerminalesConsulta extends javax.swing.JFrame {
         }
         return -1;
     }
+    
+    public void actualizar(int id){
+        String nombre = (String) JtableTerminales.getValueAt(JtableTerminales.getSelectedRow(), 3);
+        String estado = (String) JtableTerminales.getValueAt(JtableTerminales.getSelectedRow(), 1);
+        String ciudad = (String) JtableTerminales.getValueAt(JtableTerminales.getSelectedRow(), 2);
+        String vialidad = (String) JtableTerminales.getValueAt(JtableTerminales.getSelectedRow(), 0);
+        int numero = Integer.parseInt((String) JtableTerminales.getValueAt(JtableTerminales.getSelectedRow(), 4));
+        String colonia = (String) JtableTerminales.getValueAt(JtableTerminales.getSelectedRow(), 5);
+        int codigoPostal = Integer.parseInt((String) JtableTerminales.getValueAt(JtableTerminales.getSelectedRow(), 6));
+        String telefono = (String) JtableTerminales.getValueAt(JtableTerminales.getSelectedRow(), 7);
+        try {
+            String idTerminal = queryBusca.buscarTerminales(id);
+            if (idTerminal != null || idTerminal.isEmpty()) {
+                if (queryActualiza.actualizaEstado(id, estado)) {
+                    if (queryActualiza.actualizaCiudad(id, ciudad)) {
+                        if (queryActualiza.actualizarColonia(id, colonia)) {
+                            if (queryActualiza.actualizarCodigoPostal(id, codigoPostal)) {
+                                if (queryActualiza.actualizarDireccion(id, nombre, numero)) {
+                                    if (queryActualiza.actualizarTerminal(idTerminal, id)) {
+                                        CMensajes.msg("Se actualizo la terminal.", "Actualizar");
+                                    } else {
+                                        CMensajes.msg_error("No se pudo actualizar la terminal", nombre);
+                                    }
+                                } else {
+                                    CMensajes.msg_error("No se pudo actualizar la direccion.", "Actualiza");
+                                }
+                            } else {
+                                CMensajes.msg_error("No se pudo actualizar el codigo postal.", "Actualiza");
+                            }
+                        } else {
+                            CMensajes.msg_error("No se pudo actualizar la colonia", "Actualizar");
+                        }
+                    } else {
+                        CMensajes.msg_error("No se pudo actualizar la ciudad", "Actualizar");
+                    }
+                } else {
+                    CMensajes.msg_error("No se pudo actualizar el estado.", "Actualizar");
+                }
+            } else {
+                CMensajes.msg_error("Ocurrio un error al actualizar.", "Actualizar");
+            }
+        } catch (Exception e) {
+        } finally {
+            limpiarBuscadores();
+            limpiarFiltro();
+            cargarTabla();
+        }
+    }
 
     public void eliminar(int id) {
         try {
@@ -284,6 +332,11 @@ public final class JfTerminalesConsulta extends javax.swing.JFrame {
         JbtnActualizar.setBackground(new java.awt.Color(160, 16, 70));
         JbtnActualizar.setForeground(new java.awt.Color(255, 255, 255));
         JbtnActualizar.setText("Actualizar");
+        JbtnActualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JbtnActualizarActionPerformed(evt);
+            }
+        });
         JpnlLienzo.add(JbtnActualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(205, 28, 84, -1));
 
         JbtnEliminar.setBackground(new java.awt.Color(160, 16, 70));
@@ -351,6 +404,14 @@ public final class JfTerminalesConsulta extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_JtableTerminalesMouseClicked
+
+    private void JbtnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnActualizarActionPerformed
+        if (JtableTerminales.getSelectedRow() != -1) {
+            actualizar(idActualizar);
+        } else {
+            CMensajes.msg_error("Seleccione un registro para actualizar.", "Actualizar");
+        }
+    }//GEN-LAST:event_JbtnActualizarActionPerformed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
