@@ -22,6 +22,8 @@ public class JfRegistroCompra extends javax.swing.JFrame {
     private ArrayList<String> datosListas = new ArrayList<>();
     private String[] telefonos;
     private String nombres, apPaterno, apMaterno, correo;
+    private String numeroCuenta, cvv, anioCaducidad;
+    private int mes, tipoTarjeta;
     private boolean sinTelefono = false;
     private String regexNombres = "^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ]+(?: [a-zA-ZáéíóúÁÉÍÓÚüÜñÑ]+)?$", regexCorreo = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
 
@@ -55,11 +57,13 @@ public class JfRegistroCompra extends javax.swing.JFrame {
         return datosPasajeros = pasajerosInfo;
     }
 
-    public String[] asignaValores() {
-        nombres = JtxtNombres.getText();
-        apPaterno = JtxtApPaterno.getText();
-        apMaterno = JtxtApMaterno.getText();
-        return new String[]{nombres, apPaterno, apMaterno};
+    public Object[] asignaValoresTarjeta() {
+        numeroCuenta = JtxtNumCuenta.getText();
+        cvv = new String(JpwsCvv.getPassword());
+        anioCaducidad = JtxtAnio.getText();
+        mes = JcmbxMeses.getSelectedIndex();
+        tipoTarjeta = JcmbxTipoTarjeta.getSelectedIndex();
+        return new Object[]{ };
     }
 
     public String[] asignaValoresConCorreo() {
@@ -95,22 +99,20 @@ public class JfRegistroCompra extends javax.swing.JFrame {
         }
     }
 
-    public void limpiaValores() {
-        nombres = null;
-        apPaterno = null;
-        apMaterno = null;
-        correo = null;
-    }
-
-    public void limpiarCampos() {
-        JtxtNombres.setText(null);
-        JtxtApPaterno.setText(null);
-        JtxtApMaterno.setText(null);
-        JtxtCorreo.setText(null);
-        JcmbxTelefonos.setSelectedIndex(0);
-
-    }
-
+//    public void limpiaValores() {
+//        nombres = null;
+//        apPaterno = null;
+//        apMaterno = null;
+//        correo = null;
+//    }
+//    public void limpiarCampos() {
+//        JtxtNombres.setText(null);
+//        JtxtApPaterno.setText(null);
+//        JtxtApMaterno.setText(null);
+//        JtxtCorreo.setText(null);
+//        JcmbxTelefonos.setSelectedIndex(0);
+//
+//    }
     public String devuelveCadena(JTextField campo, String regex) {
         String texto = campo.getText().trim();
         if (texto.isEmpty()) {
@@ -193,24 +195,93 @@ public class JfRegistroCompra extends javax.swing.JFrame {
         return telefono;
     }
 
-//    public boolean insertaPersona(){
-//        
-//    }
-//    
-//    public boolean insertaTelefono(){
-//        
-//    }
-//    
 //    public boolean insertaCliente(){
 //        
 //    }
-//    
-//    public boolean insertaPasajero(){
-//        
-//    }
-//    public boolean insertaMetodoDePago(){
-//        
-//    }
+    public void insertaPasajero(String[] pasajero) {
+        /*
+        [0] - > Nombre
+        [1] - > Apellido Paterno
+        [2] - > Apellido Materno
+        [3] - > Tipo de Pasajero
+        [4] - > Descuento
+        [5] - > ID Asiento
+        [6] - > Tipo de Boleto (Primera Plus[PP], Comercial [C])
+        [7] - > ID Ruta
+        [8] - > Telefonos....
+        [...] - > Teleefono(n)
+         */
+        try {
+            String idPersonaS = queryBusca.buscaPersona(pasajero[0], pasajero[1], pasajero[2]);
+            int idPersona = 0;
+            if (idPersonaS == null) {
+                idPersona = queryBusca.obtenIdFinalPersona() + 1;
+                queryInserta.insertaPersona(idPersona, nombres, apPaterno, apMaterno);
+            } else {
+                idPersona = Integer.parseInt(idPersonaS);
+                for (int i = 8; i < pasajero.length; i++) {
+                    String idTelefonoS = queryBusca.buscaTelefono(pasajero[i], idPersona);
+                    int idTelefono = 0;
+                    if (idTelefonoS == null) {
+                        idTelefono = queryBusca.obtenIdFinalTelefono() + 1;
+                        queryInserta.insertaTelefonos(idTelefono, pasajero[i], idPersona);
+                    }
+                }
+                String idPasajeroS = queryBusca.buscaPasajero(idPersona);
+                int idPasajero = 0;
+                if (idPasajeroS == null) {
+                    idPasajero = queryBusca.obtenIdFinalPasajero() + 1;
+                    queryInserta.insertaPasajeros(idPasajero, pasajero[3], Integer.parseInt(pasajero[4]), idPersona);
+                } else {
+                    idPasajero = Integer.parseInt(idPasajeroS);
+                    // Inserta boleto
+                }
+            }
+        } catch (Exception e) {
+        }
+    }
+
+    public void insertaCliente(String[] cliente, String[] telefonos) {
+        /*
+        [0] - > Nombre
+        [1] - > Apellido Paterno
+        [2] - > Apellido Materno
+        [3] - > Correo
+        [4] - > Telefonos....
+        [...] - > Teleefono(n)
+         */
+        try {
+            String idPersonaS = queryBusca.buscaPersona(cliente[0], cliente[1], cliente[2]);
+            int idPersona = 0;
+            if (idPersonaS == null) {
+                idPersona = queryBusca.obtenIdFinalPersona() + 1;
+                queryInserta.insertaPersona(idPersona, nombres, apPaterno, apMaterno);
+            } else {
+                idPersona = Integer.parseInt(idPersonaS);
+                for (int i = 0; i < telefonos.length; i++) {
+                    String idTelefonoS = queryBusca.buscaTelefono(telefonos[i], idPersona);
+                    int idTelefono = 0;
+                    if (idTelefonoS == null) {
+                        idTelefono = queryBusca.obtenIdFinalTelefono() + 1;
+                        queryInserta.insertaTelefonos(idTelefono, telefonos[i], idPersona);
+                    }
+                }
+                String idClienteS = queryBusca.buscaCliente(idPersona);
+                int idCliente = 0;
+                if (idClienteS == null) {
+                    idCliente = queryBusca.obtenIdFinalCliente() + 1;
+                    queryInserta.insertaClientes(idCliente, cliente[3], idPersona);
+                } else {
+                    idCliente = Integer.parseInt(idClienteS);
+                }
+            }
+        } catch (Exception e) {
+        }
+    }
+
+//    public void insertaBoleto() //    public boolean insertaMetodoDePago(){
+    //        
+    //    }
     public void enviarDatosCliente() {
         boolean exito = false;
         boolean exitoC = false;
@@ -291,7 +362,7 @@ public class JfRegistroCompra extends javax.swing.JFrame {
                         } catch (SQLException ex) {
 
                         } finally {
-                            limpiaValores();
+//                            limpiaValores();
                         }
                         this.dispose();
                     }
@@ -446,7 +517,7 @@ public class JfRegistroCompra extends javax.swing.JFrame {
         JtxtCantidadPago.setEditable(false);
         JpnlLienzo.add(JtxtCantidadPago, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 220, 140, -1));
 
-        JlblAnio.setText("Correo");
+        JlblAnio.setText("Año de Caducidad");
         JpnlLienzo.add(JlblAnio, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 150, -1, -1));
 
         JtxtAnio.setBorder(null);

@@ -34,6 +34,10 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
         return numPasajeros = numeroBoletos;
     }
 
+    public void desactivaAsientos() {
+        JcmbxAsientos.setVisible(false);
+    }
+
     public void asignaAsientos(ArrayList<String[]> asientos) throws SQLException {
         asientosInfo = asientos;
     }
@@ -321,15 +325,13 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
                     String[] pasajero = almcenaDatos();
                     if (pasajero == null) {
                     } else {
+                        if (contador != numPasajeros) {
+                            CMensajes.msg("Registre al siguiente pasajero", "Registro pasajero");
+                        }
                         pasajerosInfo.add(pasajero);
-                        CMensajes.msg("Registre al siguiente pasajero", "Registro pasajero");
                         contador++;
                         limpiarCampos();
                         if (contador > numPasajeros) {
-                            CMensajes.msg("Se guardo la informacion\n de los " + numPasajeros + " pasajeros", "Registro pasajeros");
-                            for (String[] pasajeros : pasajerosInfo) {
-                                System.out.println(Arrays.toString(pasajeros));
-                            }
                             JfRegistroCompra rc = new JfRegistroCompra();
                             rc.capturaPasajeros(pasajerosInfo);
                             rc.setVisible(true);

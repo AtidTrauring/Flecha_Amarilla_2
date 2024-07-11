@@ -435,6 +435,46 @@ public class CBusquedas {
         return Integer.parseInt(cnslt.buscarValor(consulta));
     }
 
+    public int obtenIdFinalFecha() throws SQLException {
+        consulta = "SELECT MAX(fecha.Id_fecha) FROM flecha_amarilla.fecha;";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+
+    public int obtenIdFinalAnio() throws SQLException {
+        consulta = "SELECT MAX(anio.Id_anio) FROM flecha_amarilla.anio;";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+
+    public int obtenIdFinalTarjeta() throws SQLException {
+        consulta = "SELECT MAX(tarjeta.Id_tarjeta) FROM flecha_amarilla.tarjeta;";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+
+    public int obtenIdFinalMetodoPago() throws SQLException {
+        consulta = "SELECT MAX(metodo_pago.Id_metodo) FROM flecha_amarilla.metodo_pago;";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+
+    public int obtenIdFinalEfectivo() throws SQLException {
+        consulta = "SELECT MAX(efectivo.Id_efectivo) FROM flecha_amarilla.efectivo;";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+
+    public int obtenIdFinalBoleto() throws SQLException {
+        consulta = "SELECT MAX(boleto.Id_boleto) FROM flecha_amarilla.boleto;";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+
+    public int obtenIdFinalCompra() throws SQLException {
+        consulta = "SELECT MAX(boletocliente.Id_BolClie) FROM flecha_amarilla.boletocliente";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+
+    public int obtenIdFinalReembolso() throws SQLException {
+        consulta = "SELECT MAX(reembolso.Id_reembolso) FROM flecha_amarilla.reembolso;";
+        return Integer.parseInt(cnslt.buscarValor(consulta));
+    }
+
     public ArrayList<String[]> consulta8() throws SQLException {
         consulta = "SELECT CONCAT(p.nombre, ' ', p.ApPat, ' ', p.ApMat) AS Nombre_Pasajero,"
                 + " CONCAT(pCon.nombre, ' ', pCon.ApPat, ' ', pCon.ApMat) AS Nombre_Conductor,"
