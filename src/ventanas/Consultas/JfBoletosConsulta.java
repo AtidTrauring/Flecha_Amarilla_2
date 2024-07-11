@@ -302,7 +302,78 @@ public final class JfBoletosConsulta extends javax.swing.JFrame {
         }
         return -1;
     }
+    
+    public void actualizar(int idBoleto) {
+    String origen = (String) JtableBoletos.getValueAt(JtableBoletos.getSelectedRow(), 0);
+    String destino = (String) JtableBoletos.getValueAt(JtableBoletos.getSelectedRow(), 1);
+    String fechaDia = (String) JtableBoletos.getValueAt(JtableBoletos.getSelectedRow(), 2);
+    String fechaMes = (String) JtableBoletos.getValueAt(JtableBoletos.getSelectedRow(), 3);
+    String fechaAnio = (String) JtableBoletos.getValueAt(JtableBoletos.getSelectedRow(), 4);
+    String precio = (String) JtableBoletos.getValueAt(JtableBoletos.getSelectedRow(), 5);
+    String tipoBoleto = (String) JtableBoletos.getValueAt(JtableBoletos.getSelectedRow(), 6);
 
+    try {
+        String idBoletoActual = queryBusca.buscarBoleto(idBoleto);
+        
+        String idTerminalOrigen = queryBusca.buscarIdTerminalPorBoleto(idBoletoActual, "origen");
+        String idTerminalDestino = queryBusca.buscarIdTerminalPorBoleto(idBoletoActual, "destino");
+        String idFecha = queryBusca.buscarIdFechaPorBoleto(idBoletoActual);
+        String idMes = queryBusca.buscarIdMesPorFecha(idFecha);
+        String idAnio = queryBusca.buscarIdAnioPorFecha(idFecha);
+        
+        if (idBoletoActual != null && !idBoletoActual.isEmpty()) {
+            if (queryActualiza.actualizarPrecioBoleto(idBoletoActual, precio)) {
+                CMensajes.msg("Se actualizó el precio del boleto.", "Actualizar");
+                
+                if (queryActualiza.actualizarTipoBoleto(idBoletoActual, tipoBoleto)) {
+                    CMensajes.msg("Se actualizó el tipo de boleto.", "Actualizar");
+                    
+                    if (queryActualiza.actualizarDiaFecha(idFecha, fechaDia)) {
+                        CMensajes.msg("Se actualizó el día de la fecha del boleto.", "Actualizar");
+                        
+                        if (queryActualiza.actualizarMesFecha(idMes, fechaMes)) {
+                            CMensajes.msg("Se actualizó el mes de la fecha del boleto.", "Actualizar");
+                            
+                            if (queryActualiza.actualizarAnioFecha(idAnio, fechaAnio)) {
+                                CMensajes.msg("Se actualizó el año de la fecha del boleto.", "Actualizar");
+                                
+                                if (queryActualiza.actualizarTerminal(idTerminalOrigen, origen, "origen")) {
+                                    CMensajes.msg("Se actualizó la terminal de origen.", "Actualizar");
+                                    
+                                    if (queryActualiza.actualizarTerminal(idTerminalDestino, destino, "destino")) {
+                                        CMensajes.msg("Se actualizó la terminal de destino.", "Actualizar");
+                                    } else {
+                                        CMensajes.msg_error("Ocurrió un error al actualizar la terminal de destino.", "Actualizar");
+                                    }
+                                } else {
+                                    CMensajes.msg_error("Ocurrió un error al actualizar la terminal de origen.", "Actualizar");
+                                }
+                            } else {
+                                CMensajes.msg_error("Ocurrió un error al actualizar el año de la fecha del boleto.", "Actualizar");
+                            }
+                        } else {
+                            CMensajes.msg_error("Ocurrió un error al actualizar el mes de la fecha del boleto.", "Actualizar");
+                        }
+                    } else {
+                        CMensajes.msg_error("Ocurrió un error al actualizar el día de la fecha del boleto.", "Actualizar");
+                    }
+                } else {
+                    CMensajes.msg_error("Ocurrió un error al actualizar el tipo de boleto.", "Actualizar");
+                }
+            } else {
+                CMensajes.msg_error("Ocurrió un error al actualizar el precio del boleto.", "Actualizar");
+            }
+        } else {
+            CMensajes.msg_error("Boleto no encontrado.", "Actualizar");
+        }
+    } catch (SQLException e) {
+        CMensajes.msg_error("Error: " + e.getMessage(), "Actualizar");
+    } finally {
+        limpiarBuscadores();
+        limpiarFiltro();
+        cargarTabla();
+    }
+}
 
     public void eliminar(int id) {
         try {
@@ -453,6 +524,11 @@ public final class JfBoletosConsulta extends javax.swing.JFrame {
         JbtnActualizar.setBackground(new java.awt.Color(160, 16, 70));
         JbtnActualizar.setForeground(new java.awt.Color(255, 255, 255));
         JbtnActualizar.setText("Actualizar");
+        JbtnActualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JbtnActualizarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout JpnlLienzoLayout = new javax.swing.GroupLayout(JpnlLienzo);
         JpnlLienzo.setLayout(JpnlLienzoLayout);
@@ -613,6 +689,15 @@ public final class JfBoletosConsulta extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_JtableBoletosMouseClicked
+
+    private void JbtnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnActualizarActionPerformed
+        // TODO add your handling code here:
+        if (JtableBoletos.getSelectedRow() != -1) {
+            actualizar(idActualizar);
+        } else {
+            CMensajes.msg_error("Seleccione un registro para actualizar.", "Actualizar");
+        }
+    }//GEN-LAST:event_JbtnActualizarActionPerformed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */

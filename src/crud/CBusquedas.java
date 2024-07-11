@@ -149,9 +149,31 @@ public class CBusquedas {
     public String buscarIdAutobus(int id) throws SQLException {
         return cnslt.buscarValor("SELECT Id_autobus FROM autobus WHERE Id_autobus = " + id + ";");
     }
+
     public String buscarIdFechaAuto(String idAutobus) throws SQLException {
-    return cnslt.buscarValor("SELECT Id_fecha FROM autobus WHERE Id_autobus = " + idAutobus + ";");
-}
+        return cnslt.buscarValor("SELECT Id_fecha FROM autobus WHERE Id_autobus = " + idAutobus + ";");
+    }
+
+    public String buscarBoleto(int idBoleto) throws SQLException {
+        return cnslt.buscarValor("SELECT Id_boleto FROM boleto WHERE Id_boleto = " + idBoleto);
+    }
+
+    public String buscarIdTerminalPorBoleto(String idBoleto, String tipo) throws SQLException {
+        String campo = tipo.equals("origen") ? "Id_terminal_origen" : "Id_terminal_destino";
+        return cnslt.buscarValor("SELECT " + campo + " FROM boleto WHERE Id_boleto = " + idBoleto);
+    }
+
+    public String buscarIdFechaPorBoleto(String idBoleto) throws SQLException {
+        return cnslt.buscarValor("SELECT Id_fecha FROM boleto WHERE Id_boleto = " + idBoleto);
+    }
+
+    public String buscarIdMesPorFecha(String idFecha) throws SQLException {
+        return cnslt.buscarValor("SELECT Id_mes FROM fecha WHERE Id_fecha = " + idFecha);
+    }
+
+    public String buscarIdAnioPorFecha(String idFecha) throws SQLException {
+        return cnslt.buscarValor("SELECT Id_anio FROM fecha WHERE Id_fecha = " + idFecha);
+    }
 
     public String buscarIdModeloAuto(String idAutobus) throws SQLException {
         String idConductor = cnslt.buscarValor("SELECT\n"

@@ -395,6 +395,9 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Actualizar"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JbtnActualizarActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
