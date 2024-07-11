@@ -433,6 +433,11 @@ public class JfRegistroCompra extends javax.swing.JFrame {
         JbtnFinalizar.setBackground(new java.awt.Color(160, 16, 70));
         JbtnFinalizar.setForeground(new java.awt.Color(255, 255, 255));
         JbtnFinalizar.setText("Finalizar");
+        JbtnFinalizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JbtnFinalizarActionPerformed(evt);
+            }
+        });
         JpnlLienzo.add(JbtnFinalizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 220, -1, -1));
 
         JlblPagoPronto.setText("Pago pronto");
@@ -494,6 +499,11 @@ public class JfRegistroCompra extends javax.swing.JFrame {
         JspAnio.setVisible(JrbTarjeta.isSelected());
     }//GEN-LAST:event_JrbTarjetaItemStateChanged
 
+    private void JbtnFinalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnFinalizarActionPerformed
+        CMensajes.msg("La compra se realizo con exito", "Compra");
+        this.dispose();
+    }//GEN-LAST:event_JbtnFinalizarActionPerformed
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -518,12 +528,7 @@ public class JfRegistroCompra extends javax.swing.JFrame {
         }
         //</editor-fold>
         //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
+
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
