@@ -61,6 +61,30 @@ public class CInserciones {
         return cnslt.inserta(consulta);
     }
 
+    public boolean insertaBoleto(int idBoleto, String tipoBoleto, float precioDescuento, int idMetodo, int idRuta, int idFecha, int idPasajero, int idAsiento) throws SQLException {
+        consulta = "INSERT INTO `boleto`(`Id_boleto`, `tipo_boleto`, `precioDescuento`, `Id_metodo`, `Id_ruta`, `Id_fecha`, `Id_pasajero`, `Id_asiento`) VALUES"
+                + " ('" + idBoleto
+                + "','" + tipoBoleto
+                + "','" + precioDescuento
+                + "','" + idMetodo
+                + "','" + idRuta
+                + "','" + idFecha
+                + "','" + idPasajero
+                + "','" + idAsiento
+                + "')";
+        return cnslt.inserta(consulta);
+    }
+
+    public boolean insertaCompra(int idCompra, float total, int idBoleto, int idCliente) throws SQLException {
+        consulta = "INSERT INTO `boletocliente`(`Id_BolClie`, `total`, `Id_boleto`, `Id_cliente`) VALUES ('" + idCompra + "','" + total + "','" + idBoleto + "','" + idCliente + "')";
+        return cnslt.inserta(consulta);
+    }
+
+    public boolean insertaReembolso(int idReembolso, float cantidad, int idBoleto, int idFecha) throws SQLException {
+        consulta = "INSERT INTO `reembolso`(`Id_reembolso`, `cantidad`, `Id_boleto`, `Id_fecha`) VALUES ('"+idReembolso+"','"+cantidad+"','"+idBoleto+"','"+idFecha+"')";
+        return cnslt.inserta(consulta);
+    }
+
     public boolean insertaConductores(int idConductor, int idPersona) throws SQLException {
         consulta = "INSERT INTO flecha_amarilla.conductor (`Id_conductor`, `Id_persona`) VALUES ('" + idConductor + "','" + idPersona + "')";
         return cnslt.inserta(consulta);
