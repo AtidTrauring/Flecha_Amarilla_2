@@ -176,6 +176,43 @@ public final class JfRutasConsulta extends javax.swing.JFrame {
         }
         return -1;
     }
+    
+    public void actualizar(int id){
+        String nombre = (String) JtableRutas.getValueAt(JtableRutas.getSelectedRow(), 0);
+        String origen = (String) JtableRutas.getValueAt(JtableRutas.getSelectedRow(), 1);
+        String destino = (String) JtableRutas.getValueAt(JtableRutas.getSelectedRow(), 2);
+        String distancia = (String) JtableRutas.getValueAt(JtableRutas.getSelectedRow(), 3);
+        String salida = (String) JtableRutas.getValueAt(JtableRutas.getSelectedRow(), 4);
+        String llegada = (String) JtableRutas.getValueAt(JtableRutas.getSelectedRow(), 5);
+        String duracion = (String) JtableRutas.getValueAt(JtableRutas.getSelectedRow(), 6);
+        String precio = (String) JtableRutas.getValueAt(JtableRutas.getSelectedRow(), 7);
+        float precioFlotante = Float.parseFloat(precio);
+        try {
+            String idRuta = queryBusca.buscarRutas(id);
+            if (idRuta != null || idRuta.isEmpty()) {
+                if (queryActualiza.actualizarTerminal(origen, id)) {
+                    if (queryActualiza.actualizarTerminal(destino, id)) {
+                        if (queryActualiza.actualizarRuta2(id, nombre, duracion, salida, llegada, precioFlotante, distancia)) {
+                            CMensajes.msg("Se actualizo la informacion de la ruta.", "Actualizar");
+                        } else {
+                            CMensajes.msg_error("Error al actualizar la ruta.", "Actualizar");
+                        }
+                    } else {
+                        CMensajes.msg_error("Error al actualizar la terminal de destino.", "Actualizar");
+                    }
+                } else {
+                    CMensajes.msg_error("Error al actualizar la terminal de origen.", "Actualizar");
+                }
+            } else {
+                CMensajes.msg_error("Ocurrio un error al actualizar.", "Actualizar");
+            }
+        } catch (Exception e) {
+        } finally {
+            limpiarBuscadores();
+            limpiarFiltro();
+            cargarTabla();
+        }
+    }
 
   public void eliminar(int id) {
     try {
@@ -249,6 +286,11 @@ public final class JfRutasConsulta extends javax.swing.JFrame {
         JbtnActualizar.setBackground(new java.awt.Color(160, 16, 70));
         JbtnActualizar.setForeground(new java.awt.Color(255, 255, 255));
         JbtnActualizar.setText("Actualizar");
+        JbtnActualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JbtnActualizarActionPerformed(evt);
+            }
+        });
         JpnlLienzo.add(JbtnActualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 200, -1, -1));
 
         JlblOrigen.setText("Origen");
@@ -385,6 +427,14 @@ public final class JfRutasConsulta extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_JtableRutasMouseClicked
+
+    private void JbtnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnActualizarActionPerformed
+        if (JtableRutas.getSelectedRow() != -1) {
+            actualizar(idActualizar);
+        } else {
+            CMensajes.msg_error("Seleccione un registro para actualizar.", "Actualizar");
+        }
+    }//GEN-LAST:event_JbtnActualizarActionPerformed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
