@@ -214,6 +214,55 @@ public final class JfAutobusConsulta extends javax.swing.JFrame {
         return -1;
     }
 
+    public void actualizar(int id) {
+        String marca = (String) JtableAutobuses.getValueAt(JtableAutobuses.getSelectedRow(), 0);
+        String modelos = (String) JtableAutobuses.getValueAt(JtableAutobuses.getSelectedRow(), 1);
+        String capacidad = (String) JtableAutobuses.getValueAt(JtableAutobuses.getSelectedRow(), 2);
+        String dia = (String) JtableAutobuses.getValueAt(JtableAutobuses.getSelectedRow(), 3);
+        String mes = (String) JtableAutobuses.getValueAt(JtableAutobuses.getSelectedRow(), 4);
+        String anio = (String) JtableAutobuses.getValueAt(JtableAutobuses.getSelectedRow(), 5);
+        int cantidadFlotante = Integer.parseInt(capacidad);
+        int anioFlotante = Integer.parseInt(anio);
+        int diaFlotante = Integer.parseInt(dia);
+        try {
+            String idAutobus = queryBusca.buscarAutobus(id);
+            if (idAutobus != null || idAutobus.isEmpty()) {
+                if (queryActualiza.actualizarMarca(marca, id)) {
+                    if (queryActualiza.actualizarModelo(modelos, id)) {
+                        if (queryActualiza.actualizarCapacidad(cantidadFlotante, id)) {
+                            if (queryActualiza.actualizarAnio(anioFlotante, id)) {
+                                if (queryActualiza.actualizarMes(mes, id)) {
+                                    if (queryActualiza.actualizarFecha(diaFlotante, id)) {
+                                        CMensajes.msg("Se actualizo la informacion del autobus.", "Actualizar");
+                                    } else {
+                                        CMensajes.msg_error("Error al actualizar la ruta.", "Actualizar");
+                                    }
+                                } else {
+                                    CMensajes.msg_error("Error al actualizar la terminal de destino.", "Actualizar");
+                                }
+                            } else {
+                                CMensajes.msg_error("Error al actualizar la terminal de origen.", "Actualizar");
+                            }
+                        } else {
+                            CMensajes.msg_error("Error al actualizar la ruta.", "Actualizar");
+                        }
+                    } else {
+                        CMensajes.msg_error("Error al actualizar la terminal de destino.", "Actualizar");
+                    }
+                } else {
+                    CMensajes.msg_error("Error al actualizar la terminal de origen.", "Actualizar");
+                }
+            } else {
+                CMensajes.msg_error("Ocurrio un error al actualizar.", "Actualizar");
+            }
+        } catch (Exception e) {
+        } finally {
+            limpiarBuscadores();
+            limpiarFiltro();
+            cargarTabla();
+        }
+    }
+    
     public void eliminar(int id) {
         try {
             // Buscar la terminal por ID
@@ -376,6 +425,11 @@ public final class JfAutobusConsulta extends javax.swing.JFrame {
         JbtnActualizar.setBackground(new java.awt.Color(160, 16, 70));
         JbtnActualizar.setForeground(new java.awt.Color(255, 255, 255));
         JbtnActualizar.setText("Actualizar");
+        JbtnActualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JbtnActualizarActionPerformed(evt);
+            }
+        });
         JpnlLienzo.add(JbtnActualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 250, 90, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -444,6 +498,15 @@ public final class JfAutobusConsulta extends javax.swing.JFrame {
 
         }
     }//GEN-LAST:event_JbtnEliminarActionPerformed
+
+    private void JbtnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnActualizarActionPerformed
+        // TODO add your handling code here:
+         if (JtableAutobuses.getSelectedRow() != -1) {
+            actualizar(idActualizar);
+        } else {
+            CMensajes.msg_error("Seleccione un registro para actualizar.", "Actualizar");
+        }
+    }//GEN-LAST:event_JbtnActualizarActionPerformed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */

@@ -64,4 +64,28 @@ public class CActualizaciones {
         return cnslt.actualiza(consulta);
     }
 
+    public boolean actualizarMarca(String marca, int id) throws SQLException {
+        consulta = "UPDATE flecha_amarilla.marca SET `marca`='" + marca + "' WHERE Id_marca = " + id;
+        return cnslt.actualiza(consulta);
+    }
+    public boolean actualizarModelo(String modelo, int id) throws SQLException {
+        consulta = "UPDATE flecha_amarilla.modelo SET `modelo`='" + modelo + "' WHERE Id_modelo = " + id;
+        return cnslt.actualiza(consulta);
+    }
+    public boolean actualizarCapacidad(int capacidad, int id) throws SQLException {
+        consulta = "UPDATE flecha_amarilla.autobus SET `capacidad`='" + capacidad + "' WHERE Id_autobus = " + id;
+        return cnslt.actualiza(consulta);
+    }
+    public boolean actualizarMes(String mes, int id) throws SQLException {
+        consulta = "UPDATE flecha_amarilla.mes SET `mes`='" + mes + "' WHERE Id_mes = " + id;
+        return cnslt.actualiza(consulta);
+    }
+    public boolean actualizarAnio(int anio, int id) throws SQLException {
+        consulta = "UPDATE flecha_amarilla.anio SET `anio`='" + anio + "' WHERE Id_anio = " + id;
+        return cnslt.actualiza(consulta);
+    }
+    public boolean actualizarFecha(int dia, int id) throws SQLException {
+        consulta = "UPDATE flecha_amarilla.fecha SET `dia`='" + dia + "' WHERE Id_fecha = " + id;
+        return cnslt.actualiza(consulta);
+    }
 }
