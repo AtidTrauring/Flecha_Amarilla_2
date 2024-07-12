@@ -6,6 +6,8 @@ import crud.CInserciones;
 import crud.CMensajes;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
@@ -26,54 +28,57 @@ public class JfRegistroCompra extends javax.swing.JFrame {
     private int mes, tipoTarjeta;
     private boolean sinTelefono = false;
     private String regexNombres = "^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ]+(?: [a-zA-ZáéíóúÁÉÍÓÚüÜñÑ]+)?$", regexCorreo = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
-
+    
     public JfRegistroCompra() {
         initComponents();
         JcmbxMeses.setVisible(false);
         JcmbxTipoTarjeta.setVisible(false);
-
+        
         JtxtNumCuenta.setVisible(false);
         JtxtNumCuenta.setEditable(false);
         JlblNumCuenta.setVisible(false);
         JspNumCuenta.setVisible(false);
-
+        
         JtxtAnio.setVisible(false);
         JtxtAnio.setEditable(false);
         JlblAnio.setVisible(false);
         JspAnio.setVisible(false);
-
+        
         JpwsCvv.setVisible(false);
         JpwsCvv.setEditable(false);
         JlblCvv.setVisible(false);
         JspCvv.setVisible(false);
-
+        
         JtxtCorreo.setVisible(false);
         JtxtCorreo.setEditable(false);
         JlblCorreo.setVisible(false);
         JspCorreo.setVisible(false);
+        
+        JtxtCantidadPago.setVisible(false);
+        JlblPagoPronto.setVisible(false);
     }
-
+    
     public ArrayList<String[]> capturaPasajeros(ArrayList<String[]> pasajerosInfo) {
         return datosPasajeros = pasajerosInfo;
     }
-
+    
     public Object[] asignaValoresTarjeta() {
         numeroCuenta = JtxtNumCuenta.getText();
         cvv = new String(JpwsCvv.getPassword());
         anioCaducidad = JtxtAnio.getText();
         mes = JcmbxMeses.getSelectedIndex();
         tipoTarjeta = JcmbxTipoTarjeta.getSelectedIndex();
-        return new Object[]{ };
+        return new Object[]{numeroCuenta, cvv, anioCaducidad, mes, tipoTarjeta};
     }
-
-    public String[] asignaValoresConCorreo() {
+    
+    public String[] asignaValoresCliente() {
         nombres = JtxtNombres.getText();
         apPaterno = JtxtApPaterno.getText();
         apMaterno = JtxtApMaterno.getText();
         correo = JtxtCorreo.getText();
         return new String[]{nombres, apPaterno, apMaterno, correo};
     }
-
+    
     public void cargaComboBox(JComboBox combo, int metodoCarga) {
         listas = (DefaultComboBoxModel) combo.getModel();
         try {
@@ -87,32 +92,18 @@ public class JfRegistroCompra extends javax.swing.JFrame {
                     break;
                 case 3:
                     datosListas = queryCarga.cargaComboTTarjetas();
-                    for (int i = 1; i < datosListas.size(); i++) {
+                    for (int i = 0; i < datosListas.size(); i++) {
                         listas.addElement(datosListas.get(i));
                     }
                     datosListas.clear();
                     break;
             }
-
+            
         } catch (SQLException e) {
             CMensajes.msg_error("Ocurrio un error al cargar la lista", "Metodo de pago");
         }
     }
 
-//    public void limpiaValores() {
-//        nombres = null;
-//        apPaterno = null;
-//        apMaterno = null;
-//        correo = null;
-//    }
-//    public void limpiarCampos() {
-//        JtxtNombres.setText(null);
-//        JtxtApPaterno.setText(null);
-//        JtxtApMaterno.setText(null);
-//        JtxtCorreo.setText(null);
-//        JcmbxTelefonos.setSelectedIndex(0);
-//
-//    }
     public String devuelveCadena(JTextField campo, String regex) {
         String texto = campo.getText().trim();
         if (texto.isEmpty()) {
@@ -123,9 +114,10 @@ public class JfRegistroCompra extends javax.swing.JFrame {
             return texto;
         }
     }
-
+    
     public boolean validaCampo(String campoTexto, JTextField campo, String regex, String mensajeVacio, String mensajeInvalido) {
         campoTexto = devuelveCadena(campo, regex);
+        
         if (campoTexto == null) {
             CMensajes.msg_advertencia(mensajeVacio, "Registro Usuarios");
             return false;
@@ -136,20 +128,13 @@ public class JfRegistroCompra extends javax.swing.JFrame {
             return true;
         }
     }
-
-    public boolean validaCamposSinCorreo() {
+    
+    public boolean validaCampos() {
         return validaCampo(nombres, JtxtNombres, regexNombres, "Ingrese nombre(s)", "Valores invalidos para nombre(s)")
-                && validaCampo(apPaterno, JtxtApPaterno, regexNombres, "Ingrerse un apellido paterno.", "Valores invalidos para apellido paterno")
+                && validaCampo(apPaterno, JtxtApPaterno, regexNombres, "Ingrese un apellido paterno.", "Valores invalidos para apellido paterno")
                 && validaCampo(apMaterno, JtxtApMaterno, regexNombres, "Ingrese un apellido materno.", "Valores invalidos para apellido materno");
     }
-
-    public boolean validaCamposConCorreo() {
-        return validaCampo(nombres, JtxtNombres, regexNombres, "Ingrese nombre(s)", "Valores invalidos para nombre(s)")
-                && validaCampo(apPaterno, JtxtApPaterno, regexNombres, "Ingrerse un apellido paterno.", "Valores invalidos para apellido paterno")
-                && validaCampo(apMaterno, JtxtApMaterno, regexNombres, "Ingrese un apellido materno.", "Valores invalidos para apellido materno")
-                && validaCampo(correo, JtxtCorreo, regexCorreo, "Ingrese un correo", "Valores invalidos para correo");
-    }
-
+    
     public String obtieneTelefono(String mensaje) {
         String telefono = "";
         do {
@@ -166,7 +151,7 @@ public class JfRegistroCompra extends javax.swing.JFrame {
         } while (telefono == null || !telefono.matches("^[0-9]{10}$"));
         return telefono;
     }
-
+    
     public String[] devuelveTelefonos() {
         String[] telefono = null;
         if (JcmbxTelefonos.getSelectedIndex() == 0) {
@@ -177,14 +162,14 @@ public class JfRegistroCompra extends javax.swing.JFrame {
             int cantidad = JcmbxTelefonos.getSelectedIndex();
             telefono = new String[cantidad];
             sinTelefono = false;
-
+            
             for (int i = 0; i < cantidad; i++) {
                 int j = i;
                 String mensaje = "Ingrese el número de telefono: ";
                 if (i > 0) {
                     mensaje = "Ingrese el " + (j + 1) + "º número de telefono: ";
                 }
-
+                
                 telefono[i] = obtieneTelefono(mensaje);
                 if (telefono[i] == null) {
                     sinTelefono = true;
@@ -195,53 +180,9 @@ public class JfRegistroCompra extends javax.swing.JFrame {
         return telefono;
     }
 
-//    public boolean insertaCliente(){
-//        
-//    }
-    public void insertaPasajero(String[] pasajero) {
-        /*
-        [0] - > Nombre
-        [1] - > Apellido Paterno
-        [2] - > Apellido Materno
-        [3] - > Tipo de Pasajero
-        [4] - > Descuento
-        [5] - > ID Asiento
-        [6] - > Tipo de Boleto (Primera Plus[PP], Comercial [C])
-        [7] - > ID Ruta
-        [8] - > Telefonos....
-        [...] - > Teleefono(n)
-         */
-        try {
-            String idPersonaS = queryBusca.buscaPersona(pasajero[0], pasajero[1], pasajero[2]);
-            int idPersona = 0;
-            if (idPersonaS == null) {
-                idPersona = queryBusca.obtenIdFinalPersona() + 1;
-                queryInserta.insertaPersona(idPersona, nombres, apPaterno, apMaterno);
-            } else {
-                idPersona = Integer.parseInt(idPersonaS);
-                for (int i = 8; i < pasajero.length; i++) {
-                    String idTelefonoS = queryBusca.buscaTelefono(pasajero[i], idPersona);
-                    int idTelefono = 0;
-                    if (idTelefonoS == null) {
-                        idTelefono = queryBusca.obtenIdFinalTelefono() + 1;
-                        queryInserta.insertaTelefonos(idTelefono, pasajero[i], idPersona);
-                    }
-                }
-                String idPasajeroS = queryBusca.buscaPasajero(idPersona);
-                int idPasajero = 0;
-                if (idPasajeroS == null) {
-                    idPasajero = queryBusca.obtenIdFinalPasajero() + 1;
-                    queryInserta.insertaPasajeros(idPasajero, pasajero[3], Integer.parseInt(pasajero[4]), idPersona);
-                } else {
-                    idPasajero = Integer.parseInt(idPasajeroS);
-                    // Inserta boleto
-                }
-            }
-        } catch (Exception e) {
-        }
-    }
-
+    // Metodo que inserta al cliente capturado en la ventana
     public void insertaCliente(String[] cliente, String[] telefonos) {
+        System.out.println("Entramos a inserta cliente");
         /*
         [0] - > Nombre
         [1] - > Apellido Paterno
@@ -251,130 +192,515 @@ public class JfRegistroCompra extends javax.swing.JFrame {
         [...] - > Teleefono(n)
          */
         try {
+            // Buscamos a la persona por su nombre completo
             String idPersonaS = queryBusca.buscaPersona(cliente[0], cliente[1], cliente[2]);
+            System.out.println("La persona-cliente tiene asociado el id " + null);
+            // Variable que permitira manipular el id de la persona
+            int idPersona = 0;
+            // Si la persona no se encontro
+            if (idPersonaS == null) {
+                // Obtenemos el ultimo id y lo aumentamos en una unidad
+                idPersona = queryBusca.obtenIdFinalPersona() + 1;
+                // Insertamos a la persona
+                queryInserta.insertaPersona(idPersona, nombres, apPaterno, apMaterno);
+                System.out.println("Insertamos al cliente en persona porque no estaba");
+                // Si la persona fue encontrada
+            } else {
+                // Asignamos el id encontrado al id de tipo int
+                idPersona = Integer.parseInt(idPersonaS);
+            }
+            System.out.println("Despues de buscarlo, el id de persona-cliente es " + idPersona);
+            System.out.println("El tamanio del arreglo de telefonos es: " + telefonos.length);
+            // Recorremos el arreglo que contiene al o los telefonos del Cliente
+            for (int i = 0; i < telefonos.length; i++) {
+                // Buscamos el telefono, por el numero de telefono
+                String idTelefonoS = queryBusca.buscaTelefono(telefonos[i], idPersona);
+                System.out.println("El id del telefono-cliente es " + idTelefonoS);
+                // Variable que permitira manipular el id del telefono
+                int idTelefono = 0;
+                // Si el telefono no se encntro
+                if (idTelefonoS == null) {
+                    // Obtenemos el ultimo id de los Telefonos y lo aumentamos en una unidad
+                    idTelefono = queryBusca.obtenIdFinalTelefono() + 1;
+                    // Insertamos al telefono de la posicion i del arreglo
+                    queryInserta.insertaTelefonos(idTelefono, telefonos[i], idPersona);
+                    System.out.println("Se inserto el telefono del cliente");
+                } // Si el telefono se encontro, no insertamos nada, puesto que ya se encuentra registrado
+            }
+            // Buscamos al cliente por su Id de persona
+            String idClienteS = queryBusca.buscaCliente(idPersona);
+            System.out.println("EL id del cliente es " + idClienteS);
+            // Variable que permitira manipular el id del Cliente
+            int idCliente = 0;
+            // Si el cliente no fue encontrado
+            if (idClienteS == null) {
+                // Obtenemos el ultimo id y lo aumentamos en una unidad
+                idCliente = queryBusca.obtenIdFinalCliente() + 1;
+                // Si el usuario selecciono "En linea"
+                if (JrbLinea.isSelected()) {
+                    // Insertamos el correo usado por el cliente
+                    queryInserta.insertaClientes(idCliente, cliente[3], idPersona);
+                    System.out.println("Se inserto el cliente con correo");
+                    // Si el usuario seleccino "Ventanilla"
+                } else {
+                    // Insertamos nulo en correo
+                    queryInserta.insertaClientes(idCliente, null, idPersona);
+                    System.out.println("Se inserto el cliente con correo nulo");
+                }
+                // Si el cliente fue encontrado
+            } else {
+                //....
+            }
+            System.out.println("Es el final de inserta cliente");
+            // Si ocurre un error al realizar alguna transaccion
+        } catch (Exception e) {
+            // Se obtiene en el catch y nos manda el mensaje correspondiente
+        }
+    }
+
+    // Metodo que inserta el metodo de pago, correspondiente a lo seleccionado
+    public void insertaMetodoPago(Object[] datosTarjeta) {
+        System.out.println("Entramos a insertaMetodoPago");
+        /*
+        datosTarjeta[0] - > numeroCuenta 
+        datosTarjeta[1] - > cvv 
+        datosTarjeta[2] - > anioCaducidad 
+        datosTarjeta[3] - > ID mes
+        datosTarjeta[4] - > ID tipo (Credito[1],Debito [2])
+         */
+        //Instancia de la clase Calendar para obtener la fecha[Dia, Mes Anio]
+        Calendar fecha = Calendar.getInstance();
+
+        // Obtenemos el dia proporcionado por el sistema (Dia Actual)
+        int diaSistema = fecha.get(fecha.DATE);
+        // Obtenemos el mes proporcionado por el sistema (Mes Actual)
+        int mesSistema = fecha.get(fecha.MONTH);
+        // Obtenemos el año proporcionado por el sistema (Año Actual)
+        int anioSistema = fecha.get(fecha.YEAR);
+        
+        try {
+            // Buscamos el id del año a registrar por medio del año actual
+            String idAnioS = queryBusca.buscaAnio(anioSistema);
+            System.out.println("El id del año actual es " + idAnioS);
+            // Variable que permitira manipular el id del año
+            int idAnio = 0;
+            // Si no se encuentra el año
+            if (idAnioS == null) {
+                // Se obtiene el ultimo id y se aumenta en una unidad
+                idAnio = queryBusca.obtenIdFinalAnio() + 1;
+                // Se inserta el año
+                queryInserta.insertaAnio(idAnio, anioSistema);
+                System.out.println("Se inserto el año porque no estaba");
+                // Si el año fue encontrado
+            } else {
+                // Asignamos el id obtenido a la variable de tipo int (Parseado[String->Int])
+                idAnio = Integer.parseInt(idAnioS);
+            }
+            System.out.println("Despues de buscar el id del año actual se determino que es " + idAnio);
+            // Buscamos la fecha usando el dia, mes y año del sistema 
+            System.out.println("El dia " + diaSistema);
+            System.out.println("El mes " + mesSistema);
+            System.out.println("El idAnio " + idAnio);
+            String idFechaS = queryBusca.buscaFecha(diaSistema, mesSistema, idAnio);
+            System.out.println("EL id de la Fecha actual es " + idFechaS);
+            // Variable que permitira manipular el id de la fecha
+            int idFecha = 0;
+            // Si la fecha no se encontro
+            if (idFechaS == null) {
+                // Obtenemos el ultimo id y lo aumentamos en una unidad
+                idFecha = queryBusca.obtenIdFinalFecha() + 1;
+                // Insertamos la fecha correspondiente
+                queryInserta.insertaFecha(idFecha, diaSistema, mesSistema, idAnio);
+                System.out.println("Insetamos la fecha porque no estaba ");
+                // Si la fecha se encontro
+            } else {
+                // Asignamos el id obtenido a la variable de tipo int (Parseado[String->Int])
+                idFecha = Integer.parseInt(idFechaS);
+            }
+            System.out.println("Despues de la busqueda se determino que el id de la fecha actual es " + idFecha);
+            // Buscamos el metodo de pago usando la fecha ingresada (idFecha)
+            System.out.println("El dia del sistema es " + diaSistema);
+            System.out.println("El id del mes es " + mesSistema);
+            System.out.println("El id de la fecha es " + idFecha);
+            String idMetodoS = queryBusca.buscaMetodoPago(idFecha);
+            System.out.println("El id del metodo de pago es " + idMetodoS);
+            // Variable que permitira manipular el id del metodo
+            int idMetodo = 0;
+            // Si el metodo no fue encontrado
+            if (idMetodoS == null) {
+                // Obtenemos el ultimo id y lo aumentamos en una unidad
+                idMetodo = queryBusca.obtenIdFinalMetodoPago() + 1;
+                // Insertamos el metodo
+                queryInserta.insertaMetodo(idMetodo, idFecha);
+                System.out.println("Insertamos el metodo porque no estaba");
+                // Si el metodo fue encontrado
+            } else {
+                // Asignamos el id obtenido a la variable de tipo int (Parseado[String->Int])
+                idMetodo = Integer.parseInt(idMetodoS);
+            }
+            System.out.println("Despues de la busqueda el id del Metodo de pago es " + idMetodo);
+            // Si el usuario selecciono pago con tarjeta
+            if (JrbTarjeta.isSelected()) {
+                // Asignamos en variables separadas el valor correspondiente a los datos
+                // de interes
+                // Varibale correspondiente al Numero de cuenta
+                String numeroC = (String) datosTarjeta[0];
+                // Variable correspondiente al CVV de la tarjeta
+                int cvv = Integer.parseInt((String) datosTarjeta[1]);
+                // Variable correspondiente al año de caducidad
+                int anio = Integer.parseInt((String) datosTarjeta[2]);
+                // Variable correspondiente al mes de caducidad
+                int idMes = Integer.parseInt((String) datosTarjeta[3]);
+                // Variable correspondiente al tipo de tarjeta
+                int idTT = Integer.parseInt((String) datosTarjeta[4]);
+                // Buscamos los datos de la tarjeta, por su numero de cuenta y cvv
+                String idTarjetaS = queryBusca.buscaTarjeta(numeroCuenta, cvv);
+                System.out.println("El id de la tarjeta a buscar es " + idTarjetaS);
+                // Variable que permitira manipular el id de la tarjeta
+                int idTarjeta = 0;
+                // Si la tarjeta no fue encontrada
+                if (idTarjetaS == null) {
+                    // Buscamos el año de caducidad
+                    String idAnioCaducidadS = queryBusca.buscaAnio(anio);
+                    // Variable que permitira manipular el id del año de Caducidad
+                    int idAnioCaducidad = 0;
+                    // Si el año no fue encontrado
+                    if (idAnioCaducidadS == null) {
+                        // Obtenemos el ultimo id y lo aumentamos en una unidad
+                        idAnioCaducidad = queryBusca.obtenIdFinalAnio() + 1;
+                        // Insertamos el año
+                        queryInserta.insertaAnio(idAnioCaducidad, anio);
+                        System.out.println("Insertamos el año de caducidad porque no estaba");
+                        // Si el año fue encontrado
+                    } else {
+                        // Asignamos el id obtenido a la variable de tipo int (Parseado[String->Int])
+                        idAnioCaducidad = Integer.parseInt(idAnioCaducidadS);
+                        System.out.println("Despues de la busqueda el id del anio de caducidad es " + idAnioCaducidad);
+                        // Insertamos la tarjeta
+                        queryInserta.insertaTarjeta(idTarjeta, numeroCuenta, cvv, idAnioCaducidad, mesSistema, idMes, queryBusca.obtenIdFinalCliente(), idTT);
+                        System.out.println("Se inserto la tarjeta porque no estaba");
+                    }
+                }
+                // Si el usuario seleccino Efectivo
+            } else {
+                // Obtenemos el ultimo id registrado en Efectivo y lo aumentamos en una unidad
+                int idEfectivo = queryBusca.obtenIdFinalEfectivo() + 1;
+                // Insertamos el registro de efectivo
+                queryInserta.insertaEfectivo(idEfectivo, idMetodo);
+                System.out.println("Se inserto el efectivo porque no estaba ");
+            }
+            System.out.println("Es el final de inserta Metodo");
+        } catch (Exception e) {
+        }
+    }
+
+    // Metodo que inserta a los pasajeros, e intermanente a los boletos
+    // compras y reembolsos
+    public void insertaPasajero(String[] pasajero, int numPasajero) {
+        System.out.println("Entramos a insertaPasajero");
+        /*
+        [0] - > Nombre
+        [1] - > Apellido Paterno
+        [2] - > Apellido Materno
+        [3] - > Tipo de Pasajero
+        [4] - > Descuento
+        [5] - > ID Asiento
+        [6] - > Tipo de Boleto (Primera Plus[PP], Comercial [C])
+        [7] - > ID Ruta
+        [8] - > Precio
+        [9] - > Telefonos....
+        [...] - > Teleefono(n)
+         */
+        try {
+            String idPersonaS = queryBusca.buscaPersona(pasajero[0], pasajero[1], pasajero[2]);
+            System.out.println("El id del pasajaero en persona es " + idPersonaS);
             int idPersona = 0;
             if (idPersonaS == null) {
                 idPersona = queryBusca.obtenIdFinalPersona() + 1;
                 queryInserta.insertaPersona(idPersona, nombres, apPaterno, apMaterno);
+                System.out.println("Se inserto al pasajero en persona, porque no estaba");
             } else {
                 idPersona = Integer.parseInt(idPersonaS);
-                for (int i = 0; i < telefonos.length; i++) {
-                    String idTelefonoS = queryBusca.buscaTelefono(telefonos[i], idPersona);
-                    int idTelefono = 0;
-                    if (idTelefonoS == null) {
-                        idTelefono = queryBusca.obtenIdFinalTelefono() + 1;
-                        queryInserta.insertaTelefonos(idTelefono, telefonos[i], idPersona);
-                    }
+            }
+            System.out.println("Despues de la busqueda el id del pasajero en persona es " + idPersona);
+            System.out.println("El tamaño del arreglo de pasajero es " + pasajero.length);
+            for (int i = 9; i < pasajero.length; i++) {
+                System.out.println(i + " < " + pasajero.length);
+                String idTelefonoS = queryBusca.buscaTelefono(pasajero[i], idPersona);
+                System.out.println("EL id del telefono del pasajero es " + idTelefonoS);
+                int idTelefono = 0;
+                if (idTelefonoS == null) {
+                    idTelefono = queryBusca.obtenIdFinalTelefono() + 1;
+                    queryInserta.insertaTelefonos(idTelefono, pasajero[i], idPersona);
+                    System.out.println("Se inserto el telefono porque no estaba");
                 }
-                String idClienteS = queryBusca.buscaCliente(idPersona);
-                int idCliente = 0;
-                if (idClienteS == null) {
-                    idCliente = queryBusca.obtenIdFinalCliente() + 1;
-                    queryInserta.insertaClientes(idCliente, cliente[3], idPersona);
-                } else {
-                    idCliente = Integer.parseInt(idClienteS);
-                }
+            }
+            String idPasajeroS = queryBusca.buscaPasajero(idPersona);
+            System.out.println("El id del pasajero es " + idPasajeroS);
+            int idPasajero = 0;
+            if (idPasajeroS == null) {
+                idPasajero = queryBusca.obtenIdFinalPasajero() + 1;
+                queryInserta.insertaPasajeros(idPasajero, pasajero[3], Integer.parseInt(pasajero[4]), idPersona);
+                System.out.println("Se inserto al pasajero porque no estaba");
+            } else {
+                idPasajero = Integer.parseInt(idPasajeroS);
+                System.out.println("Despues de la busqueda el id del pasajero es " + idPasajero);
+                // Inserta boleto
+                System.out.println("Es el final de inserta pasajero");
+                insertaBoletoCompraReembolso(pasajero, numPasajero);
             }
         } catch (Exception e) {
         }
     }
 
-//    public void insertaBoleto() //    public boolean insertaMetodoDePago(){
-    //        
-    //    }
-    public void enviarDatosCliente() {
-        boolean exito = false;
-        boolean exitoC = false;
-        if (JrbLinea.isSelected()) {
-            if (validaCamposConCorreo()) {
-                telefonos = devuelveTelefonos();
-                if (telefonos != null) {
-                    if (sinTelefono == false) {
-                        String[] valoresObtenidos = asignaValoresConCorreo();
-                        try {
-                            for (String[] datosPasajero : datosPasajeros) {
-                                // Inserta a la persona-pasajero "i"
-                                if (queryInserta.insertaPersona((queryBusca.obtenIdFinalPersona() + 1), datosPasajero[0], datosPasajero[1], datosPasajero[2])) {
-                                    // Se inserto a la persona-pasajero
-                                    System.out.println("Se inserto al pasajero");
-                                    for (int i = 5; i <= datosPasajero.length; i++) {
-                                        // Inserta los telefonos necesarios
-                                        if (queryInserta.insertaTelefonos((queryBusca.obtenIdFinalTelefono() + 1), datosPasajero[i], queryBusca.obtenIdFinalPersona())) {
-                                            // Mensaje se inserto el valor de manera correcta
-                                            System.out.println("Se inserto el telefono del pasajero");
-                                            exito = true;
-                                        } else {
-                                            // Ocurrio un error al insertar el telefono 
-                                            System.out.println("No se pudo insertar el telefono");
-                                            exito = false;
-//                                            break;
-                                        }
-
-                                    }
-                                    if (queryInserta.insertaPasajeros((queryBusca.obtenIdFinalPasajero() + 1), datosPasajero[3], Integer.parseInt(datosPasajero[4]), queryBusca.obtenIdFinalPersona())) {
-                                        System.out.println("Se pudo insertar al pasajero en PASAJERO");
-                                        // Mensaje de inserta el pasajero de manera correcta
-                                        if (exito) {
-                                            CMensajes.msg("Se registraron los pasajeros", correo);
-                                        } else {
-                                            CMensajes.msg_error("No se pudieron registrar a los pasajeros", correo);
-                                        }
-                                    } else {
-                                        System.out.println("No se pudo insertar al pasajero en PASAJERO");
-                                        // Ocurrio un error al insertar la informacion del pasajero
-                                    }
-                                } else {
-                                    // No se pudo insertar a la persona-pasajero
-                                    System.out.println("No se pudo insertar a la persona-pasajero");
-                                }
-                            }
-                            if (queryInserta.insertaPersona((queryBusca.obtenIdFinalPersona() + 1), valoresObtenidos[0], valoresObtenidos[1], valoresObtenidos[2])) {
-                                System.out.println("Se inserto a la persona-cliente");
-                                // Se inserto a la persona-cliente
-                                if (queryInserta.insertaClientes((queryBusca.obtenIdFinalCliente() + 1), valoresObtenidos[3], queryBusca.obtenIdFinalPersona())) {
-                                    System.out.println("Se inserto al cliente en CLIENTES");
-                                    // Se inserto el cliente
-                                    for (int i = 0; i < telefonos.length; i++) {
-                                        // Recorriendo el arreglo, insertamos todos los telefonos que se tengan
-                                        if (queryInserta.insertaTelefonos((queryBusca.obtenIdFinalTelefono() + 1), telefonos[i], queryBusca.obtenIdFinalPersona())) {
-                                            System.out.println("Se inserto el telefono del cliente");
-                                            exitoC = true;
-                                            // Se inserto el telefono del cliente
-                                        } else {
-                                            System.out.println("No se pudo insertar el telefono del cliente");
-                                            // No se inserto el telefono del cliente
-                                            exitoC = false;
-                                        }
-                                    }
-                                    if (exitoC) {
-                                        CMensajes.msg("Se registro al cliente", correo);
-                                    } else {
-                                        CMensajes.msg_error("No se pudo registrar al cliente", correo);
-                                    }
-                                } else {
-                                    // No se pudo insertar el cliente
-                                    System.out.println("No se pudo insertar al cliente en CLIENTES");
-                                }
-                            } else {
-                                // No se pudo insertar a la persona-cliente
-                                System.out.println("No se pudo insertar a la persona-cliente");
-                            }
-                        } catch (SQLException ex) {
-
-                        } finally {
-//                            limpiaValores();
-                        }
-                        this.dispose();
-                    }
+    // Metodo que inserta al boleto asi como la compra y en dado caso el reembolso
+    public void insertaBoletoCompraReembolso(String[] pasajero, int numPasajero) {
+        System.out.println("Entramos al metodo insertaBCR");
+        /*
+        [0] - > Nombre
+        [1] - > Apellido Paterno
+        [2] - > Apellido Materno
+        [3] - > Tipo de Pasajero
+        [4] - > Descuento
+        [5] - > ID Asiento
+        [6] - > Tipo de Boleto (Primera Plus[PP], Comercial [C])
+        [7] - > ID Ruta
+        [8] - > Precio
+        [9] - > Telefonos....
+        [...] - > Teleefono(n)
+         */
+        try {
+            // Si el usuario selecciono Ventanilla
+            if (JrbVentanilla.isSelected()) {
+                // Obtenemos el ultimo id de Metodo de pago
+                int idMetodo = queryBusca.obtenIdFinalMetodoPago();
+                // Obtenemos el ultimo id de Fecha
+                int idFecha = queryBusca.obtenIdFinalFecha();
+                // Obtenemos el ultimo id de Pasajero
+                int idPasajero = queryBusca.obtenIdFinalPasajero();
+                // Obtenemos el el precio de la ruta
+                float precioRuta = Float.parseFloat(queryBusca.buscaPrecioRuta(Integer.parseInt(pasajero[7])));
+                // Calculamos el precio con descuento de cada pasajero
+                float precioDescuento = precioRuta - (precioRuta * 100) / Float.parseFloat(pasajero[4]);
+                //Buscamos el boleto
+                String idBoletoS = queryBusca.buscaBoleto(idMetodo, Integer.parseInt(pasajero[7]), idFecha, Integer.parseInt(pasajero[5]), idPasajero, pasajero[6], precioDescuento);
+                System.out.println("EL id del boleto es " + idBoletoS);
+                // Variable que permitira manipular el id del boleto
+                int idBoleto = 0;
+                // Si el boleto no se encontro
+                if (idBoletoS == null) {
+                    // Obtenemos el ultimo id en boleto y lo aumentamos en una unidad
+                    idBoleto = queryBusca.obtenIdFinalBoleto() + 1;
+                    // Insertamos el boleto
+                    queryInserta.insertaBoleto(idBoleto, pasajero[6], precioDescuento, idMetodo, Integer.parseInt(pasajero[7]), idFecha, idPasajero, Integer.parseInt(pasajero[5]));
+                    System.out.println("Se inserto el boleto porque no estaba");
+                    // Si el boleto fue encontrado
                 } else {
-                    CMensajes.msg_advertencia("Faltaron datos", "Compra");
+                    // Asignamos el id del boleto parseado a la varibale de tipo int
+                    idBoleto = Integer.parseInt(idBoletoS);
                 }
+                System.out.println("Despues de la busqueda el id del boleto es " + idBoleto);
+                // Obtenemos el ultimo id de Cliente
+                int idCliente = queryBusca.obtenIdFinalCliente();
+                // Buscamos la compra
+                String idCompraS = queryBusca.buscaCompra(idBoleto, idCliente, precioDescuento);
+                System.out.println("El id de la compra es " + idCompraS);
+                // Varibale que permitira manipular el id de la compra
+                int idCompra = 0;
+                // Si la compra no se encontro
+                if (idCompraS == null) {
+                    // Obtenemos el ultimo id de compra y lo aumentamos en una unidad
+                    idCompra = queryBusca.obtenIdFinalCompra() + 1;
+                    // Insertamos la compra
+                    queryInserta.insertaCompra(idCompra, precioDescuento, idBoleto, idCliente);
+                    System.out.println("Se inserto la compra porque no estaba");
+                }
+                // Si el usuario selecciono en linea
+            } else {
+                int idMetodo = queryBusca.obtenIdFinalMetodoPago();
+                int idFecha = queryBusca.obtenIdFinalFecha();
+                int idPasajero = queryBusca.obtenIdFinalPasajero();
+                float precioRuta = Float.parseFloat(queryBusca.buscaPrecioRuta(Integer.parseInt(pasajero[7])));
+                // Calculamos unicamente el descuento
+                float precioDescuento = (precioRuta * 100) / Float.parseFloat(pasajero[4]);
+                // Buscamos usando el precio de la ruta
+                String idBoletoS = queryBusca.buscaBoleto(idMetodo, Integer.parseInt(pasajero[7]), idFecha, Integer.parseInt(pasajero[5]), idPasajero, pasajero[6], precioRuta);
+                System.out.println("El id del boleto en reembolso es " + idBoletoS);
+                int idBoleto = 0;
+                if (idBoletoS == null) {
+                    idBoleto = queryBusca.obtenIdFinalBoleto() + 1;
+                    queryInserta.insertaBoleto(idBoleto, pasajero[6], precioRuta, idMetodo, Integer.parseInt(pasajero[7]), idFecha, idPasajero, Integer.parseInt(pasajero[5]));
+                    System.out.println("Se inserto el boleto porque no estaba (Estamos en la opcion de compra en linea)");
+                } else {
+                    idBoleto = Integer.parseInt(idBoletoS);
+                }
+                System.out.println("El id del boleto-reembolso despues de la busqueda es " + idBoleto);
+                int idCliente = queryBusca.obtenIdFinalCliente();
+                String idCompraS = queryBusca.buscaCompra(idBoleto, idCliente, precioRuta);
+                System.out.println("EL id de la compra-reembolso es " + idCompraS);
+                int idCompra = 0;
+                // Si la compra se encontro
+                if (idCompraS == null) {
+                    idCompra = queryBusca.obtenIdFinalCompra() + 1;
+                    // Insertamos el boleto con el precio de la ruta
+                    queryInserta.insertaCompra(idCompra, precioRuta, idBoleto, idCliente);
+                    System.out.println("Se inserto la compra porque no estaba (Estamos en la opcion de compra en linea)");
+                    // Si la compra no se encontro
+                } else {
+                    // Asignamos el id de la compra parseado a la varibale de tipo int
+                    idCompra = Integer.parseInt(idCompraS);
+                }
+                System.out.println("Despues de la busqueda el id de la compra es " + idCompra);
+                // Buscamos la fecha por el id de la ruta
+                int idFechaRuta = Integer.parseInt(queryBusca.buscaFechaRuta(Integer.parseInt(pasajero[7])));
+                // Buscamos el reembolso
+                String idReembolsoS = queryBusca.buscaReembolso(idBoleto, idFechaRuta, precioDescuento);
+                System.out.println("EL id del reembolso es " + idReembolsoS);
+                // Variable que permitira manipular el id del Reembolso
+                int idReembolso = 0;
+                // Si el reembolso no se encontro
+                if (idReembolsoS == null) {
+                    // Obtenemos el ultimo id de reembolso y lo aumentamos en una unidad
+                    idReembolso = queryBusca.obtenIdFinalReembolso() + 1;
+                    // Insertamos el reembolso
+                    queryInserta.insertaReembolso(idReembolso, precioDescuento, idBoleto, idFechaRuta);
+                    System.out.println("Se inserto el reembolso porque no estaba (Estamos en la opcion de compra en linea)");
+                }
+                System.out.println("EL id maximo es reembolso es " + queryBusca.obtenIdFinalReembolso());
             }
-        } else if (JrbTarjeta.isSelected()) {
-
+            System.out.println("Es el final de CompraBoletoReembolso");
+        } catch (Exception e) {
         }
     }
 
+    // Metodo que finaliza una compra (Inserta todos los datos)
+    public void insertaDatos() {
+        // Declaramos una variable que nos permita indicar el numero de pasajero
+        int numPasajero = 0;
+        // Si el usuario lleno todos los campos
+        if (validaCampos()) {
+            // Asignamos los valores de telefono
+            telefonos = devuelveTelefonos();
+            // Si el arreglo telefonos tiene almentos un elemtno
+            if (telefonos != null) {
+                // Por seguridad confirmamos que la varibale sin telefono sea falsa
+                if (sinTelefono == false) {
+                    // Insertamos al cliente
+                    String[] datosCliete = asignaValoresCliente();
+                    System.out.println(Arrays.toString(datosCliete));
+                    System.out.println(Arrays.toString(telefonos));
+                    insertaCliente(datosCliete, telefonos);
+                    // Insertamos el metodo de pago
+                    insertaMetodoPago(asignaValoresTarjeta());
+                    // iteramos por el numero de arreglos que tenga la lista
+
+                    for (String[] datosPasajero : datosPasajeros) {
+                        // Insertamos al pasajero, proporcionando la informacion de su arreglo
+                        // e indicando el numero de pasajero
+                        insertaPasajero(datosPasajero, numPasajero);
+                        // aumentamos el numero del pasajero en una unidad
+                        numPasajero++;
+                    }
+                    CMensajes.msg("La compra finalizo con exito", "Compra");
+                }
+                
+            }
+        }
+        
+    }
+
+//    public void enviarDatosCliente() {
+//        boolean exito = false;
+//        boolean exitoC = false;
+//        if (JrbLinea.isSelected()) {
+//            if (validaCamposConCorreo()) {
+//                telefonos = devuelveTelefonos();
+//                if (telefonos != null) {
+//                    if (sinTelefono == false) {
+//                        String[] valoresObtenidos = asignaValoresConCorreo();
+//                        try {
+//                            for (String[] datosPasajero : datosPasajeros) {
+//                                 Inserta a la persona-pasajero "i"
+//                                if (queryInserta.insertaPersona((queryBusca.obtenIdFinalPersona() + 1), datosPasajero[0], datosPasajero[1], datosPasajero[2])) {
+//                                     Se inserto a la persona-pasajero
+//                                    System.out.println("Se inserto al pasajero");
+//                                    for (int i = 5; i <= datosPasajero.length; i++) {
+//                                         Inserta los telefonos necesarios
+//                                        if (queryInserta.insertaTelefonos((queryBusca.obtenIdFinalTelefono() + 1), datosPasajero[i], queryBusca.obtenIdFinalPersona())) {
+//                                             Mensaje se inserto el valor de manera correcta
+//                                            System.out.println("Se inserto el telefono del pasajero");
+//                                            exito = true;
+//                                        } else {
+//                                             Ocurrio un error al insertar el telefono 
+//                                            System.out.println("No se pudo insertar el telefono");
+//                                            exito = false;
+//                                            break;
+//                                        }
+//
+//                                    }
+//                                    if (queryInserta.insertaPasajeros((queryBusca.obtenIdFinalPasajero() + 1), datosPasajero[3], Integer.parseInt(datosPasajero[4]), queryBusca.obtenIdFinalPersona())) {
+//                                        System.out.println("Se pudo insertar al pasajero en PASAJERO");
+//                                         Mensaje de inserta el pasajero de manera correcta
+//                                        if (exito) {
+//                                            CMensajes.msg("Se registraron los pasajeros", correo);
+//                                        } else {
+//                                            CMensajes.msg_error("No se pudieron registrar a los pasajeros", correo);
+//                                        }
+//                                    } else {
+//                                        System.out.println("No se pudo insertar al pasajero en PASAJERO");
+//                                         Ocurrio un error al insertar la informacion del pasajero
+//                                    }
+//                                } else {
+//                                     No se pudo insertar a la persona-pasajero
+//                                    System.out.println("No se pudo insertar a la persona-pasajero");
+//                                }
+//                            }
+//                            if (queryInserta.insertaPersona((queryBusca.obtenIdFinalPersona() + 1), valoresObtenidos[0], valoresObtenidos[1], valoresObtenidos[2])) {
+//                                System.out.println("Se inserto a la persona-cliente");
+//                                 Se inserto a la persona-cliente
+//                                if (queryInserta.insertaClientes((queryBusca.obtenIdFinalCliente() + 1), valoresObtenidos[3], queryBusca.obtenIdFinalPersona())) {
+//                                    System.out.println("Se inserto al cliente en CLIENTES");
+//                                     Se inserto el cliente
+//                                    for (int i = 0; i < telefonos.length; i++) {
+//                                         Recorriendo el arreglo, insertamos todos los telefonos que se tengan
+//                                        if (queryInserta.insertaTelefonos((queryBusca.obtenIdFinalTelefono() + 1), telefonos[i], queryBusca.obtenIdFinalPersona())) {
+//                                            System.out.println("Se inserto el telefono del cliente");
+//                                            exitoC = true;
+//                                             Se inserto el telefono del cliente
+//                                        } else {
+//                                            System.out.println("No se pudo insertar el telefono del cliente");
+//                                             No se inserto el telefono del cliente
+//                                            exitoC = false;
+//                                        }
+//                                    }
+//                                    if (exitoC) {
+//                                        CMensajes.msg("Se registro al cliente", correo);
+//                                    } else {
+//                                        CMensajes.msg_error("No se pudo registrar al cliente", correo);
+//                                    }
+//                                } else {
+//                                     No se pudo insertar el cliente
+//                                    System.out.println("No se pudo insertar al cliente en CLIENTES");
+//                                }
+//                            } else {
+//                                 No se pudo insertar a la persona-cliente
+//                                System.out.println("No se pudo insertar a la persona-cliente");
+//                            }
+//                        } catch (SQLException ex) {
+//
+//                        } finally {
+//                            limpiaValores();
+//                        }
+//                        this.dispose();
+//                    }
+//                } else {
+//                    CMensajes.msg_advertencia("Faltaron datos", "Compra");
+//                }
+//            }
+//        } else if (JrbTarjeta.isSelected()) {
+//
+//        }
+//    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -458,10 +784,10 @@ public class JfRegistroCompra extends javax.swing.JFrame {
         JpnlLienzo.add(JspCvv, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 100, 130, 10));
 
         JcmbxMeses.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mes de Caducidad" }));
-        JpnlLienzo.add(JcmbxMeses, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 90, 140, -1));
+        JpnlLienzo.add(JcmbxMeses, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 90, 170, -1));
 
-        JcmbxTipoTarjeta.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tipo deTarjeta" }));
-        JpnlLienzo.add(JcmbxTipoTarjeta, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 120, 140, -1));
+        JcmbxTipoTarjeta.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tipo de Tarjeta" }));
+        JpnlLienzo.add(JcmbxTipoTarjeta, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 180, 170, -1));
 
         JcmbxTelefonos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Numeros de Telefono", "1 Telefono", "2 Telefonos", "3 Telefonos", "4 Telefonos", "5 Telefonos" }));
         JpnlLienzo.add(JcmbxTelefonos, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 60, 170, -1));
@@ -518,11 +844,11 @@ public class JfRegistroCompra extends javax.swing.JFrame {
         JpnlLienzo.add(JtxtCantidadPago, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 220, 140, -1));
 
         JlblAnio.setText("Año de Caducidad");
-        JpnlLienzo.add(JlblAnio, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 150, -1, -1));
+        JpnlLienzo.add(JlblAnio, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 120, -1, -1));
 
         JtxtAnio.setBorder(null);
-        JpnlLienzo.add(JtxtAnio, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 170, 130, -1));
-        JpnlLienzo.add(JspAnio, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 190, 130, 10));
+        JpnlLienzo.add(JtxtAnio, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 140, 130, -1));
+        JpnlLienzo.add(JspAnio, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 160, 130, 10));
 
         JlblFondoCompra.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/FondoCompra.jpeg"))); // NOI18N
         JpnlLienzo.add(JlblFondoCompra, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 120, 200, 120));
@@ -553,17 +879,17 @@ public class JfRegistroCompra extends javax.swing.JFrame {
         cargaComboBox(JcmbxMeses, 2);
         JcmbxTipoTarjeta.setVisible(JrbTarjeta.isSelected());
         cargaComboBox(JcmbxTipoTarjeta, 3);
-
+        
         JtxtNumCuenta.setVisible(JrbTarjeta.isSelected());
         JtxtNumCuenta.setEditable(JrbTarjeta.isSelected());
         JlblNumCuenta.setVisible(JrbTarjeta.isSelected());
         JspNumCuenta.setVisible(JrbTarjeta.isSelected());
-
+        
         JpwsCvv.setVisible(JrbTarjeta.isSelected());
         JpwsCvv.setEditable(JrbTarjeta.isSelected());
         JlblCvv.setVisible(JrbTarjeta.isSelected());
         JspCvv.setVisible(JrbTarjeta.isSelected());
-
+        
         JtxtAnio.setVisible(JrbTarjeta.isSelected());
         JtxtAnio.setEditable(JrbTarjeta.isSelected());
         JlblAnio.setVisible(JrbTarjeta.isSelected());
@@ -571,10 +897,10 @@ public class JfRegistroCompra extends javax.swing.JFrame {
     }//GEN-LAST:event_JrbTarjetaItemStateChanged
 
     private void JbtnFinalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnFinalizarActionPerformed
-        CMensajes.msg("La compra se realizo con exito", "Compra");
+        insertaDatos();
         this.dispose();
     }//GEN-LAST:event_JbtnFinalizarActionPerformed
-
+    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -597,6 +923,8 @@ public class JfRegistroCompra extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(JfRegistroCompra.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 

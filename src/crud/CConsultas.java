@@ -1,4 +1,5 @@
 package crud;
+
 import java.sql.ResultSet;
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,22 +13,21 @@ public class CConsultas {
     private final CConecta conector = new CConecta();
     private ArrayList<String[]> resultados;
     private ArrayList<String> resultadosCombos;
-    private String valorObtenido = null;
 
     //************ Metodos ************
     public String buscarValor(String consulta) throws SQLException {
+        String valorObtenido = null;
         //1. Abrir la conexion
         conn = conector.conecta();
         //2. Ejecutar la query(consulta)
         try {
             stmt = conn.createStatement();
             rs = stmt.executeQuery(consulta);
-            if (rs == null) {
-                CMensajes.msg_advertencia("Elementos no encontrados", "buscar objetos");
+            if (rs.next()) {
+                valorObtenido = rs.getString(1);
             } else {
-                while (rs.next()) {
-                    valorObtenido = rs.getString(1);
-                }
+                CMensajes.msg_advertencia("Elementos no encontrados", "buscar objetos");
+
             }
         } catch (SQLException ex) {
             String cadena = "SQLException: " + ex.getMessage() + "\n"
@@ -51,7 +51,44 @@ public class CConsultas {
         }
         return valorObtenido;
     }
-    
+
+    public String buscarValorSinMensaje(String consulta) throws SQLException {
+        String valorObtenido = null;
+        //1. Abrir la conexion
+        conn = conector.conecta();
+        //2. Ejecutar la query(consulta)
+        try {
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery(consulta);
+            if (rs.next()) {
+                valorObtenido = rs.getString(1);
+            } else {
+//                CMensajes.msg_advertencia("Elementos no encontrados", "buscar objetos");
+
+            }
+        } catch (SQLException ex) {
+            String cadena = "SQLException: " + ex.getMessage() + "\n"
+                    + "SQLState: " + ex.getSQLState() + "\n"
+                    + "VendorError: " + ex.getErrorCode();
+            CMensajes.msg_error(cadena, "Conexion");
+        } //3. 
+        finally {
+            //Cerrar los resultados
+            try {
+                rs.close();
+            } catch (SQLException e) {
+            }
+            //Cerrar el statement
+            try {
+                stmt.close();
+            } catch (SQLException e) {
+            }
+            //cerrar conexion
+            conector.desconecta(conn);
+        }
+        return valorObtenido;
+    }
+
     public ArrayList<String> buscarValoresCombos(String consulta) throws SQLException {
         //1. Abrir la conexion
         conn = conector.conecta();
@@ -89,7 +126,7 @@ public class CConsultas {
         }
         return resultadosCombos;
     }
-    
+
     public ArrayList<String[]> buscarValores(String consulta, int numCampos) throws SQLException {
         //1. Abrir la conexion
         conn = conector.conecta();
@@ -131,7 +168,7 @@ public class CConsultas {
         }
         return resultados;
     }
-    
+
     public boolean inserta(String consulta) throws SQLException {
         //1. Abrir la conexion
         conn = conector.conecta();
@@ -149,7 +186,7 @@ public class CConsultas {
         }
         return false;
     }
-    
+
     public boolean elimina(String consulta) throws SQLException {
         //1. Abrir la conexion
         conn = conector.conecta();
@@ -166,7 +203,7 @@ public class CConsultas {
         }
         return false;
     }
-    
+
     public boolean actualiza(String consulta) throws SQLException {
         conn = conector.conecta();
         try {
@@ -181,7 +218,7 @@ public class CConsultas {
         }
         return false;
     }
-    
+
     public boolean buscar(String consulta) throws SQLException {
         conn = conector.conecta();
         try {
@@ -198,7 +235,7 @@ public class CConsultas {
                     }
                 }
             }
-            
+
         } catch (SQLException e) {
             CMensajes.msg_error("Error: " + e.getMessage(), "Buscar objeto");
         } finally {

@@ -10,45 +10,50 @@ public class CBusquedas {
 
     // Metodos Compra
     //--------------------------------------------------------------------------
-    public String buscaPersona(String nombre, String apPat, String apMat) throws SQLException {
+   public String buscaPersona(String nombre, String apPat, String apMat) throws SQLException {
         consulta = "SELECT `Id_persona` FROM `persona` WHERE nombre = '" + nombre + "' AND ApPat = '" + apPat + "' AND ApMat = '" + apMat + "'";
-        return cnslt.buscarValor(consulta);
+        return cnslt.buscarValorSinMensaje(consulta);
     }
 
     public String buscaTelefono(String telefono, int idPersona) throws SQLException {
-        consulta = "SELECT `Id_telefonoPersona`, `telefono`, `Id_persona` FROM `telefono_persona` WHERE telefono = '" + telefono + "', Id_persona = '" + idPersona + "';";
-        return cnslt.buscarValor(consulta);
+        consulta = "SELECT `Id_telefonoPersona` FROM `telefono_persona` WHERE telefono = '" + telefono + "' AND Id_persona = '" + idPersona + "';";
+        return cnslt.buscarValorSinMensaje(consulta);
     }
 
     public String buscaPasajero(int idPersona) throws SQLException {
         consulta = "SELECT `Id_pasajero` FROM `pasajero` WHERE Id_persona = '" + idPersona + "';";
-        return cnslt.buscarValor(consulta);
+        return cnslt.buscarValorSinMensaje(consulta);
     }
 
     public String buscaCliente(int idPersona) throws SQLException {
-        consulta = "SELECT `Id_cliente` FROM `cliente` WHERE Id_persona = '" + idPersona + "';";
-        return cnslt.buscarValor(consulta);
+        consulta = "SELECT `Id_cliente` FROM `cliente` WHERE `Id_persona` = " + idPersona + "";
+        return cnslt.buscarValorSinMensaje(consulta);
     }
 
     public String buscaFecha(int dia, int idMes, int idAnio) throws SQLException {
         consulta = "SELECT `Id_fecha` FROM `fecha` WHERE fecha.dia = '" + dia + "' AND fecha.Id_mes = '" + idMes + "' AND fecha.Id_anio = '" + idAnio + "';";
-        return cnslt.buscarValor(consulta);
+        return cnslt.buscarValorSinMensaje(consulta);
     }
 
     public String buscaAnio(int anio) throws SQLException {
         consulta = "SELECT `Id_anio` FROM `anio` WHERE anio.anio = '" + anio + "';";
-        return cnslt.buscarValor(consulta);
+        return cnslt.buscarValorSinMensaje(consulta);
+    }
+
+    public String buscaMes(int mes) throws SQLException {
+        consulta = "SELECT `Id_mes` FROM `mes` WHERE mes.Id_mes = '" + mes + "';";
+        return cnslt.buscarValorSinMensaje(consulta);
     }
 
     public String buscaMetodoPago(int idFecha) throws SQLException {
         consulta = "SELECT `Id_metodo` FROM `metodo_pago` WHERE metodo_pago.Id_fecha = '" + idFecha + "';";
-        return cnslt.buscarValor(consulta);
+        return cnslt.buscarValorSinMensaje(consulta);
     }
 
     public String buscaTarjeta(String numCuenta, int cvv) throws SQLException {
 //        consulta = "SELECT `Id_tarjeta` FROM `tarjeta` WHERE tarjeta.numeroCuenta = '" + numCuenta + "';";
         consulta = "SELECT `Id_tarjeta` FROM `tarjeta` WHERE tarjeta.numeroCuenta = '" + numCuenta + "' AND tarjeta.CVV = '" + cvv + "';";
-        return cnslt.buscarValor(consulta);
+        return cnslt.buscarValorSinMensaje(consulta);
     }
 
     public String buscaBoleto(int idMetodo, int idRuta, int idFecha, int idAsiento, int idPasajero, String tipoBoleto, float precioDescuento) throws SQLException {
@@ -56,7 +61,7 @@ public class CBusquedas {
                 + " AND boleto.Id_ruta = '" + idRuta + "' AND boleto.Id_fecha = '" + idFecha + "'"
                 + " AND boleto.Id_asiento = '" + idAsiento + "' AND boleto.Id_pasajero = '" + idPasajero + "'"
                 + " AND boleto.tipo_boleto = '" + tipoBoleto + "' AND boleto.precioDescuento = '" + precioDescuento + "';";
-        return cnslt.buscarValor(consulta);
+        return cnslt.buscarValorSinMensaje(consulta);
     }
 
     public String buscaCompra(int idBoleto, int idCliente, float total) throws SQLException {
@@ -64,7 +69,7 @@ public class CBusquedas {
                 + " boletocliente.Id_boleto = '" + idBoleto + "' AND"
                 + " boletocliente.Id_cliente = '" + idCliente + "' AND"
                 + " boletocliente.total = '" + total + "';";
-        return cnslt.buscarValor(consulta);
+        return cnslt.buscarValorSinMensaje(consulta);
     }
 
     public String buscaReembolso(int idBoleto, int idFecha, float cantidad) throws SQLException {
@@ -72,9 +77,18 @@ public class CBusquedas {
                 + " reembolso.Id_boleto = '" + idBoleto + "' AND"
                 + " reembolso.Id_fecha = '" + idFecha + "' AND"
                 + " reembolso.cantidad = '" + cantidad + "';";
-        return cnslt.buscarValor(consulta);
+        return cnslt.buscarValorSinMensaje(consulta);
     }
 
+    public String buscaPrecioRuta(int idRuta) throws SQLException {
+        consulta = "SELECT `precio` FROM `ruta` WHERE ruta.Id_ruta = '" + idRuta + "';";
+        return cnslt.buscarValorSinMensaje(consulta);
+    }
+
+    public String buscaFechaRuta(int idRuta) throws SQLException {
+        consulta = "SELECT `Id_fecha` FROM `rutaautobus` WHERE rutaautobus.Id_ruta = '" + idRuta + "';";
+        return cnslt.buscarValorSinMensaje(consulta);
+    }
     public String buscarReembolsoBoleto(int id) throws SQLException {
         String idReembolsoBoleto = "SELECT reembolso.Id_boleto FROM `reembolso` WHERE reembolso.Id_reembolso = " + id;
         return cnslt.buscarValor(consulta);

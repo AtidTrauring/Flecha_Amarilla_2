@@ -211,7 +211,6 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
                     System.arraycopy(datosObtenidos, 0, datosUnidos, 0, datosObtenidos.length);
                     System.arraycopy(prueba, 0, datosUnidos, datosObtenidos.length, prueba.length);
                     System.arraycopy(telefonos, 0, datosUnidos, datosObtenidos.length + prueba.length, telefonos.length);
-                    System.out.println(Arrays.toString(datosUnidos));
                     limpiaValores();
                 }
             }
@@ -381,6 +380,10 @@ public class JfRegistroPasajeros extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(JfRegistroPasajeros.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
