@@ -37,8 +37,39 @@ public class JfRegistroAutobuses extends javax.swing.JFrame {
     
     
     
-    private CInserciones queryInserta = new CInserciones();
-    private CBusquedas queryBusca = new CBusquedas();
+    private CInserciones queryInserta1 = new CInserciones();
+    private CInserciones queryInserta2 = new CInserciones();
+    private CInserciones queryInserta3 = new CInserciones();
+    private CInserciones queryInserta4 = new CInserciones();
+    private CInserciones queryInserta5 = new CInserciones();
+    private CInserciones queryInserta6 = new CInserciones();
+    private CInserciones queryInserta7 = new CInserciones();
+    private CInserciones queryInserta8 = new CInserciones();
+    private CBusquedas queryBusca1 = new CBusquedas();
+    private CBusquedas queryBusca2 = new CBusquedas();
+    private CBusquedas queryBusca3 = new CBusquedas();
+    private CBusquedas queryBusca4 = new CBusquedas();
+    private CBusquedas queryBusca5 = new CBusquedas();
+    private CBusquedas queryBusca6 = new CBusquedas();
+    private CBusquedas queryBusca7 = new CBusquedas();
+    private CBusquedas queryBusca8 = new CBusquedas();
+    private CBusquedas queryBusca9 = new CBusquedas();
+    private CBusquedas queryBusca10 = new CBusquedas();
+    private CBusquedas queryBusca11 = new CBusquedas();
+    private CBusquedas queryBusca12 = new CBusquedas();
+    private CBusquedas queryBusca13 = new CBusquedas();
+    private CBusquedas queryBusca14 = new CBusquedas();
+    private CBusquedas queryBusca15 = new CBusquedas();
+    private CBusquedas queryBusca16 = new CBusquedas();
+    private CBusquedas queryBusca17 = new CBusquedas();
+    private CBusquedas queryBusca18 = new CBusquedas();
+    private CBusquedas queryBusca19 = new CBusquedas();
+    private CBusquedas queryBusca20 = new CBusquedas();
+    private CBusquedas queryBusca21 = new CBusquedas();
+    private CBusquedas queryBusca22 = new CBusquedas();
+    private CBusquedas queryBusca23 = new CBusquedas();
+    private CBusquedas queryBusca24 = new CBusquedas();
+    private CBusquedas queryBusca25 = new CBusquedas();
     private CEliminaciones queryElimina = new CEliminaciones();
     private CActualizaciones queryActualiza = new CActualizaciones();
       private final CCargaCombos queryCarga = new CCargaCombos();
@@ -46,7 +77,7 @@ public class JfRegistroAutobuses extends javax.swing.JFrame {
     private DefaultComboBoxModel listas;
     private ArrayList<String> datosListas = new ArrayList<>();
     private String placa,capacidad,marca,modelo,numeroEconomico,AñoEmision,diaRegistro,AñoRegistro,mes;
-    private String regexPlaca = "\"^[a-zA-Z0-9]+$\"";
+    private String regexPlaca = "^[a-zA-Z0-9-]{1,8}$";
     private String regexCapacidad = "^\\d{2}$";
     private String regexmarca = "^[a-zA-Z ]{1,50}$";
     private String regexmodelo = "^[a-zA-Z0-9 ]{1,80}$";
@@ -224,8 +255,8 @@ public class JfRegistroAutobuses extends javax.swing.JFrame {
        
          
               public boolean validaCampos() {
-    return //validaCampo(placa, JtxtPlaca, regexPlaca, "Ingrese la placa", "Placa invalida")
-          validaCampo(capacidad, JtxtCapacidad, regexCapacidad, "Ingrese la capacidad", "Capacidad invalida")
+    return validaCampo(placa, JtxtPlaca, regexPlaca, "Ingrese la placa", "Placa invalida")
+        && validaCampo(capacidad, JtxtCapacidad, regexCapacidad, "Ingrese la capacidad", "Capacidad invalida")
         && validaCampo(marca, JtxtMarca, regexmarca, "Ingrese la marca", "marca invalida")
         && validaCampo(modelo, JtxtModelo, regexmodelo, "Ingrese el modelo", "modelo invalida")
         && validaCampo(numeroEconomico, JtxtNumEconomico, regexnumeroEconomico, "Ingrese el numero economico", "numero invalido")
@@ -234,140 +265,211 @@ public class JfRegistroAutobuses extends javax.swing.JFrame {
         && validaCombo(mes, JcmbxMeses, "Ingresa la marca");
         //&& validaCombo(diaRegistro, JcmbxDia, "Ingresa el dia");
     }
+
+              
+              
+              
+                     
+          public void BuscaAñoEmision(String Año) throws SQLException{
+        boolean buscar = false;
+        try {
+        String  idAño = queryBusca6.obtenIdFinalAñoo();
+        String resultado =queryBusca1.obtenIdBuscaAñoo(Año);
+        int IDAño=Integer.parseInt(idAño);
+        if (resultado == null) {
+           // CMensajes.msg_advertencia("No se encontro el año de emision", "Registro año emisiom");
+            queryInserta1.insertaAnioo(IDAño + 1, Año);
+           //queryInserta1.insertaAnio(idAño + 1, AñoEmision);
+          //return buscar =false;
+        }else{
+          CMensajes.msg_advertencia("El año de emision ya esta registrado", "Registro año emision");
+             
+           //return buscar=true;
+        }
     
-              
-        public boolean BuscaAño(JTextField campo) {
-        boolean buscar = false;
-        int año = 0;
-        try {
-            año = Integer.parseInt(campo.getText());
-            int idAño = queryBusca.obtenIdBuscaAño(año);
-
-            if (idAño > 0) {
-
-               // CMensajes.msg_error("El año ya esta registrado", "Registro año");
-                // Si se encontró el año en la base de datos
-                buscar = true;
-
-            } else {
-                // Si no se encontró el año
-                buscar = false;
-            }
-        } catch (SQLException e) {
-            System.out.println("error en busca año");
-        }
-
-        return buscar;
-    }
-        
-        
-        
-        
-         public boolean BuscaNumEconomico(JTextField campo) {
-        boolean buscar = false;
-        String numEconomico = "";
-        try {
-            numEconomico = campo.getText();
-            int idAño = queryBusca.obtenIdBuscaNunEconomico(numEconomico);
-
-            if (idAño > 0) {
-
-              
-                // Si se encontró el año en la base de datos
-                buscar = true;
-
-            } else {
-                // Si no se encontró el año
-                buscar = false;
-            }
-        } catch (SQLException e) {
-            System.out.println("error en busca numero economico");
-        }
-
-        return buscar;
-    }
-         
-         
-             public boolean BuscaMarca(JTextField campo) {
-        boolean buscar = false;
-        String marca = "";
-        try {
-            marca = campo.getText();
-            int idAño = queryBusca.obtenIdBuscaMarca(marca);
-
-            if (idAño > 0) {
-
-                //CMensajes.msg_error("La marca ya esta registrado", "Registro marca");
-                // Si se encontró el año en la base de datos
-                buscar = true;
-
-            } else {
-                // Si no se encontró el año
-                buscar = false;
-            }
         } catch (SQLException e) {
             System.out.println("error en busca marca");
         }
-
-        return buscar;
+          // return buscar;
     }
-             
-             
-        public boolean BuscaModelo(JTextField campo) {
+          
+          
+              public void BuscaAñoRegistro(String Año) throws SQLException{
         boolean buscar = false;
-        String modelo = "";
         try {
-            modelo = campo.getText();
-            int idAño = queryBusca.obtenIdBuscaModelo(modelo);
-
-            if (idAño > 0) {
-
-                //CMensajes.msg_error("El modelo ya esta registrado", "Registro modelo");
-                // Si se encontró el año en la base de datos
-                buscar = true;
-
-            } else {
-                // Si no se encontró el año
-                buscar = false;
-            }
-        } catch (SQLException e) {
-            System.out.println("error en busca modelo");
+        String  idAño = queryBusca6.obtenIdFinalAñoo();
+        String resultado =queryBusca1.obtenIdBuscaAñoo(Año);
+        int IDAño=Integer.parseInt(idAño);
+        if (resultado == null) {
+            //CMensajes.msg_advertencia("No se encontro el año registro", "Registro año registro");
+            queryInserta1.insertaAnioo(IDAño + 1, Año);
+           //queryInserta1.insertaAnio(idAño + 1, AñoEmision);
+          //return buscar =false;
+        }else{
+          CMensajes.msg_advertencia("El año ya esta registrado el año registro", "Registro año registro");
+             
+           //return buscar=true;
         }
-
-        return buscar;
-    }
-        
-        
-         public boolean BuscaPlaca(JTextField campo) {
-        boolean buscar = false;
-        String placa = "";
-        try {
-            placa = campo.getText();
-            int idAño = queryBusca.obtenIdBuscaPlaca(placa);
-
-            if (idAño > 0) {
-
-                //CMensajes.msg_error("La placa ya esta registrada", "Registro placa");
-                // Si se encontró el año en la base de datos
-                buscar = true;
-
-            } else {
-                // Si no se encontró el año
-                buscar = false;
-            }
+    
         } catch (SQLException e) {
-            System.out.println("error en busca placa");
+            System.out.println("error en busca marca");
         }
-
-        return buscar;
+          // return buscar;
     }
+          
               
+              
+              
+              
+
+//         
+          public void BuscaMarca(String marca) throws SQLException{
+        boolean buscar = false;
+        try {
+        String resultado =queryBusca3.obtenIdBuscaMarcaa(marca);
+        String  idMarca = queryBusca7.obtenIdFinalMarcaa();
+        int IDmarca= Integer.parseInt(idMarca);
+        if (resultado == null) {
+            //CMensajes.msg_advertencia("No se encontro la marca", "Registro terminal");
+            queryInserta3.insertaMarca(IDmarca + 1, marca);
+            System.out.println("Se registro la marca");
+        
+           
+          //return buscar =false;
+        }else{
+          CMensajes.msg_advertencia("La marca ya esta registrado", "Registro marca");
+             
+           //return buscar=true;
+        }
+    
+        } catch (SQLException e) {
+            System.out.println("error en busca marca");
+        }
+          // return buscar;
+    }
+          
+          
+        public void BuscaModelo(String modelo) throws SQLException{
+        boolean buscar = false;
+        try {
+        String idBuscaMarca = queryBusca8.obtenIdBuscaMarcaa(marca);
+        String resultado = queryBusca4.obtenIdBuscaModeloo(modelo);
+        String idModelo = queryBusca9.obtenIdFinalModeloo();
+        int IDModelo= Integer.parseInt(idModelo);
+        if (resultado == null) {
+            //CMensajes.msg_advertencia("No se encontro el modelo", "Registro modelo");
+            queryInserta4.insertaMadeloo(IDModelo + 1, modelo, idBuscaMarca);
+            System.out.println("Se registro el modelo");
+        
+           
+          //return buscar =false;
+        }else{
+          CMensajes.msg_advertencia("El modelo ya esta registrado", "Registro modelo");
+             
+           //return buscar=true;
+        }
+    
+        } catch (SQLException e) {
+            System.out.println("error en busca marca");
+        }
+          // return buscar;
+    }
+        
+        
+        public void Insertafecha(String dia,String mes,String añoRegistro) throws SQLException{
+        boolean buscar = false;
+        try {
+       
+        //int fechaBuscada = queryBusca13.obtenIdBuscaFechaa(dia, mes, añoRegistro);
+        String idfech=queryBusca16.obtenIdFinalFechaa();
+        String idmes=queryBusca17.obtenIdBuscaMes(mes);
+        String idanio=queryBusca17.obtenIdBuscaAñoo(añoRegistro);
+        int idFecha=Integer.parseInt(idfech);
+        queryInserta6.insertaFechaa(idFecha+1, dia, idmes, idanio);
+            
+            
+            
+            
+    
+        } catch (Exception e) {
+            System.out.println("error en busca dia");
+        }
+          // return buscar;
+    }
+        
+              
+        public void BuscaPlaca(String placa,String numeroEconomico, String capacidad,String modelo,String marca, String diaRegistro,String AñoEmision,String mes, String AñoRegistro) throws SQLException{
+        boolean buscar = false;
+        try {
+       
+        String resultado =queryBusca5.obtenIdBuscaPlacaa(placa);
+        
+                //=queryBusca13.obtenIdBuscaFechaa(dia, mes, AñoRegi);
+       
+        if (resultado == null) {
+            //CMensajes.msg_advertencia("No se encontro la placa", "Registro placa");
+           String resultado2=queryBusca18.obtenIdBuscaNunEconomicoo(numeroEconomico);
+            if (resultado2== null) {
+                
+                String idAutobusss=queryBusca19.obtenIdFinalAutobuss();
+                
+                
+                
+                
+                
+                String idMes=queryBusca22.buscarIdMes(mes);
+                String AñoRegist=queryBusca20.buscaAnioo(AñoRegistro);
+                
+                        
+                String IdFechaBusca=queryBusca21.buscaFechaa(diaRegistro, idMes, AñoRegist);
+                String AñoEmisi= queryBusca23.buscaAnioo(AñoEmision);
+                int idAutobus=Integer.parseInt(idAutobusss);
+                String idModelo=queryBusca24.obtenIdBuscaModeloo(modelo);
+                
+                queryInserta8.insertaAutobus(idAutobus+1, capacidad, numeroEconomico, placa, AñoEmisi, IdFechaBusca, idModelo);
+                
+                CMensajes.msg("El autobus se registro correctamente", "Registro autobus");
+                System.out.println("se registro correctamente el autobus");
+                
+                
+            }else{
+                System.out.println("el num economico ya esta ");
+                          CMensajes.msg_advertencia("El numero economico ya esta registrado", "Registro numero");
+
+                
+            }
+            
+            
+            
+            if (buscar) {
+                
+            }
+           
+            //System.out.println("Se registro el la placa");
+        
+           
+          //return buscar =false;
+        }else{
+          CMensajes.msg_advertencia("La placa ya esta registrado", "Registro placa");
+             
+           //return buscar=true;
+        }
+    
+        } catch (Exception e) {
+            System.out.println("error en busca dia");
+        }
+          // return buscar;
+    }
+        
+        
+        
+      
               
               
               
        
       public void enviarDatos() {
-        int idAutobus, idFecha, idMes, idModelo, idAño, idMarca, idBuscaMarca;
+
         //int precio1=Integer.parseInt(precio);
         if (validaCampos()) {
             //telefonos = devuelveTelefonos();
@@ -375,83 +477,33 @@ public class JfRegistroAutobuses extends javax.swing.JFrame {
             // if (sinTelefono == false) {
             asignaValores();
             try {
-                idAño = queryBusca.obtenIdFinalAño();
-                idMarca = queryBusca.obtenIdFinalMarca();
-                idBuscaMarca = queryBusca.obtenIdBuscaMarca(marca);
-                idModelo = queryBusca.obtenIdFinalModelo();
-                idAutobus = queryBusca.obtenIdFinalAutobus();
-                System.out.println("id año maximo:" + idAño);
+              
+                
+                
+                
+                
+                
+                
+               
+                BuscaMarca(marca);
+                BuscaModelo(modelo);
+                
+               
+                BuscaAñoRegistro(AñoEmision);
+                BuscaAñoEmision(AñoRegistro);
+                Insertafecha(diaRegistro, mes, AñoRegistro);
+                
+                BuscaPlaca(placa, numeroEconomico, capacidad, modelo, marca, diaRegistro, AñoEmision, mes, AñoRegistro);
+                
+                
+                
+                
+                
+                
+                
+    
 
-                if (BuscaAño(JtxtAnioE)) {
-                    CMensajes.msg_error("El año ya esta registrado", "Registro año");
-                    System.out.println("el año de existencia ya esta registrado");
-                } else {
-                    int AñoEmi = Integer.parseInt(AñoEmision);
-                     queryInserta.insertaAnio(idAño + 1, AñoEmi);
-                    System.out.println("id año maximo:" + AñoEmi);
-                    System.out.println("se inserto correcrtamente el año");
-                }
-
-                if (BuscaAño(JtxtAnioR)) {
-                    System.out.println("el año de registro ya esta registrado");
-                } else {
-                    int AñoRegi = Integer.parseInt(AñoRegistro);
-                    queryInserta.insertaAnio(idAño + 1, AñoRegi);
-                    System.out.println("id año maximo:" + AñoRegi);
-                    System.out.println("se inserto correcrtamente el año");
-                }
-
-                if (BuscaMarca(JtxtMarca)) {
-                    System.out.println("el año ya esta registrado");
-                    CMensajes.msg_error("La marca ya esta registrado", "Registro marca");
-                } else {
-                    int AñoEmi = Integer.parseInt(AñoEmision);
-                    queryInserta.insertaMarca(idMarca + 1, marca);
-                    System.out.println("id marca:" + idMarca);
-                    System.out.println("se inserto correcrtamente la marca");
-                }
-
-                if (BuscaModelo(JtxtModelo)) {
-                    System.out.println("el año ya esta registrado");
-                } else {
-                    int AñoEmi = Integer.parseInt(AñoEmision);
-                    queryInserta.insertaMadelo(idModelo + 1, marca, idBuscaMarca);
-                    System.out.println("id año maximo:" + AñoEmi);
-                    System.out.println("se inserto correcrtamente el modelo");
-                }
-
-                if (BuscaPlaca(JtxtPlaca)) {
-                    System.out.println("La placa ya esta registrada");
-                    CMensajes.msg_error("La placa ya esta registrada", "Registro placa");
-
-                } else {
-
-                }
-
-                if (BuscaNumEconomico(JtxtNumEconomico)) {
-                    CMensajes.msg_error("El numero economico ya esta registrado", "Registro numero economico");
-                    System.out.println("el año ya esta registrado");
-                } else {
-                    int AñoEmi = Integer.parseInt(AñoEmision);
-                    System.out.println("se inserto correcrtamente el nun economico");
-
-                }
-
-                if (BuscaNumEconomico(JtxtNumEconomico) && !BuscaPlaca(JtxtPlaca)) {
-                    //System.out.println("el año ya esta registrado");
-                } else {
-                    int capacidadnum = Integer.parseInt(capacidad);
-                    int dia = Integer.parseInt(diaRegistro);
-                    int AñoEmi = Integer.parseInt(AñoEmision);
-                    int AñoRegi = Integer.parseInt(AñoRegistro);
-                    int idAnioBuscado = queryBusca.obtenIdBuscaAnio(AñoEmi);
-                    int idModeloBuscado = queryBusca.obtenIdBuscaModelo(modelo);
-                    int fechaBuscada = queryBusca.obtenIdBuscaFecha(dia, mes, AñoRegi);
-                    queryInserta.insertaAutobus(idAutobus + 1, capacidadnum, numeroEconomico, placa, idAnioBuscado, fechaBuscada, idModeloBuscado);
-
-                }
-
-                CMensajes.msg("Usuario Registrado", "Registro Usuarios");
+              
             } catch (SQLException ex) {
             } finally {
                 limpiaValores();
@@ -463,6 +515,14 @@ public class JfRegistroAutobuses extends javax.swing.JFrame {
     }
     
    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -510,6 +570,7 @@ public class JfRegistroAutobuses extends javax.swing.JFrame {
         JspNumEconomico = new javax.swing.JSeparator();
         JlblMesRegistro = new javax.swing.JLabel();
         JcmbxDia = new javax.swing.JComboBox<>();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Agregar autobuses");
@@ -521,6 +582,7 @@ public class JfRegistroAutobuses extends javax.swing.JFrame {
         JlblPlaca.setText("Placa");
         JpnlLienzo.add(JlblPlaca, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 10, 50, -1));
 
+        JtxtPlaca.setToolTipText("Guiese del siguiente ejemplo: QSR-45678");
         JtxtPlaca.setBorder(null);
         JpnlLienzo.add(JtxtPlaca, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 30, 129, -1));
         JpnlLienzo.add(JspPlaca, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 50, 129, 10));
@@ -528,6 +590,7 @@ public class JfRegistroAutobuses extends javax.swing.JFrame {
         JlblCapacidad.setText("Capacidad");
         JpnlLienzo.add(JlblCapacidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 60, 60, -1));
 
+        JtxtCapacidad.setToolTipText("Solo ingrese dos numero señalando la capacidad");
         JtxtCapacidad.setBorder(null);
         JpnlLienzo.add(JtxtCapacidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 80, 129, -1));
         JpnlLienzo.add(JspCapacidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 100, 129, 10));
@@ -535,6 +598,7 @@ public class JfRegistroAutobuses extends javax.swing.JFrame {
         JlblMarca.setText("Marca");
         JpnlLienzo.add(JlblMarca, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 110, 129, -1));
 
+        JtxtMarca.setToolTipText("Solo ingrese letras");
         JtxtMarca.setBorder(null);
         JpnlLienzo.add(JtxtMarca, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 130, 129, -1));
         JpnlLienzo.add(JspMarca, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 150, 129, 10));
@@ -542,6 +606,7 @@ public class JfRegistroAutobuses extends javax.swing.JFrame {
         JlblModelo.setText("Modelo");
         JpnlLienzo.add(JlblModelo, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 160, 129, -1));
 
+        JtxtModelo.setToolTipText("Puede ingresar letras y numeros");
         JtxtModelo.setBorder(null);
         JpnlLienzo.add(JtxtModelo, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 180, 129, -1));
         JpnlLienzo.add(JspModelo, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 200, 129, 10));
@@ -549,6 +614,7 @@ public class JfRegistroAutobuses extends javax.swing.JFrame {
         JlblAnioR.setText("Año de Registro");
         JpnlLienzo.add(JlblAnioR, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 60, 129, -1));
 
+        JtxtAnioR.setToolTipText("Solo ingrese los 4 numeros del año");
         JtxtAnioR.setBorder(null);
         JpnlLienzo.add(JtxtAnioR, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 80, 129, -1));
         JpnlLienzo.add(JspAnioR, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 100, 129, 10));
@@ -559,6 +625,7 @@ public class JfRegistroAutobuses extends javax.swing.JFrame {
         JlblAnioE.setText("Año de Emision");
         JpnlLienzo.add(JlblAnioE, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 10, 129, -1));
 
+        JtxtAnioE.setToolTipText("Solo ingrese los 4  numero del año");
         JtxtAnioE.setBorder(null);
         JpnlLienzo.add(JtxtAnioE, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 30, 129, -1));
         JpnlLienzo.add(JspAnioE, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 50, 129, 10));
@@ -584,6 +651,7 @@ public class JfRegistroAutobuses extends javax.swing.JFrame {
         JlblNumEconomico.setText("Numero Economico");
         JpnlLienzo.add(JlblNumEconomico, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 210, 129, -1));
 
+        JtxtNumEconomico.setToolTipText("Solo ingrese numen un maximo de 5 digitos");
         JtxtNumEconomico.setBorder(null);
         JpnlLienzo.add(JtxtNumEconomico, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 230, 129, -1));
         JpnlLienzo.add(JspNumEconomico, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 250, 129, 10));
@@ -593,6 +661,9 @@ public class JfRegistroAutobuses extends javax.swing.JFrame {
 
         JcmbxDia.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione una opcion" }));
         JpnlLienzo.add(JcmbxDia, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 180, -1, -1));
+
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/FondoRegistroAutobuses.png"))); // NOI18N
+        JpnlLienzo.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 10, -1, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -605,10 +676,9 @@ public class JfRegistroAutobuses extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(JpnlLienzo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(JpnlLienzo, javax.swing.GroupLayout.PREFERRED_SIZE, 271, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -652,7 +722,22 @@ public class JfRegistroAutobuses extends javax.swing.JFrame {
 
     private void JbtnEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnEnviarActionPerformed
         // TODO add your handling code here:
-        enviarDatos();
+        try {
+            String AñoEmision= JtxtAnioE.getText();
+            String AñoRegistro=JtxtAnioR.getText();
+            int añoEmision= Integer.parseInt(AñoEmision);
+            int añoRegistro= Integer.parseInt(AñoRegistro);
+            
+            if (añoEmision <= añoRegistro) {
+                 enviarDatos();
+            }else{
+            
+             CMensajes.msg_error("El año de Emision no puede ser mayor al año de Registro ", "Registro placa");
+            }
+        } catch (Exception e) {
+        }
+        
+       
     }//GEN-LAST:event_JbtnEnviarActionPerformed
 
     /**
@@ -718,5 +803,6 @@ public class JfRegistroAutobuses extends javax.swing.JFrame {
     private javax.swing.JTextField JtxtModelo;
     private javax.swing.JTextField JtxtNumEconomico;
     private javax.swing.JTextField JtxtPlaca;
+    private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
 }

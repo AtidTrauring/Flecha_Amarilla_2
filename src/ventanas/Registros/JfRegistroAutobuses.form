@@ -34,10 +34,9 @@
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="1" attributes="0">
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="JpnlLienzo" max="32767" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace max="32767" attributes="0"/>
+              <Component id="JpnlLienzo" min="-2" pref="271" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -66,6 +65,7 @@
         </Component>
         <Component class="javax.swing.JTextField" name="JtxtPlaca">
           <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="Guiese del siguiente ejemplo: QSR-45678"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="null"/>
             </Property>
@@ -95,6 +95,7 @@
         </Component>
         <Component class="javax.swing.JTextField" name="JtxtCapacidad">
           <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="Solo ingrese dos numero se&#xf1;alando la capacidad"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="null"/>
             </Property>
@@ -124,6 +125,7 @@
         </Component>
         <Component class="javax.swing.JTextField" name="JtxtMarca">
           <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="Solo ingrese letras"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="null"/>
             </Property>
@@ -153,6 +155,7 @@
         </Component>
         <Component class="javax.swing.JTextField" name="JtxtModelo">
           <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="Puede ingresar letras y numeros"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="null"/>
             </Property>
@@ -182,6 +185,7 @@
         </Component>
         <Component class="javax.swing.JTextField" name="JtxtAnioR">
           <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="Solo ingrese los 4 numeros del a&#xf1;o"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="null"/>
             </Property>
@@ -221,6 +225,7 @@
         </Component>
         <Component class="javax.swing.JTextField" name="JtxtAnioE">
           <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="Solo ingrese los 4  numero del a&#xf1;o"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="null"/>
             </Property>
@@ -289,6 +294,7 @@
         </Component>
         <Component class="javax.swing.JTextField" name="JtxtNumEconomico">
           <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="Solo ingrese numen un maximo de 5 digitos"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="null"/>
             </Property>
@@ -330,6 +336,18 @@
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
               <AbsoluteConstraints x="440" y="180" width="-1" height="-1"/>
+            </Constraint>
+          </Constraints>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel1">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/imagenes/FondoRegistroAutobuses.png"/>
+            </Property>
+          </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+              <AbsoluteConstraints x="0" y="10" width="-1" height="-1"/>
             </Constraint>
           </Constraints>
         </Component>
