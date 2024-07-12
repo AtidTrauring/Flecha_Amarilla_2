@@ -29,10 +29,36 @@ public class JfRegistroTerminal extends javax.swing.JFrame {
     }
 
     
+     
     
-    
-      private final CInserciones queryInserta = new CInserciones();
-    private final CBusquedas queryBusca = new CBusquedas();
+    private final CInserciones queryInserta1 = new CInserciones();
+    private final CInserciones queryInserta2 = new CInserciones();
+    private final CInserciones queryInserta3 = new CInserciones();
+    private final CInserciones queryInserta4 = new CInserciones();
+    private final CInserciones queryInserta5 = new CInserciones();
+    private final CInserciones queryInserta6 = new CInserciones();
+    private final CInserciones queryInserta7 = new CInserciones();
+    private final CInserciones queryInserta8 = new CInserciones();
+    private final CBusquedas queryBusca1 = new CBusquedas();
+    private final CBusquedas queryBusca2 = new CBusquedas();
+    private final CBusquedas queryBusca3 = new CBusquedas();
+    private final CBusquedas queryBusca4 = new CBusquedas();
+    private final CBusquedas queryBusca5 = new CBusquedas();
+    private final CBusquedas queryBusca6 = new CBusquedas();
+    private final CBusquedas queryBusca7 = new CBusquedas();
+    private final CBusquedas queryBusca8 = new CBusquedas();
+    private final CBusquedas queryBusca9 = new CBusquedas();
+    private final CBusquedas queryBusca10 = new CBusquedas();
+    private final CBusquedas queryBusca11 = new CBusquedas();
+    private final CBusquedas queryBusca12 = new CBusquedas();
+    private final CBusquedas queryBusca13 = new CBusquedas();
+    private final CBusquedas queryBusca14 = new CBusquedas();
+    private final CBusquedas queryBusca15 = new CBusquedas();
+    private final CBusquedas queryBusca16 = new CBusquedas();
+    private final CBusquedas queryBusca17 = new CBusquedas();
+    private final CBusquedas queryBusca18 = new CBusquedas();
+    private final CBusquedas queryBusca19 = new CBusquedas();
+    private final CBusquedas queryBusca20 = new CBusquedas();
     private final CEliminaciones queryElimina = new CEliminaciones();
     private final CActualizaciones queryActualiza = new CActualizaciones();
     private final CCargaCombos queryCarga = new CCargaCombos();
@@ -44,7 +70,7 @@ public class JfRegistroTerminal extends javax.swing.JFrame {
     private String regexEstado="^[a-zA-Z]{1,19}$";
     private String regexCiudad="^[a-zA-Z]{1,80}$";
     private String regexCalle="^[a-zA-Z]{1,80}$";
-    private String regexNumero="^[0-9]{5}$";
+    private String regexNumero="^[0-9]{1,5}$";
     private String regexColonia="^[a-zA-Z]{1,80}$";
 
      private DefaultComboBoxModel listas;
@@ -117,109 +143,204 @@ public class JfRegistroTerminal extends javax.swing.JFrame {
             &&  validaCampo(ciudad, JtxtCiudad, regexCiudad, "Ingrese la ciudad", "Ciudad invalida")
             &&  validaCampo(Colonia, JtxtBarrio, regexColonia, "Ingrese la colonia", "Colonia invalida")
             &&  validaCampo(calle, JtxtCalle, regexCalle, "Ingrese la calle", "Calle invalida")
-            &&  validaCampo(Numero, JtxtNumero, regexNumero, "Ingrese el numero", "Numero invalidp")
-            &&  validaCampo(codigoPostal, JtxtCP, regexCodigoPostal, "Ingrese el Codigo postal", "Codigo postal invalidp");
+            &&  validaCampo(Numero, JtxtNumero, regexNumero, "Ingrese el numero", "Numero invalido")
+            &&  validaCampo(codigoPostal, JtxtCP, regexCodigoPostal, "Ingrese el Codigo postal", "Codigo postal invalido");
             
     }
     
-    public boolean BuscaCamposNombre(String nombreTerminal) throws SQLException{
-        boolean buscar=false;
+    public void BuscaCamposNombre(String nombreTerminal) throws SQLException{
+   
         String terminal=nombreTerminal;
         
         try {
-           Integer resultado=queryBusca.obtenIdtTerminal(terminal);
-        CMensajes.msg_advertencia("Nombre buscado:"+resultado, "Registro terminal");
+        String resultado=queryBusca1.buscarIdNombreTerminal(terminal);
+       
         
         if (resultado == null) {
-             //CMensajes.msg_advertencia("No se encontro el campo", "Registro Autobus");
-           return buscar =false;
+             //CMensajes.msg_advertencia("No se encontro el campo", "Registro terminal");
+              String idBuscaCiudad=queryBusca15.buscarIdCiudad(ciudad);
+        String idBuscaColonia=queryBusca16.buscarIdColonia(Colonia);
+        String idBuscaCodigoPostal=queryBusca17.buscarIdCodigoPostal(codigoPostal);
+        String idDireccion=queryBusca19.buscarIdDireccion(calle, Numero, idBuscaCiudad, idBuscaColonia, idBuscaCodigoPostal);
+        int idTerminal=queryBusca20.obtenIdFinalTerminal();
+        queryInserta6.insertaTerminal(idTerminal+1, nombreTerminal, idDireccion);
+             System.out.println("Se registro exitosamente la terminal");
+             CMensajes.msg("La terminal se registro correctamente", "Registro terminal");
+               
+            
+             System.out.println("Nombre de la terminal no encontrado");
         }else{
-            //CMensajes.msg_advertencia("Si se encontro el campo", "Registro Autobus");
-             //CMensajes.msg_error("El nombre de la terminal ya esta registrado", "Registro Nombre terminal");
-           return buscar=true;
+            CMensajes.msg_advertencia("Ten en cuenta que ese nombre ya esta registrado", "Registro Nombre de la terminal");
+             //CMensajes.msg_advertencia("Nombre buscado:"+resultado, "Registro terminal");
+            //CMensajes.msg_error("El nombre de la terminal ya esta registrado", "Registro Nombre terminal");
+              System.out.println("Encontrado");
+              System.out.println("No se registro la terminal");
+          // return buscar=true;
         }
     
         } catch (Exception e) {
         }
-        return buscar;
+       
+    }
+    
+    
+     public void insertaDireccion(String nombreTerminal,String calle,String Numero,String ciudad,String Colonia,String codigoPostal) throws SQLException{
+         System.out.println("--------------------------------------");
+        String terminal=nombreTerminal;
+        
+        try {
+        //String resultadoNombre=queryBusca14.buscarIdNombreTerminal(terminal);
+        String idBuscaCiudad=queryBusca15.buscarIdCiudad(ciudad);
+        String idBuscaColonia=queryBusca16.buscarIdColonia(Colonia);
+        String idBuscaCodigoPostal=queryBusca17.buscarIdCodigoPostal(codigoPostal);
+        int idDireccion=queryBusca18.obtenIdFinalDireciion();
+//        if (resultadoNombre == null) {
+//             CMensajes.msg_advertencia("No se encontro el campo", "Registro terminal");
+//             System.out.println("Nombre de la terminal no encontrado");
+//             
+             if (idBuscaCiudad != null) {
+                 System.out.println("Encontro Ciudad");
+                   
+                 if (idBuscaColonia!=null) {
+                      System.out.println("Encontro Colonia");
+                     if (idBuscaCodigoPostal!=null) {
+                         System.out.println("Encontro CodigoPostal"); 
+                         queryInserta5.insertaDireccion(idDireccion+1, calle, Numero, idBuscaCiudad, idBuscaColonia, idBuscaCodigoPostal);
+                         System.out.println("se inseto direccion");
+                     }else{
+                      
+                     }
+                     
+                 }else{
+                 
+                 }
+                 
+                
+            }else{
+                    
+             }
+             
+
+    
+        } catch (SQLException e) {
+        }
+       
     }
     
     
     
     
-    
-    
-    public boolean BuscaCamposEstado(String estado) throws SQLException{
-        boolean buscar=false;
-        String Nombreestados=estado;
+     public void insertaTerminal(String nombreTerminal,String calle,String Numero,String ciudad,String Colonia,String codigoPostal) throws SQLException{
+         System.out.println("--------------------------------------");
+         
+       
+      
         
         try {
-           Integer resultado=queryBusca.obtenIdtEstado(Nombreestados);
-        CMensajes.msg_advertencia("Nombre buscado:"+resultado, "Registro estado");
-        
-        if (resultado == null) {
-             //CMensajes.msg_advertencia("No se encontro el campo", "Registro Autobus");
-           return buscar =false;
-        }else{
-           // CMensajes.msg_advertencia("Si se encontro el campo", "Registro Autobus");
-             //CMensajes.msg_error("El nombre del estado ya esta registrado", "Registro estado");
-           return buscar=true;
-        }
+         String idBuscaCiudad=queryBusca15.buscarIdCiudad(ciudad);
+        String idBuscaColonia=queryBusca16.buscarIdColonia(Colonia);
+        String idBuscaCodigoPostal=queryBusca17.buscarIdCodigoPostal(codigoPostal);
+        String idDireccion=queryBusca19.buscarIdDireccion(calle, Numero, idBuscaCiudad, idBuscaColonia, idBuscaCodigoPostal);
+        int idTerminal=queryBusca20.obtenIdFinalTerminal();
+        queryInserta6.insertaTerminal(idTerminal+1, nombreTerminal, idDireccion);
+            System.out.println("Se registro la terminal");
+               
+            
+  
+
     
-        } catch (Exception e) {
+        } catch (SQLException e) {
         }
-        return buscar;
+       
     }
     
     
-    public boolean BuscaCamposCodigoPostal(int codigoPostal) throws SQLException{
-        boolean buscar=false;
-        int CP=codigoPostal;
+    
+    
+    public void BuscaCamposEstado(String estado) throws SQLException{
+        
         
         try {
-           Integer resultado=null;
-           resultado=queryBusca.obtenIdCodigoPostal(CP);
-        CMensajes.msg_advertencia("Nombre buscado:"+resultado, "Registro A codigo postal");
-        
+        String resultado=queryBusca2.buscarIdEstado(estado);
+       String idEstado =queryBusca6.obtenIdFinalEstadoo();
+        int idEstadoIngresado= Integer.parseInt(idEstado);
         if (resultado == null) {
-             //CMensajes.msg_advertencia("No se encontro el campo", "Registro Autobus");
-           return buscar =false;
+            // CMensajes.msg_advertencia("No se encontro el estado", "Registro terminal");
+             System.out.println("Nombre del estado no encontrado");
+             queryInserta1.insertaEstado(idEstadoIngresado+1, estado);
+             System.out.println("se inserto un estado:"+estado);
+         //  return buscar =false;
         }else{
             //CMensajes.msg_advertencia("Si se encontro el campo", "Registro Autobus");
-            // CMensajes.msg_error("El nombre del estado ya esta registrado", "Registro estado");
-           return buscar=true;
+           // CMensajes.msg_advertencia("Nombre buscado:"+resultado, "Registro terminal");
+            CMensajes.msg_error("El nombre del estado ya esta registrado", "Registro Nombre estado");
+             System.out.println("Encontrado");
+             
+          // return buscar=true;
         }
     
         } catch (Exception e) {
         }
+    }
+    
+    
+    public void BuscaCamposCodigoPostal(String codigoPostal) throws SQLException{
+        try {
+        String resultado=queryBusca3.buscarIdCodigoPostal(codigoPostal);
+        String idCodPos=queryBusca13.obtenIdFinalCodigoPostall();
+        int idCodigo=Integer.parseInt(idCodPos);
+       
         
-        return buscar;
+        if (resultado == null) {
+            // CMensajes.msg_advertencia("No se encontro el codigo postal", "Registro codigoPostal");
+            
+             queryInserta4.insertaCodigoPostal(idCodigo+1, codigoPostal);
+              System.out.println("codigo insertado:"+codigoPostal);
+         //  return buscar =false;
+        }else{
+            //CMensajes.msg_advertencia("Si se encontro el campo", "Registro Autobus");
+             //CMensajes.msg_advertencia("Nombre buscado:"+resultado, "Registro terminal");
+             CMensajes.msg_advertencia("Ten en cuenta que el codigo postal ya esta registrado", "Registro codigo postal");
+            //CMensajes.msg_error("El codigo ya esta registrado", "Registro codigo postal");
+             System.out.println("Encontrado");
+          // return buscar=true;
+         
+        }
+    
+        } catch (Exception e) {
+        }
     }
     
     
     
     
      
-    public boolean BuscaCamposCiudad(String ciudad) throws SQLException{
-        boolean buscar=false;
-        String NombreeCiudad=ciudad;
-        
+    public void BuscaCamposCiudad(String ciudad) throws SQLException{
         try {
-           Integer resultado=queryBusca.obtenIdtCiudad(NombreeCiudad);
-        CMensajes.msg_advertencia("Nombre buscado:"+resultado, "Registro ciudad");
+        String resultado=queryBusca4.buscarIdCiudad(ciudad);
+       
         
         if (resultado == null) {
-             //CMensajes.msg_advertencia("No se encontro el campo", "Registro Autobus");
-           return buscar =false;
+             //CMensajes.msg_advertencia("No se encontro la ciudad", "Registro ciudad");
+             
+              int estadoBuscado=queryBusca7.obtenIdBuscaEstado(estado);
+              int idCiudad=queryBusca9.obtenIdFinalCiudad();
+              queryInserta2.insertaCiudad(idCiudad+1, ciudad, estadoBuscado);
+              System.out.println("ciudad insertada: "+ciudad);
+              
+         //  return buscar =false;
         }else{
-           // CMensajes.msg_advertencia("Si se encontro el campo", "Registro Autobus");
-            // CMensajes.msg_error("El nombre de la ciudad ya esta registrado", "Registro ciudad");
-           return buscar=true;
+            //CMensajes.msg_advertencia("Si se encontro el campo", "Registro Autobus");
+             //CMensajes.msg_advertencia("Nombre buscado:"+resultado, "Registro terminal");
+             CMensajes.msg_advertencia("Ten en cuenta que la ciudad ya esta registrada", "Registro ciudad");
+            //CMensajes.msg_error("Ciudad ya esta registrado", "Registro ciudad");
+             System.out.println("Encontrado");
+          // return buscar=true;
+         
         }
     
         } catch (Exception e) {
         }
-        return buscar;
     }
     
     
@@ -227,116 +348,78 @@ public class JfRegistroTerminal extends javax.swing.JFrame {
     
     
      
-    public boolean BuscaCamposColonia(String colonia) throws SQLException{
-        boolean buscar=false;
-        String col=colonia;
-        
-        try {
-           Integer resultado=queryBusca.obtenIdtColonia(col);
-        CMensajes.msg_advertencia("Nombre buscado:"+resultado, "Registro colonia");
+    public void BuscaCamposColonia(String colonia) throws SQLException{
+              try {
+        String resultado=queryBusca10.buscarIdColonia(colonia);
+        String IdCol=queryBusca12.obtenIdFinalColoniaa();
+        int idColonia=Integer.parseInt(IdCol);
+       
         
         if (resultado == null) {
-             //CMensajes.msg_advertencia("No se encontro el campo", "Registro Autobus");
-           return buscar =false;
+             //CMensajes.msg_advertencia("No se encontro la colonia", "Registro colonia");
+           
+               queryInserta3.insertaColonia(idColonia+1, Colonia);
+               System.out.println("Seinserto colonia:"+Colonia);
+         //  return buscar =false;
         }else{
             //CMensajes.msg_advertencia("Si se encontro el campo", "Registro Autobus");
-             //CMensajes.msg_error("El nombre de la ciudad ya esta registrado", "Registro ciudad");
-           return buscar=true;
+             //CMensajes.msg_advertencia("Nombre buscado:"+resultado, "Registro colonina");
+             CMensajes.msg_advertencia("Ten en cuenta que la colonia ya esta registrada", "Registro colonia");
+            //CMensajes.msg_error("Colonia ya esta registrado", "Registro colonia");
+             System.out.println("Encontrado");
+          // return buscar=true;
+         
         }
     
         } catch (Exception e) {
         }
-        return buscar;
+    }
+    
+    
+    
+       public void BuscaCamposNumeroHabitacional(String numero) throws SQLException{
+              try {
+        String resultado=queryBusca11.buscarIdNumeroHabitacional(numero);
+       
+        
+        if (resultado == null) {
+             CMensajes.msg_advertencia("No se encontro el numero", "Registro numero");
+             System.out.println("numero no encontrado");
+         //  return buscar =false;
+        }else{
+            //CMensajes.msg_advertencia("Si se encontro el campo", "Registro Autobus");
+             CMensajes.msg_advertencia("Nombre buscado:"+resultado, "Registro colonina");
+            CMensajes.msg_error("Numero habitacional ya esta registrado", "Registro numero");
+             System.out.println("Encontrado");
+          // return buscar=true;
+         
+        }
+    
+        } catch (Exception e) {
+        }
     }
     
     
     
      public void enviarDatos() {
-        int idAutobus, idFecha, idMes, idModelo, idAño, idMarca, idBuscaMarca;
-        //int precio1=Integer.parseInt(precio);
+       
         if (validaCampos()) {
           
             
-            asignaValores();
-            try {
-                
-                
-                if (BuscaCamposNombre(nombresTerminal)) {
-                    System.out.println("si se encontro"); 
-                    CMensajes.msg_error("El nombre de la terminal ya esta registrado", "Registro Nombre terminal");
-                }else{
-                
-                   System.out.println("no se encontro"); 
-                }
-                
+           asignaValores();
+          try {
+              
              
-                if (BuscaCamposEstado(estado)) {
-                    System.out.println("si se encontro"); 
-                    CMensajes.msg_error("El nombre del estado ya esta registrado", "Registro estado");
-                }else{
-                int idEstado=queryBusca.obtenIdFinalEstado();
-               // queryInserta.insertaEstado(idEstado+1, estado);
-                   System.out.println("se registro el estado exitosamente:"+estado); 
-                }
+              BuscaCamposEstado(estado);
+              BuscaCamposCiudad(ciudad);
+              BuscaCamposColonia(Colonia);
+              BuscaCamposCodigoPostal(codigoPostal);
+              //BuscaCamposNumeroHabitacional(Numero);
               
-                 if (BuscaCamposCiudad(ciudad)) {
-                    System.out.println("si se encontro"); 
-                     CMensajes.msg_error("El nombre de la ciudad ya esta registrado", "Registro ciudad");
-               }else{
-                int estadoBuscado=queryBusca.obtenIdBuscaEstado(estado);
-                int idCiudad=queryBusca.obtenIdFinalCiudad();
-                queryInserta.insertaCiudad(idCiudad+1, ciudad, estadoBuscado);
-                System.out.println("se registro la ciudad exitosamente:"+ciudad); 
-                  //System.out.println("no se encontro"); 
-                }
-               
-               int codiPost= Integer.parseInt(codigoPostal);
-                  if (BuscaCamposCodigoPostal(codiPost)) {
-                   System.out.println("si se encontro");
-                   CMensajes.msg_error("El nombre del estado ya esta registrado", "Registro codigo postal");
-              }else{
-               int idCodigo=queryBusca.obtenIdFinalCodigoPostal();
-               queryInserta.insertaCodigoPostal(idCodigo+1, codiPost);
-  
-               System.out.println("se registro el codigo postal exitosamente:"+codigoPostal); 
-                 //System.out.println("no se encontro"); 
-               }
-//                  
-//                  
-                // int codiPost= Integer.parseInt(codigoPostal);
-                  if (BuscaCamposColonia(Colonia)) {
-                  System.out.println("si se encontro"); 
-                    CMensajes.msg_error("El nombre de la colonia ya esta registrado", "Registro colonia");
-               }else{
-                int idColonia=queryBusca.obtenIdFinalColonia();
-                queryInserta.insertaColonia(idColonia+1, Colonia);
-   
-                System.out.println("se registro el codigo postal exitosamente:"+codigoPostal); 
-                   //System.out.println("no se encontro"); 
-                }
-//                
-//                
-                if (BuscaCamposNombre(nombresTerminal) && BuscaCamposEstado(estado) && BuscaCamposCiudad(ciudad) && BuscaCamposCodigoPostal(codiPost) && BuscaCamposColonia(Colonia)) {
-              
-               }else{
-                   int idBucaCiudad=queryBusca.obtenIdtCiudad(ciudad);
-                    int idBucaColonia=queryBusca.obtenIdtColonia(Colonia);
-                    int idBucaCodigoPostal=queryBusca.obtenIdCodigoPostal(codiPost);
-                    int idDireccion=queryBusca.obtenIdFinalDireciion();
-                    int num=Integer.parseInt(Numero);
-                    queryInserta.insertaDireccion(idDireccion+1, calle, num, idBucaCiudad, idBucaColonia, idBucaCodigoPostal);
-                    System.out.println("se registro exitosamente la direccion");
-                
-                int idBuscaDireccio=queryBusca.obtenIdBuscaDireccion(calle, num);
-                int idTerminal=queryBusca.obtenIdFinalTerminal();
-                queryInserta.insertaTerminal(idTerminal+1, nombresTerminal, idDireccion);
-                CMensajes.msg("Terminal Registrada", "Registro terminal");
-                }
-//                
-//                
-//             
-//                
-                
+              insertaDireccion(nombresTerminal, calle, Numero, ciudad, Colonia, codigoPostal);
+               BuscaCamposNombre(nombresTerminal);
+              //insertaTerminal(nombresTerminal, calle, Numero, ciudad, Colonia, codigoPostal);
+
                 
                 
                 
@@ -388,7 +471,6 @@ public class JfRegistroTerminal extends javax.swing.JFrame {
         JlblNombreTerminal = new javax.swing.JLabel();
         JtxtNombreTerminal = new javax.swing.JTextField();
         JspNombreTerminal = new javax.swing.JSeparator();
-        JlblFondo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Agregar terminales");
@@ -442,6 +524,11 @@ public class JfRegistroTerminal extends javax.swing.JFrame {
         JbtnEnviar.setBackground(new java.awt.Color(160, 16, 70));
         JbtnEnviar.setForeground(new java.awt.Color(255, 255, 255));
         JbtnEnviar.setText("Enviar");
+        JbtnEnviar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JbtnEnviarActionPerformed(evt);
+            }
+        });
         JpnlLienzo.add(JbtnEnviar, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 140, 70, -1));
 
         JlblNombreTerminal.setText("Nombre");
@@ -450,9 +537,6 @@ public class JfRegistroTerminal extends javax.swing.JFrame {
         JtxtNombreTerminal.setBorder(null);
         JpnlLienzo.add(JtxtNombreTerminal, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, 110, -1));
         JpnlLienzo.add(JspNombreTerminal, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, 110, -1));
-
-        JlblFondo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/FondoRegistroTerminal.png"))); // NOI18N
-        JpnlLienzo.add(JlblFondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 0, 200, 190));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -467,6 +551,11 @@ public class JfRegistroTerminal extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void JbtnEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnEnviarActionPerformed
+        // TODO add your handling code here:
+        enviarDatos();
+    }//GEN-LAST:event_JbtnEnviarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -511,7 +600,6 @@ public class JfRegistroTerminal extends javax.swing.JFrame {
     private javax.swing.JLabel JlblCalle;
     private javax.swing.JLabel JlblCiudad;
     private javax.swing.JLabel JlblEstado;
-    private javax.swing.JLabel JlblFondo;
     private javax.swing.JLabel JlblNombreTerminal;
     private javax.swing.JLabel JlblNumero;
     private javax.swing.JPanel JpnlLienzo;
