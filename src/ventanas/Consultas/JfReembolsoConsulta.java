@@ -249,6 +249,50 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
         return -1;
     }
     
+    public void actualizar(int id){
+        String nombre = (String) JtableReembolsos.getValueAt(JtableReembolsos.getSelectedRow(), 0);
+        String apPat = (String) JtableReembolsos.getValueAt(JtableReembolsos.getSelectedRow(), 1);
+        String apMat = (String) JtableReembolsos.getValueAt(JtableReembolsos.getSelectedRow(), 2);
+        float cantidad = Float.parseFloat((String) JtableReembolsos.getValueAt(JtableReembolsos.getSelectedRow(), 3));
+        int dia = Integer.parseInt((String) JtableReembolsos.getValueAt(JtableReembolsos.getSelectedRow(), 4));
+        String mes = (String) JtableReembolsos.getValueAt(JtableReembolsos.getSelectedRow(), 5);
+        int anio = Integer.parseInt((String) JtableReembolsos.getValueAt(JtableReembolsos.getSelectedRow(), 6));
+        try {
+            String idReembolso = queryBusca.buscarReembolso(id);
+            int idRee = Integer.parseInt(idReembolso);
+            if (idReembolso != null || idReembolso.isEmpty()) {
+                if (queryActualiza.actualizarPersona(nombre, apPat, apMat, id)) {
+                    if (queryActualiza.actualizarCantidadReembolso(idRee, cantidad)) {
+                        if (queryActualiza.actualizarFecha(dia, id)) {
+                            if (queryActualiza.actualizarMesFecha(mes, mes)) {
+                                if (queryActualiza.actualizarAnio(anio, id)) {
+                                    CMensajes.msg("Se actualizo el reembolso", "Actualizar");
+                                } else {
+                                    CMensajes.msg_error("No se pudo actualizar el año", "Actualizar");
+                                }
+                            } else {
+                                CMensajes.msg_error("No se pudo actualizar el mes", "Actualizar");
+                            }
+                        } else {
+                            CMensajes.msg_error("No se pudo actualizar el dia", "Actualizar");
+                        }
+                    } else {
+                        CMensajes.msg_error("No se pudo actulizar la cantidad", "Actualizar");
+                    }
+                } else {
+                    CMensajes.msg_error("No se pudo actualizr a la persona", "Actualizar");
+                }
+            } else {
+                CMensajes.msg_error("Ocurrio un error al actualizar.", "Actualizar");
+            }
+        } catch (Exception e) {
+        } finally {
+            limpiarBuscadores();
+            limpiarFiltro();
+            cargarTabla();
+        }
+    }
+    
      public void eliminar(int id) {
         try {
             String idRee = queryBusca.buscarReembolso(id);
@@ -457,6 +501,11 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
         JbtnActualizar.setBackground(new java.awt.Color(160, 16, 70));
         JbtnActualizar.setForeground(new java.awt.Color(255, 255, 255));
         JbtnActualizar.setText("Actualizar");
+        JbtnActualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JbtnActualizarActionPerformed(evt);
+            }
+        });
         JpnlLienzo.add(JbtnActualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 90, 90, -1));
 
         JlblTotal.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -560,6 +609,14 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
 
         }
     }//GEN-LAST:event_JbtnEliminarActionPerformed
+
+    private void JbtnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JbtnActualizarActionPerformed
+        if (JtableReembolsos.getSelectedRow() != -1) {
+            actualizar(idActualizar);
+        } else {
+            CMensajes.msg_error("Seleccione un registro para actualizar.", "Actualizar");
+        }
+    }//GEN-LAST:event_JbtnActualizarActionPerformed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
