@@ -361,6 +361,7 @@ public class JfRegistroRuta extends javax.swing.JFrame {
         JspHLL = new javax.swing.JSeparator();
         JspP = new javax.swing.JSeparator();
         JbtnEnviar = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Agregar rutas");
@@ -441,7 +442,10 @@ public class JfRegistroRuta extends javax.swing.JFrame {
                 JbtnEnviarActionPerformed(evt);
             }
         });
-        JpnlLienzo.add(JbtnEnviar, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 210, -1, -1));
+        JpnlLienzo.add(JbtnEnviar, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 220, -1, -1));
+
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/FondoRuta.png"))); // NOI18N
+        JpnlLienzo.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 0, -1, 250));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -451,7 +455,7 @@ public class JfRegistroRuta extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(JpnlLienzo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(JpnlLienzo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -526,5 +530,6 @@ public class JfRegistroRuta extends javax.swing.JFrame {
     private javax.swing.JTextField JtxtLlegada;
     private javax.swing.JTextField JtxtNombre;
     private javax.swing.JTextField JtxtPrecio;
+    private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
 }
