@@ -135,13 +135,10 @@ public class CActualizaciones {
     }
 //Boleto
 
-    public boolean actualizarPrecioBoleto(String idBoleto, float precio) throws SQLException {
-        consulta = "UPDATE boleto SET precio = " + precio + " WHERE Id_boleto = '" + idBoleto + "'";
-        return cnslt.actualiza(consulta);
-    }
+   //Boleto
 
-    public boolean actualizarTipoBoleto(String idBoleto, String tipoBoleto) throws SQLException {
-        consulta = "UPDATE boleto SET tipo_boleto = '" + tipoBoleto + "' WHERE Id_boleto = '" + idBoleto + "'";
+    public boolean actualizarBoletoPreTi(String idBoleto, String precio, String tipo) throws SQLException {
+        consulta = "UPDATE boleto SET precioDescuento ='" + precio + "',`tipo_boleto`='" + tipo + "' WHERE Id_boleto = '" + idBoleto + "'";
         return cnslt.actualiza(consulta);
     }
 
@@ -156,17 +153,17 @@ public class CActualizaciones {
     }
 
     public boolean actualizarAnioFecha(String idAnio, String anio) throws SQLException {
-        consulta = "UPDATE fecha SET anio = " + anio + " WHERE Id_anio = '" + idAnio + "'";
+        consulta = "UPDATE anio SET anio = " + anio + " WHERE Id_anio = '" + idAnio + "'";
         return cnslt.actualiza(consulta);
     }
 
     public boolean actualizarTerminalD(String idTerminal, String destino) throws SQLException {
-        consulta = "UPDATE terminal t SET t.nombre = '" + destino + "' WHERE t.Id_terminal = '" + idTerminal + "'";
+        consulta = "UPDATE terminal SET nombre = '" + destino + "' WHERE Id_terminal = '" + idTerminal + "'";
         return cnslt.actualiza(consulta);
     }
 
     public boolean actualizarTerminalO(String idTerminal, String origen) throws SQLException {
-        consulta = "UPDATE terminal o SET o.nombre = '" + origen + "' WHERE o.Id_terminal = '" + idTerminal + "'";
+        consulta = "UPDATE terminal SET nombre = '" + origen + "' WHERE Id_terminal = '" + idTerminal + "'";
         return cnslt.actualiza(consulta);
     }
 

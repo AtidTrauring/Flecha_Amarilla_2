@@ -966,12 +966,13 @@ public class CBusquedas {
         //return Integer.parseInt(cnslt.buscarValor(consulta));
         return cnslt.buscarValor(consulta);
     }
-    
-     public String obtenIdFinalAñoo() throws SQLException {
+
+    public String obtenIdFinalAñoo() throws SQLException {
         consulta = "SELECT MAX(Id_anio) FROM flecha_amarilla.anio;";
         return cnslt.buscarValor(consulta);
     }
-       public String obtenIdBuscaAñoo(String año) throws SQLException {
+
+    public String obtenIdBuscaAñoo(String año) throws SQLException {
         consulta = "SELECT\n"
                 + "anio.Id_anio\n"
                 + "FROM\n"
@@ -980,8 +981,8 @@ public class CBusquedas {
                 + "anio.anio = " + año + ";";
         return cnslt.buscarValor(consulta);
     }
-       
-           public String obtenIdBuscaMarcaa(String marca) throws SQLException {
+
+    public String obtenIdBuscaMarcaa(String marca) throws SQLException {
         consulta = "SELECT\n"
                 + "marca.Id_marca\n"
                 + "FROM\n"
@@ -990,12 +991,13 @@ public class CBusquedas {
                 + "marca.nombre = '" + marca + "';";
         return cnslt.buscarValor(consulta);
     }
-           public String obtenIdFinalMarcaa() throws SQLException {
+
+    public String obtenIdFinalMarcaa() throws SQLException {
         consulta = "SELECT MAX(Id_marca) FROM flecha_amarilla.marca;";
         return cnslt.buscarValor(consulta);
     }
-           
-              public String obtenIdBuscaModeloo(String modelo) throws SQLException {
+
+    public String obtenIdBuscaModeloo(String modelo) throws SQLException {
         consulta = "SELECT\n"
                 + "modelo.Id_modelo\n"
                 + "FROM\n"
@@ -1004,16 +1006,18 @@ public class CBusquedas {
                 + "modelo.nombre = '" + modelo + "';";
         return cnslt.buscarValor(consulta);
     }
-            public String obtenIdFinalModeloo() throws SQLException {
+
+    public String obtenIdFinalModeloo() throws SQLException {
         consulta = "SELECT MAX(Id_modelo) FROM flecha_amarilla.modelo;";
         return cnslt.buscarValor(consulta);
     }
-              public String obtenIdFinalFechaa() throws SQLException {
+
+    public String obtenIdFinalFechaa() throws SQLException {
         consulta = "SELECT MAX(fecha.Id_fecha) FROM flecha_amarilla.fecha;";
         return cnslt.buscarValor(consulta);
     }
-                  
-       public String obtenIdBuscaMes(String mes) throws SQLException {
+
+    public String obtenIdBuscaMes(String mes) throws SQLException {
         consulta = "SELECT\n"
                 + "mes.Id_mes\n"
                 + "FROM\n"
@@ -1022,7 +1026,8 @@ public class CBusquedas {
                 + "mes.mes = '" + mes + "';";
         return cnslt.buscarValor(consulta);
     }
-          public String obtenIdBuscaPlacaa(String placa) throws SQLException {
+
+    public String obtenIdBuscaPlacaa(String placa) throws SQLException {
         consulta = "SELECT\n"
                 + "autobus.Id_autobus\n"
                 + "FROM\n"
@@ -1031,7 +1036,8 @@ public class CBusquedas {
                 + "autobus.placa = '" + placa + "';";
         return cnslt.buscarValor(consulta);
     }
-            public String obtenIdBuscaNunEconomicoo(String numero) throws SQLException {
+
+    public String obtenIdBuscaNunEconomicoo(String numero) throws SQLException {
         consulta = "SELECT\n"
                 + "autobus.Id_autobus\n"
                 + "FROM\n"
@@ -1040,11 +1046,13 @@ public class CBusquedas {
                 + "autobus.num_economico = '" + numero + "';";
         return cnslt.buscarValor(consulta);
     }
-             public String obtenIdFinalAutobuss() throws SQLException {
+
+    public String obtenIdFinalAutobuss() throws SQLException {
         consulta = "SELECT MAX(Id_autobus) FROM flecha_amarilla.autobus;";
         return cnslt.buscarValor(consulta);
     }
-               public String buscarIdMes(String mes) throws SQLException {
+
+    public String buscarIdMes(String mes) throws SQLException {
         String idConductor = cnslt.buscarValor("SELECT\n"
                 + "mes.Id_mes\n"
                 + "FROM\n"
@@ -1053,15 +1061,45 @@ public class CBusquedas {
                 + "mes.mes = '" + mes + "';");
         return idConductor;
     }
-               
-               public String buscaAnioo(String anio) throws SQLException {
+
+    public String buscaAnioo(String anio) throws SQLException {
         consulta = "SELECT `Id_anio` FROM `anio` WHERE anio.anio = '" + anio + "';";
         return cnslt.buscarValor(consulta);
     }
-                 public String buscaFechaa(String dia, String idMes, String idAnio) throws SQLException {
+
+    public String buscaFechaa(String dia, String idMes, String idAnio) throws SQLException {
         consulta = "SELECT `Id_fecha` FROM `fecha` WHERE fecha.dia = '" + dia + "' AND fecha.Id_mes = '" + idMes + "' AND fecha.Id_anio = '" + idAnio + "';";
         return cnslt.buscarValor(consulta);
     }
 
+//Boletos********************
+    public String buscarIdBoletoFecha(String id) throws SQLException {
+        String idFecha = cnslt.buscarValor("SELECT boleto.Id_fecha FROM boleto WHERE boleto.Id_boleto = " + id + ";");
+        return idFecha;
+    }
 
+    public String buscarIdBoletoAsiento(String id) throws SQLException {
+        String idAsiento = cnslt.buscarValor("SELECT boleto.Id_asiento FROM boleto WHERE boleto.Id_boleto = " + id + ";");
+        return idAsiento;
+    }
+
+    public String buscarIdBoletoRuta(String id) throws SQLException {
+        String idRuta = cnslt.buscarValor("SELECT boleto.Id_ruta FROM boleto WHERE boleto.Id_boleto = " + id + ";");
+        return idRuta;
+    }
+
+    public String buscarIdFechaanio(String idFecha) throws SQLException {
+        String idBoleto = cnslt.buscarValor("SELECT fecha.Id_anio FROM fecha WHERE fecha.Id_fecha = " + idFecha + ";");
+        return idBoleto;
+    }
+
+    public String buscarIdFechaMes(String idFecha) throws SQLException {
+        String idBoleto = cnslt.buscarValor("SELECT fecha.Id_mes FROM fecha WHERE fecha.Id_fecha = " + idFecha + ";");
+        return idBoleto;
+    }
+
+    public String buscarIdRutaOrigen(String idRuta) throws SQLException {
+        String idBoleto = cnslt.buscarValor("SELECT ruta.Id_origen FROM ruta WHERE ruta.Id_ruta = " + idRuta + ";");
+        return idBoleto;
+    }
 }
