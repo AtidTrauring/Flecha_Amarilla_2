@@ -249,7 +249,7 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
         return -1;
     }
     
-    public void actualizar(int id){
+public void actualizar(int id) {
         String nombre = (String) JtableReembolsos.getValueAt(JtableReembolsos.getSelectedRow(), 0);
         String apPat = (String) JtableReembolsos.getValueAt(JtableReembolsos.getSelectedRow(), 1);
         String apMat = (String) JtableReembolsos.getValueAt(JtableReembolsos.getSelectedRow(), 2);
@@ -259,13 +259,22 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
         int anio = Integer.parseInt((String) JtableReembolsos.getValueAt(JtableReembolsos.getSelectedRow(), 6));
         try {
             String idReembolso = queryBusca.buscarReembolso(id);
+
+            String idBoleto = queryBusca.buscarReembolsoBoleto(id);
+            String idFecha = queryBusca.buscarReembolsoFecha(idReembolso);
+            String idMes = queryBusca.buscarIdFechaMesRe(idFecha);
+            String idAnio = queryBusca.buscarIdFechaAnioRe(idFecha);
+            String idPersona = queryBusca.buscarIdBoletoPasajero(idBoleto);
+            String idApPat = queryBusca.buscarIdBoletoPasajero(idPersona);
+            String idApMat = queryBusca.buscarIdBoletoPasajero(idPersona);
+            String idNombre = queryBusca.buscarIdBoletoPasajero(idPersona);
             int idRee = Integer.parseInt(idReembolso);
             if (idReembolso != null || idReembolso.isEmpty()) {
-                if (queryActualiza.actualizarPersona(nombre, apPat, apMat, id)) {
+                if (queryActualiza.actualizarPersona(idNombre, idApPat, idApMat, id)) {
                     if (queryActualiza.actualizarCantidadReembolso(idRee, cantidad)) {
-                        if (queryActualiza.actualizarFecha(dia, id)) {
-                            if (queryActualiza.actualizarMesFecha(mes, mes)) {
-                                if (queryActualiza.actualizarAnio(anio, id)) {
+                        if (queryActualiza.actualizarFechaReembolso(idFecha, dia)) {
+                            if (queryActualiza.actualizarMesFecha(mes, idFecha)) {
+                                if (queryActualiza.actualizarAnio(anio, idFecha)) {
                                     CMensajes.msg("Se actualizo el reembolso", "Actualizar");
                                 } else {
                                     CMensajes.msg_error("No se pudo actualizar el año", "Actualizar");
@@ -286,6 +295,7 @@ public final class JfReembolsoConsulta extends javax.swing.JFrame {
                 CMensajes.msg_error("Ocurrio un error al actualizar.", "Actualizar");
             }
         } catch (Exception e) {
+            CMensajes.msg_error("Error: " + e.getMessage(), "Actualizar");
         } finally {
             limpiarBuscadores();
             limpiarFiltro();
