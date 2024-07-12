@@ -75,6 +75,31 @@ public class CBusquedas {
         return cnslt.buscarValor(consulta);
     }
 
+    public String buscarReembolsoBoleto(int id) throws SQLException {
+        String idReembolsoBoleto = "SELECT reembolso.Id_boleto FROM `reembolso` WHERE reembolso.Id_reembolso = " + id;
+        return cnslt.buscarValor(consulta);
+    }
+
+    public String buscarReembolsoFecha(String idReembolso) throws SQLException {
+        String idReembolsoFecha = "SELECT reembolso.Id_fecha FROM `reembolso` WHERE reembolso.Id_reembolso =" + idReembolso;
+        return cnslt.buscarValor(consulta);
+    }
+
+    public String buscarIdFechaMesRe(String idFecha) throws SQLException {
+        String idFechaMesRe = "SELECT fecha.Id_mes FROM `fecha` WHERE fecha.Id_fecha =" + idFecha;
+        return cnslt.buscarValor(consulta);
+    }
+
+    public String buscarIdFechaAnioRe(String idFecha) throws SQLException {
+        String idFechaAnioRe = "SELECT fecha.Id_Id_anio FROM `fecha` WHERE fecha.Id_fecha =" + idFecha;
+        return cnslt.buscarValor(consulta);
+    }
+
+    public String buscarIdBoletoPasajero(String idBoleto) throws SQLException {
+        String idBoletoPersona = "SELECT boleto.Id_pasajero FROM `boleto` WHERE boleto.Id_boleto ='" + idBoleto + "'";
+        return cnslt.buscarValor(consulta);
+    }
+
     //--------------------------------------------------------------------------
     public int obtenIdBuscaAño(int año) throws SQLException {
         consulta = "SELECT\n"
