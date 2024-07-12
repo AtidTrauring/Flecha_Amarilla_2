@@ -161,4 +161,25 @@ public class CInserciones {
         consulta = "INSERT INTO `ciudad`(`Id_ciudad`, `nombre`, `Id_estado`) VALUES (" + Id_ciudad + ",'" + nombre + "'," + Id_estado + ");";
         return cnslt.inserta(consulta);
     }
+    
+    
+    public boolean insertaTerminal(int Id_terminal, String nombre, String Id_direccion) throws SQLException {
+        consulta = "INSERT INTO `terminal`(`Id_terminal`, `nombre`, `Id_direccion`) VALUES (" + Id_terminal + ",'" + nombre + "'," + Id_direccion + ")";
+        return cnslt.inserta(consulta);
+    }
+    public boolean insertaDireccion(int Id_direccion, String nombre_calle, String numero, String Id_ciudad, String Id_colonia, String Id_CP) throws SQLException {
+        consulta = "INSERT INTO `direccion`(`Id_direccion`, `nombre_calle`, `numero`, `Id_ciudad`, `Id_colonia`, `Id_CP`) VALUES"
+                + " (" + Id_direccion + ",'" + nombre_calle + "'," + numero + "," + Id_ciudad + "," + Id_colonia + "," + Id_CP + ");";
+        return cnslt.inserta(consulta);
+    }
+    
+      public boolean insertaEstado(int idestado, String estado) throws SQLException {
+        consulta = "INSERT INTO `estado`(`Id_estado`, `nombre`) VALUES ('"+idestado+"','"+estado+"')";
+        return cnslt.inserta(consulta);
+    }
+      
+       public boolean insertaCodigoPostal(int Id_CP, String codigo_postal) throws SQLException {
+        consulta = "INSERT INTO `codigo_postal`(`Id_CP`, `codigo_postal`) VALUES (" + Id_CP + "," + codigo_postal + ");";
+        return cnslt.inserta(consulta);
+    }
 }
