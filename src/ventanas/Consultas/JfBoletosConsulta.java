@@ -304,13 +304,14 @@ public final class JfBoletosConsulta extends javax.swing.JFrame {
     }
     
     public void actualizar(int idBoleto) {
-    String origen = (String) JtableBoletos.getValueAt(JtableBoletos.getSelectedRow(), 0);
-    String destino = (String) JtableBoletos.getValueAt(JtableBoletos.getSelectedRow(), 1);
-    String fechaDia = (String) JtableBoletos.getValueAt(JtableBoletos.getSelectedRow(), 2);
-    String fechaMes = (String) JtableBoletos.getValueAt(JtableBoletos.getSelectedRow(), 3);
-    String fechaAnio = (String) JtableBoletos.getValueAt(JtableBoletos.getSelectedRow(), 4);
-    String precio = (String) JtableBoletos.getValueAt(JtableBoletos.getSelectedRow(), 5);
+    String asiento = (String) JtableBoletos.getValueAt(JtableBoletos.getSelectedRow(), 0);
+    String origen = (String) JtableBoletos.getValueAt(JtableBoletos.getSelectedRow(), 1);
+    String destino = (String) JtableBoletos.getValueAt(JtableBoletos.getSelectedRow(), 2);
+    String fechaDia = (String) JtableBoletos.getValueAt(JtableBoletos.getSelectedRow(), 3);
+    String fechaMes = (String) JtableBoletos.getValueAt(JtableBoletos.getSelectedRow(), 4);
+    String fechaAnio = (String) JtableBoletos.getValueAt(JtableBoletos.getSelectedRow(), 5);
     String tipoBoleto = (String) JtableBoletos.getValueAt(JtableBoletos.getSelectedRow(), 6);
+    float precio = Float.parseFloat((String) JtableBoletos.getValueAt(JtableBoletos.getSelectedRow(), 7));
 
     try {
         String idBoletoActual = queryBusca.buscarBoleto(idBoleto);
@@ -319,6 +320,7 @@ public final class JfBoletosConsulta extends javax.swing.JFrame {
         String idFecha = queryBusca.buscarIdFechaPorBoleto(idBoletoActual);
         String idMes = queryBusca.buscarIdMesPorFecha(idFecha);
         String idAnio = queryBusca.buscarIdAnioPorFecha(idFecha);
+        String idAsiento = queryBusca.buscarAsiento(asiento);
         
         if (idBoletoActual != null && !idBoletoActual.isEmpty()) {
             if (queryActualiza.actualizarPrecioBoleto(idBoletoActual, precio)) {
@@ -341,6 +343,11 @@ public final class JfBoletosConsulta extends javax.swing.JFrame {
                                     
                                     if (queryActualiza.actualizarTerminalD(idTerminalDestino, destino)) {
                                         CMensajes.msg("Se actualizó la terminal de destino.", "Actualizar");
+                                        if (queryActualiza.actualizarAsiento(idAsiento, asiento)) {
+                                            CMensajes.msg("Los datos se actualizaron", "Actualizar");
+                                        } else {
+                                            CMensajes.msg_error("No se pudo actualizar el asiento", "Actualizar");
+                                        }
                                     } else {
                                         CMensajes.msg_error("Ocurrió un error al actualizar la terminal de destino.", "Actualizar");
                                     }
