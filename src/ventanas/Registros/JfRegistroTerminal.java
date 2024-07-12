@@ -471,6 +471,7 @@ public class JfRegistroTerminal extends javax.swing.JFrame {
         JlblNombreTerminal = new javax.swing.JLabel();
         JtxtNombreTerminal = new javax.swing.JTextField();
         JspNombreTerminal = new javax.swing.JSeparator();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Agregar terminales");
@@ -482,6 +483,7 @@ public class JfRegistroTerminal extends javax.swing.JFrame {
         JlblEstado.setText("Estado");
         JpnlLienzo.add(JlblEstado, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, -1, -1));
 
+        JtxtEstado.setToolTipText("Ingrese el estado usando puras letras mayusculas o minusculas");
         JtxtEstado.setBorder(null);
         JpnlLienzo.add(JtxtEstado, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, 110, -1));
         JpnlLienzo.add(JspEstado, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 100, 110, -1));
@@ -489,13 +491,20 @@ public class JfRegistroTerminal extends javax.swing.JFrame {
         JlblCiudad.setText("Ciudad");
         JpnlLienzo.add(JlblCiudad, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 110, -1, -1));
 
+        JtxtCiudad.setToolTipText("Ingrese la ciudad usando puras letras mayusculas o minusculas");
         JtxtCiudad.setBorder(null);
+        JtxtCiudad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JtxtCiudadActionPerformed(evt);
+            }
+        });
         JpnlLienzo.add(JtxtCiudad, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 130, 110, -1));
         JpnlLienzo.add(JspCiudad, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 150, 110, -1));
 
         JlblCalle.setText("Nombre de la vialidad");
         JpnlLienzo.add(JlblCalle, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 10, -1, -1));
 
+        JtxtCalle.setToolTipText("Ingrese la vialidad usando puras letras mayusculas o minusculas");
         JtxtCalle.setBorder(null);
         JpnlLienzo.add(JtxtCalle, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 30, 120, -1));
         JpnlLienzo.add(JspCalle, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 50, 120, 10));
@@ -503,6 +512,7 @@ public class JfRegistroTerminal extends javax.swing.JFrame {
         JlblBarrio.setText("Colonia/Barrio");
         JpnlLienzo.add(JlblBarrio, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 60, -1, -1));
 
+        JtxtBarrio.setToolTipText("Ingrese la colonia usando puras letras mayusculas o minusculas");
         JtxtBarrio.setBorder(null);
         JpnlLienzo.add(JtxtBarrio, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 80, 110, -1));
         JpnlLienzo.add(JspBarrio, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 100, 120, -1));
@@ -510,6 +520,7 @@ public class JfRegistroTerminal extends javax.swing.JFrame {
         JlblCP.setText("Codigo Postal");
         JpnlLienzo.add(JlblCP, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 10, -1, -1));
 
+        JtxtCP.setToolTipText("Ingrese el codigo postal usando solo 5 numeros en total");
         JtxtCP.setBorder(null);
         JpnlLienzo.add(JtxtCP, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 30, 110, -1));
         JpnlLienzo.add(JspCP, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 50, 110, -1));
@@ -517,6 +528,7 @@ public class JfRegistroTerminal extends javax.swing.JFrame {
         JlblNumero.setText("Numero");
         JpnlLienzo.add(JlblNumero, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 60, -1, -1));
 
+        JtxtNumero.setToolTipText("Ingrese el numero habitacional usando puros numeros que puede ir del 1 a 5 como maximo");
         JtxtNumero.setBorder(null);
         JpnlLienzo.add(JtxtNumero, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 80, 110, -1));
         JpnlLienzo.add(JspNumerp, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 100, 110, -1));
@@ -534,9 +546,13 @@ public class JfRegistroTerminal extends javax.swing.JFrame {
         JlblNombreTerminal.setText("Nombre");
         JpnlLienzo.add(JlblNombreTerminal, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
 
+        JtxtNombreTerminal.setToolTipText("Ingrese el nombre usando puras letras mayusculas o minusculas");
         JtxtNombreTerminal.setBorder(null);
         JpnlLienzo.add(JtxtNombreTerminal, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, 110, -1));
         JpnlLienzo.add(JspNombreTerminal, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, 110, -1));
+
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/FondoRegistroTerminal.png"))); // NOI18N
+        JpnlLienzo.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 0, -1, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -546,7 +562,7 @@ public class JfRegistroTerminal extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(JpnlLienzo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(JpnlLienzo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -556,6 +572,10 @@ public class JfRegistroTerminal extends javax.swing.JFrame {
         // TODO add your handling code here:
         enviarDatos();
     }//GEN-LAST:event_JbtnEnviarActionPerformed
+
+    private void JtxtCiudadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JtxtCiudadActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_JtxtCiudadActionPerformed
 
     /**
      * @param args the command line arguments
@@ -617,5 +637,6 @@ public class JfRegistroTerminal extends javax.swing.JFrame {
     private javax.swing.JTextField JtxtEstado;
     private javax.swing.JTextField JtxtNombreTerminal;
     private javax.swing.JTextField JtxtNumero;
+    private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
 }
