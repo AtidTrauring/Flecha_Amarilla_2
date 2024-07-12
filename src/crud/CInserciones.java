@@ -36,6 +36,18 @@ public class CInserciones {
         consulta = "INSERT INTO `anio`(`Id_anio`, `anio`) VALUES ('" + Id_anio + "','" + anio + "')";
         return cnslt.inserta(consulta);
     }
+    public boolean insertaAnioo(int Id_anio, String anio) throws SQLException {
+        consulta = "INSERT INTO `anio`(`Id_anio`, `anio`) VALUES ('" + Id_anio + "','" + anio + "')";
+        return cnslt.inserta(consulta);
+    }
+     public boolean insertaMadeloo(int Id_modelo, String nombre, String Id_marca) throws SQLException {
+        consulta = "INSERT INTO `modelo`(`Id_modelo`, `nombre`, `Id_marca`) VALUES ('" + Id_modelo + "','" + nombre + "','" + Id_marca + "');";
+        return cnslt.inserta(consulta);
+    }
+       public boolean insertaFechaa(int idFecha, String dia, String idmes, String idanio) throws SQLException {
+        consulta = "INSERT INTO `fecha`(`Id_fecha`, `dia`, `Id_mes`, `Id_anio`) VALUES ('" + idFecha + "','" + dia + "','" + idmes + "','" + idanio + "');";
+        return cnslt.inserta(consulta);
+    }
 
     public boolean insertaTarjeta(int IdTarjeta, String numCuenta, int cvv, int IdAnio, int IdMes, int IdMetodo, int IdCliente, int tipo) throws SQLException {
         consulta = "INSERT INTO `tarjeta`(`Id_tarjeta`, `numeroCuenta`, `CVV`, `Id_anio`, `Id_mes`, `Id_metodo`, `Id_cliente`, `Id_tipo_tarjeta`) VALUES"
@@ -180,6 +192,11 @@ public class CInserciones {
       
        public boolean insertaCodigoPostal(int Id_CP, String codigo_postal) throws SQLException {
         consulta = "INSERT INTO `codigo_postal`(`Id_CP`, `codigo_postal`) VALUES (" + Id_CP + "," + codigo_postal + ");";
+        return cnslt.inserta(consulta);
+    }
+        public boolean insertaAutobus(int Id_autobus, String capacidad, String num_economico, String placa, String Id_anio, String Id_fecha, String Id_modelo) throws SQLException {
+        consulta = "INSERT INTO `autobus`(`Id_autobus`, `capacidad`, `num_economico`, `placa`, `Id_anio`, `Id_fecha`, `Id_modelo`) VALUES"+
+                " ('"+Id_autobus+"','"+capacidad+"','"+num_economico+"','"+placa+"','"+Id_anio+"','"+Id_fecha+"','"+Id_modelo+"')";
         return cnslt.inserta(consulta);
     }
 }
