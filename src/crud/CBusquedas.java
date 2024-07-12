@@ -966,5 +966,102 @@ public class CBusquedas {
         //return Integer.parseInt(cnslt.buscarValor(consulta));
         return cnslt.buscarValor(consulta);
     }
+    
+     public String obtenIdFinalAñoo() throws SQLException {
+        consulta = "SELECT MAX(Id_anio) FROM flecha_amarilla.anio;";
+        return cnslt.buscarValor(consulta);
+    }
+       public String obtenIdBuscaAñoo(String año) throws SQLException {
+        consulta = "SELECT\n"
+                + "anio.Id_anio\n"
+                + "FROM\n"
+                + "anio\n"
+                + "WHERE\n"
+                + "anio.anio = " + año + ";";
+        return cnslt.buscarValor(consulta);
+    }
+       
+           public String obtenIdBuscaMarcaa(String marca) throws SQLException {
+        consulta = "SELECT\n"
+                + "marca.Id_marca\n"
+                + "FROM\n"
+                + "marca\n"
+                + "WHERE\n"
+                + "marca.nombre = '" + marca + "';";
+        return cnslt.buscarValor(consulta);
+    }
+           public String obtenIdFinalMarcaa() throws SQLException {
+        consulta = "SELECT MAX(Id_marca) FROM flecha_amarilla.marca;";
+        return cnslt.buscarValor(consulta);
+    }
+           
+              public String obtenIdBuscaModeloo(String modelo) throws SQLException {
+        consulta = "SELECT\n"
+                + "modelo.Id_modelo\n"
+                + "FROM\n"
+                + "modelo\n"
+                + "WHERE\n"
+                + "modelo.nombre = '" + modelo + "';";
+        return cnslt.buscarValor(consulta);
+    }
+            public String obtenIdFinalModeloo() throws SQLException {
+        consulta = "SELECT MAX(Id_modelo) FROM flecha_amarilla.modelo;";
+        return cnslt.buscarValor(consulta);
+    }
+              public String obtenIdFinalFechaa() throws SQLException {
+        consulta = "SELECT MAX(fecha.Id_fecha) FROM flecha_amarilla.fecha;";
+        return cnslt.buscarValor(consulta);
+    }
+                  
+       public String obtenIdBuscaMes(String mes) throws SQLException {
+        consulta = "SELECT\n"
+                + "mes.Id_mes\n"
+                + "FROM\n"
+                + "mes\n"
+                + "WHERE\n"
+                + "mes.mes = '" + mes + "';";
+        return cnslt.buscarValor(consulta);
+    }
+          public String obtenIdBuscaPlacaa(String placa) throws SQLException {
+        consulta = "SELECT\n"
+                + "autobus.Id_autobus\n"
+                + "FROM\n"
+                + "autobus\n"
+                + "WHERE\n"
+                + "autobus.placa = '" + placa + "';";
+        return cnslt.buscarValor(consulta);
+    }
+            public String obtenIdBuscaNunEconomicoo(String numero) throws SQLException {
+        consulta = "SELECT\n"
+                + "autobus.Id_autobus\n"
+                + "FROM\n"
+                + "autobus\n"
+                + "WHERE\n"
+                + "autobus.num_economico = '" + numero + "';";
+        return cnslt.buscarValor(consulta);
+    }
+             public String obtenIdFinalAutobuss() throws SQLException {
+        consulta = "SELECT MAX(Id_autobus) FROM flecha_amarilla.autobus;";
+        return cnslt.buscarValor(consulta);
+    }
+               public String buscarIdMes(String mes) throws SQLException {
+        String idConductor = cnslt.buscarValor("SELECT\n"
+                + "mes.Id_mes\n"
+                + "FROM\n"
+                + "mes\n"
+                + "WHERE\n"
+                + "mes.mes = '" + mes + "';");
+        return idConductor;
+    }
+               
+               public String buscaAnioo(String anio) throws SQLException {
+        consulta = "SELECT `Id_anio` FROM `anio` WHERE anio.anio = '" + anio + "';";
+        return cnslt.buscarValor(consulta);
+    }
+                 public String buscaFechaa(String dia, String idMes, String idAnio) throws SQLException {
+        consulta = "SELECT `Id_fecha` FROM `fecha` WHERE fecha.dia = '" + dia + "' AND fecha.Id_mes = '" + idMes + "' AND fecha.Id_anio = '" + idAnio + "';";
+        return cnslt.buscarValor(consulta);
+    }
+
 
 }
