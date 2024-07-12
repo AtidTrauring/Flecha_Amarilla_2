@@ -785,6 +785,14 @@ public class CBusquedas {
         consulta = "SELECT MAX(Id_CP) FROM flecha_amarilla.codigo_postal;";
         return Integer.parseInt(cnslt.buscarValor(consulta));
     }
+    public String obtenIdFinalCodigoPostall() throws SQLException {
+        consulta = "SELECT MAX(Id_CP) FROM flecha_amarilla.codigo_postal;";
+        return cnslt.buscarValor(consulta);
+    }
+    public String obtenIdFinalColoniaa() throws SQLException {
+        consulta = "SELECT MAX(Id_colonia) FROM flecha_amarilla.colonia;";
+        return cnslt.buscarValor(consulta);
+    }
 
     public int obtenIdFinalColonia() throws SQLException {
         consulta = "SELECT MAX(Id_colonia) FROM flecha_amarilla.colonia;";
@@ -876,6 +884,15 @@ public class CBusquedas {
         return Integer.parseInt(cnslt.buscarValor(consulta));
     }
 
+     public String buscarIdNumeroHabitacional(String numero) throws SQLException {
+        String idTerminal = cnslt.buscarValor("SELECT\n"
+                + "direccion.Id_direccion\n"
+                + "FROM\n"
+                + "direccion\n"
+                + "WHERE\n"
+                + "direccion.numero = '" + numero + "';");
+        return idTerminal;
+    }
     public int buscarIdConductorRutaConductor(int idRutaConductor) throws SQLException {
         consulta = "SELECT Id_conductor FROM rutaConductor WHERE Id_rutaConductor = " + idRutaConductor + ";";
         return Integer.parseInt(cnslt.buscarValor(consulta));
@@ -886,4 +903,80 @@ public class CBusquedas {
         return Integer.parseInt(cnslt.buscarValor(consulta));
     }
 
+    
+     public String buscarIdNombreTerminal(String nombreTerminal) throws SQLException {
+        String idTerminal = cnslt.buscarValor("SELECT terminal.Id_terminal\n"
+                + "FROM\n"
+                + "terminal\n"
+                + "WHERE\n"
+                + "terminal.nombre = '"+nombreTerminal+"';");
+        return idTerminal;
+    }
+     
+      
+    public String buscarIdCiudad(String ciudad) throws SQLException {
+        String idTerminal = cnslt.buscarValor("SELECT\n"
+                + "ciudad.Id_ciudad\n"
+                + "FROM\n"
+                + "ciudad\n"
+                + "WHERE\n"
+                + "ciudad.nombre = '"+ciudad+"';");
+        return idTerminal;
+    }
+    
+     public String buscarIdColonia(String colonia) throws SQLException {
+        String idTerminal = cnslt.buscarValor("SELECT\n"
+                + "colonia.Id_colonia\n"
+                + "FROM\n"
+                + "colonia\n"
+                + "WHERE\n"
+                + "colonia.colonia = '"+colonia+"';");
+        return idTerminal;
+    }
+     
+       public String buscarIdCodigoPostal(String codigoPostal) throws SQLException {
+        String idTerminal = cnslt.buscarValor("SELECT\n"
+                + "codigo_postal.Id_CP\n"
+                + "FROM\n"
+                + "codigo_postal\n"
+                + "WHERE\n"
+                + "codigo_postal.codigo_postal = '"+codigoPostal+"';");
+        return idTerminal;
+    }
+       
+       
+       
+       public String buscarIdDireccion(String calle,String numero,String idCiudad, String idColonia, String idCodigoPostal) throws SQLException {
+        String idDireccion = cnslt.buscarValor("SELECT\n"
+                + "direccion.Id_direccion\n"
+                + "FROM\n"
+                + "direccion\n"
+                + "WHERE\n"
+                + "direccion.nombre_calle = '"+calle+"' AND\n"
+                + "direccion.numero = "+numero+" AND\n"
+                + "direccion.Id_ciudad = "+idCiudad+" AND\n"
+                + "direccion.Id_colonia = "+idColonia+" AND\n"
+                + "direccion.Id_CP = "+idCodigoPostal+";");
+        return idDireccion;
+    }
+       
+         public String buscarIdEstado(String estado) throws SQLException {
+        String idTerminal = cnslt.buscarValor("SELECT\n"
+                + "estado.Id_estado\n"
+                + "FROM\n"
+                + "estado\n"
+                + "WHERE\n"
+                + "estado.nombre = '"+estado+"';");
+        return idTerminal;
+    }
+         
+            public String obtenIdFinalEstadoo() throws SQLException {
+        consulta = "SELECT MAX(Id_estado) FROM flecha_amarilla.estado;";
+        //return Integer.parseInt(cnslt.buscarValor(consulta));
+        return cnslt.buscarValor(consulta);
+    }
+            
+            
+    
+    
 }
