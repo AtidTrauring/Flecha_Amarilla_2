@@ -174,5 +174,10 @@ public class CActualizaciones {
         consulta = "UPDATE flecha_amarilla.asiento SET `asiento` = '" + asiento + "' WHERE `Id_asiento` = '" + idAsiento + "'";
         return cnslt.actualiza(consulta);
     }
+    
+    public boolean actualizarCantidadReembolso(int idReembolso, float cantidad) throws SQLException{
+        consulta = "UPDATE flecha_amarilla.reembolso SET `cantidad`="+cantidad+" WHERE `Id_reembolso`=" + idReembolso;
+        return cnslt.actualiza(consulta);
+    }
 
 }
