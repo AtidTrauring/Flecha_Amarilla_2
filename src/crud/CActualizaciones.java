@@ -135,8 +135,7 @@ public class CActualizaciones {
     }
 //Boleto
 
-   //Boleto
-
+    //Boleto
     public boolean actualizarBoletoPreTi(String idBoleto, String precio, String tipo) throws SQLException {
         consulta = "UPDATE boleto SET precioDescuento ='" + precio + "',`tipo_boleto`='" + tipo + "' WHERE Id_boleto = '" + idBoleto + "'";
         return cnslt.actualiza(consulta);
@@ -171,9 +170,19 @@ public class CActualizaciones {
         consulta = "UPDATE flecha_amarilla.asiento SET `asiento` = '" + asiento + "' WHERE `Id_asiento` = '" + idAsiento + "'";
         return cnslt.actualiza(consulta);
     }
-    
-    public boolean actualizarCantidadReembolso(int idReembolso, float cantidad) throws SQLException{
-        consulta = "UPDATE flecha_amarilla.reembolso SET `cantidad`="+cantidad+" WHERE `Id_reembolso`=" + idReembolso;
+
+    public boolean actualizarCantidadReembolso(int idReembolso, float cantidad) throws SQLException {
+        consulta = "UPDATE flecha_amarilla.reembolso SET `cantidad`=" + cantidad + " WHERE `Id_reembolso`=" + idReembolso;
+        return cnslt.actualiza(consulta);
+    }
+
+    public boolean actualizarFechaReembolso(String idFecha, int dia) throws SQLException {
+        consulta = "UPDATE `fecha` SET `dia`='" + dia + "' WHERE Id_fecha= " + idFecha + ";";
+        return cnslt.actualiza(consulta);
+    }
+
+    public boolean actualizarAnio(int anio, String id) throws SQLException {
+        consulta = "UPDATE flecha_amarilla.anio SET `anio`='" + anio + "' WHERE Id_anio = '" + id + "';";
         return cnslt.actualiza(consulta);
     }
 
